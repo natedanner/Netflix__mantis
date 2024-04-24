@@ -115,9 +115,9 @@ public class MasterMain implements Service {
     private final ServiceLifecycle mantisServices = new ServiceLifecycle();
     private final AtomicBoolean shutdownInitiated = new AtomicBoolean(false);
     private KeyValueBasedPersistenceProvider storageProvider;
-    private CountDownLatch blockUntilShutdown = new CountDownLatch(1);
-    private volatile CuratorService curatorService = null;
-    private volatile AgentClusterOperationsImpl agentClusterOps = null;
+    private final CountDownLatch blockUntilShutdown = new CountDownLatch(1);
+    private volatile CuratorService curatorService;
+    private volatile AgentClusterOperationsImpl agentClusterOps;
     private MasterConfiguration config;
     private SchedulingService schedulingService;
     private ILeadershipManager leadershipManager;
@@ -141,7 +141,7 @@ public class MasterMain implements Service {
             this.config = ConfigurationProvider.getConfig();
             leadershipManager = new LeadershipManagerZkImpl(config, mantisServices);
 
-            Thread t = new Thread(() -> shutdown());
+            Thread t = new Thread(this::shutdown);
             t.setDaemon(true);
             // shutdown hook
             Runtime.getRuntime().addShutdownHook(t);
@@ -433,8 +433,9 @@ public class MasterMain implements Service {
             }
             blockUntilShutdown.countDown();
             logger.info("Mantis Master shutdown done");
-        } else
+        } else {
             logger.info("Shutdown already initiated, not starting again");
+        }
     }
 
     public MasterConfiguration getConfig() {

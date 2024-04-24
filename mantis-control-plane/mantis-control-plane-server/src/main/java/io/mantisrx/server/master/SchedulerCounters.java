@@ -26,12 +26,12 @@ import io.mantisrx.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class SchedulerCounters {
+public final class SchedulerCounters {
 
     private static final SchedulerCounters instance = new SchedulerCounters();
     private final AtomicInteger iterationNumberCounter = new AtomicInteger();
     private final AtomicInteger numResourceAllocationTrials = new AtomicInteger(0);
-    private volatile IterationCounter counter = null;
+    private volatile IterationCounter counter;
     private SchedulerCounters() {
     }
 

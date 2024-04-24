@@ -42,16 +42,16 @@ import rx.functions.Func1;
 
 public class CustomizedAutoAckTaggingStage extends AutoAckTaggingStage {
 
-    private static Logger logger = LoggerFactory.getLogger(CustomizedAutoAckTaggingStage.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomizedAutoAckTaggingStage.class);
     private String jobName;
 
     private String timestampField = "_ts_";
-    private AtomicLong latestTimeStamp = new AtomicLong();
+    private final AtomicLong latestTimeStamp = new AtomicLong();
 
-    private boolean isFlattenFields = false;
-    private List<String> fieldsToFlatten = new ArrayList<>();
+    private boolean isFlattenFields;
+    private final List<String> fieldsToFlatten = new ArrayList<>();
 
-    private Func1<Map<String, Object>, Map<String, Object>> preMapperFunc = t -> t;
+    private final Func1<Map<String, Object>, Map<String, Object>> preMapperFunc = t -> t;
 
     @Override
     public void init(Context context) {
@@ -64,7 +64,7 @@ public class CustomizedAutoAckTaggingStage extends AutoAckTaggingStage {
         }
 
         String flattenFieldsStr = System.getenv("JOB_PARAM_fieldsToFlatten");
-        if (flattenFieldsStr != null && !flattenFieldsStr.isEmpty() && !flattenFieldsStr.equals("NONE")) {
+        if (flattenFieldsStr != null && !flattenFieldsStr.isEmpty() && !"NONE".equals(flattenFieldsStr)) {
 
             String[] fields = flattenFieldsStr.split(",");
             if (fields.length > 0) {

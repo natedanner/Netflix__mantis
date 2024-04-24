@@ -22,7 +22,7 @@ import io.mantisrx.server.worker.jobmaster.control.Controller;
 public class Derivative extends Controller {
 
     private double last = 0;
-    private boolean initialized = false;
+    private boolean initialized;
 
     // TODO: What if this is uninitialized?
 

@@ -63,8 +63,12 @@ public class InstanceInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         InstanceInfo that = (InstanceInfo) o;
         return Objects.equals(getApplicationName(), that.getApplicationName()) &&
             Objects.equals(getZone(), that.getZone()) &&

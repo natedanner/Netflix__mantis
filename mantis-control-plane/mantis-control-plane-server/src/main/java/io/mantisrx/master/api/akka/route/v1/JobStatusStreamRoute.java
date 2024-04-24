@@ -49,7 +49,7 @@ public class JobStatusStreamRoute extends BaseRoute {
         return pathPrefix(
                 JOBSTATUS_API_PREFIX,
                 () -> concat(
-                        path(segment("jobStatusStream").slash(PathMatchers.segment()), (jobId) ->
+                        path(segment("jobStatusStream").slash(PathMatchers.segment()), jobId ->
                                 get(() -> getJobStatusStreamRoute(jobId))
                         )
                 )

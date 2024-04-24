@@ -33,10 +33,10 @@ import rx.functions.Func1;
 public class ConsistentHashingRouter<K, V> extends Router<KeyValuePair<K, V>> {
 
     private static final Logger logger = LoggerFactory.getLogger(ConsistentHashingRouter.class);
-    private static int connectionRepetitionOnRing = 1000;
-    private static long validCacheAgeMSec = 5000;
-    private HashFunction hashFunction;
-    private AtomicReference<SnapshotCache<SortedMap<Long, AsyncConnection<KeyValuePair<K, V>>>>> cachedRingRef = new AtomicReference<>();
+    private static final int connectionRepetitionOnRing = 1000;
+    private static final long validCacheAgeMSec = 5000;
+    private final HashFunction hashFunction;
+    private final AtomicReference<SnapshotCache<SortedMap<Long, AsyncConnection<KeyValuePair<K, V>>>>> cachedRingRef = new AtomicReference<>();
 
     public ConsistentHashingRouter(String name,
                                    Func1<KeyValuePair<K, V>, byte[]> dataEncoder,
@@ -97,7 +97,7 @@ public class ConsistentHashingRouter<K, V> extends Router<KeyValuePair<K, V>> {
     }
 
     private void computeRing(Set<AsyncConnection<KeyValuePair<K, V>>> connections) {
-        SortedMap<Long, AsyncConnection<KeyValuePair<K, V>>> ring = new TreeMap<Long, AsyncConnection<KeyValuePair<K, V>>>();
+        SortedMap<Long, AsyncConnection<KeyValuePair<K, V>>> ring = new TreeMap<>();
         for (AsyncConnection<KeyValuePair<K, V>> connection : connections) {
             for (int i = 0; i < connectionRepetitionOnRing; i++) {
                 // hash node on ring

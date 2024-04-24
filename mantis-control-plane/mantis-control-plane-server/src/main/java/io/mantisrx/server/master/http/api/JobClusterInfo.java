@@ -56,9 +56,9 @@ public class JobClusterInfo {
         this.cronActive = cronActive;
         this.jars = jars;
         this.labels = labels;
-        if (jars == null || jars.isEmpty())
+        if (jars == null || jars.isEmpty()) {
             latestVersion = "";
-        else {
+        } else {
             JarInfo latest = null;
             for (JarInfo ji : jars) {
                 if (latest == null || ji.uploadedAt > latest.uploadedAt) {

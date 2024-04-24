@@ -44,25 +44,30 @@ public class SinkParameters {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((params == null) ? 0 : params.hashCode());
+        result = prime * result + (params == null ? 0 : params.hashCode());
         return result;
     }
 
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         SinkParameters other = (SinkParameters) obj;
         if (params == null) {
-            if (other.params != null)
+            if (other.params != null) {
                 return false;
-        } else if (!params.equals(other.params))
+            }
+        } else if (!params.equals(other.params)) {
             return false;
+        }
         return true;
     }
 
@@ -71,7 +76,7 @@ public class SinkParameters {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        if (params != null && params.size() > 0) {
+        if (params != null && !params.isEmpty()) {
             int size = params.size();
             int count = 0;
             sb.append("?");
@@ -99,7 +104,7 @@ public class SinkParameters {
 
     public static class Builder {
 
-        List<SinkParameter> parameters = new ArrayList<SinkParameter>();
+        List<SinkParameter> parameters = new ArrayList<>();
 
         public Builder parameters(SinkParameter... params) {
             for (SinkParameter p : params)

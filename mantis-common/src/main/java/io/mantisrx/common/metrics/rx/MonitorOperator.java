@@ -30,13 +30,13 @@ import rx.subscriptions.Subscriptions;
 
 public class MonitorOperator<T> implements Operator<T, T> {
 
-    private static Logger logger = LoggerFactory.getLogger(MonitorOperator.class);
+    private static final Logger logger = LoggerFactory.getLogger(MonitorOperator.class);
     private final Counter next;
     private final Gauge nextGauge;
     private final Gauge error;
     private final Gauge complete;
     private final Gauge subscribe;
-    private String name;
+    private final String name;
 
     public MonitorOperator(String name) {
         this.name = name;

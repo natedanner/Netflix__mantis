@@ -70,8 +70,9 @@ public class MasterClientWrapper {
 
     public static String getUnwrappedHost(String wrappedHost) {
         final int i = wrappedHost.lastIndexOf('-');
-        if (i < 0)
+        if (i < 0) {
             return wrappedHost;
+        }
         return wrappedHost.substring(0, i);
     }
 
@@ -100,9 +101,8 @@ public class MasterClientWrapper {
                                     }
                                 });
                     }
-                }).toBlocking().subscribe((ep) -> {
-            System.out.println("Endpoint Change -> " + ep);
-        });
+                }).toBlocking().subscribe(ep ->
+            System.out.println("Endpoint Change -> " + ep));
         Thread.sleep(50000);
     }
 
@@ -218,9 +218,8 @@ public class MasterClientWrapper {
         Observable<List<Endpoint>> schedulingUpdates =
                 masterClientApi
                                     .schedulingChanges(jobId)
-                                    .doOnError((Throwable throwable) -> {
-                                        logger.warn(throwable.getMessage());
-                                    })
+                                    .doOnError((Throwable throwable) ->
+                                        logger.warn(throwable.getMessage()))
                                     .retryWhen(schedInfoRetry.getRetryLogic())
                                     .map((JobSchedulingInfo jobSchedulingInfo) -> {
                                         logger.info("Got scheduling info for {}", jobId);
@@ -263,16 +262,16 @@ public class MasterClientWrapper {
                                         }
                                         return endpoints;
                                     })
-                                    .doOnError((Throwable throwable) -> {
-                                        logger.error(throwable.getMessage(), throwable);
-                                    });
+                                    .doOnError((Throwable throwable) ->
+                                        logger.error(throwable.getMessage(), throwable));
 
         return (new ToDeltaEndpointInjector(schedulingUpdates)).deltas();
     }
 
     private boolean usePartition(int fromPartition, int fromTotalPartitions, int toPartition, int toTotalPartitions) {
-        if (toPartition < 0 || toTotalPartitions == 0)
+        if (toPartition < 0 || toTotalPartitions == 0) {
             return true; // not partitioning
+        }
         long n = Math.round((double) fromTotalPartitions / (double) toTotalPartitions);
         long beg = toPartition * n;
         long end = toPartition == toTotalPartitions - 1 ? fromTotalPartitions : (toPartition + 1) * n;
@@ -294,7 +293,7 @@ public class MasterClientWrapper {
                     return Observable.empty();
                 })
                 .take(1)
-                .map((exists) -> {
+                .map(exists -> {
                     if (!exists) {
                         final Exception exception = new Exception("No such Job Cluster " + jobName);
                         namedJobsIdsRetry.setErrorRef(exception);
@@ -303,15 +302,10 @@ public class MasterClientWrapper {
                     logger.info("Getting Job cluster info for " + jobName);
                     return masterClientApi.namedJobInfo(jobName);
                 })
-                .doOnError((Throwable throwable) -> {
-                    logger.error(throwable.getMessage(), throwable);
-                })
+                .doOnError((Throwable throwable) ->
+                    logger.error(throwable.getMessage(), throwable))
                 .retryWhen(namedJobsIdsRetry.getRetryLogic())
-                .flatMap((Observable<NamedJobInfo> namedJobInfo) -> {
-                    return namedJobInfo.map((NamedJobInfo nji) -> {
-                        return nji.getJobId();
-                    });
-                });
+                .flatMap((Observable<NamedJobInfo> namedJobInfo) -> namedJobInfo.map(NamedJobInfo::getJobId));
     }
 
     public static class JobSinkNumWorkers {

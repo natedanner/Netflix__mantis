@@ -56,11 +56,11 @@ import rx.functions.Action1;
 
 public class ContextualHttpSourceTest {
 
-    private final static int SEED_PORT = 4000;
-    private final static int PORT_RANGE = 1000;
+    private static final int SEED_PORT = 4000;
+    private static final int PORT_RANGE = 1000;
     private static LocalServerProvider localServerProvider;
-    private static EventType[] expectedEvents = new EventType[] {CONNECTION_ATTEMPTED, SUBSCRIPTION_ESTABLISHED, CONNECTION_UNSUBSCRIBED, CONNECTION_ESTABLISHED, SERVER_FOUND, SOURCE_COMPLETED, SUBSCRIPTION_ENDED};
-    private static Set<EventType> EXPECTED_EVENTS_SETS = new HashSet<>(Arrays.asList(expectedEvents));
+    private static final EventType[] expectedEvents = new EventType[]{CONNECTION_ATTEMPTED, SUBSCRIPTION_ESTABLISHED, CONNECTION_UNSUBSCRIBED, CONNECTION_ESTABLISHED, SERVER_FOUND, SOURCE_COMPLETED, SUBSCRIPTION_ENDED};
+    private static final Set<EventType> EXPECTED_EVENTS_SETS = new HashSet<>(Arrays.asList(expectedEvents));
     private TestSourceObserver sourceObserver = new TestSourceObserver();
     // Just make sure the unused port is out side the range of possible ports: [SEED_PORT, SEED_PORT + PORT_RANGE)
 

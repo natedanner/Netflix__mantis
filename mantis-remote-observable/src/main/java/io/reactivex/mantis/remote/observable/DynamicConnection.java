@@ -33,9 +33,9 @@ public class DynamicConnection<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(DynamicConnection.class);
 
-    private Observable<Endpoint> changeEndpointObservable;
-    private PublishSubject<Observable<T>> subject = PublishSubject.create();
-    private Func1<Endpoint, Observable<T>> toObservableFunc;
+    private final Observable<Endpoint> changeEndpointObservable;
+    private final PublishSubject<Observable<T>> subject = PublishSubject.create();
+    private final Func1<Endpoint, Observable<T>> toObservableFunc;
 
     DynamicConnection(Func1<Endpoint, Observable<T>> toObservableFunc, Observable<Endpoint> changeEndpointObservable) {
         this.changeEndpointObservable = changeEndpointObservable;
@@ -49,7 +49,7 @@ public class DynamicConnection<T> {
                     @Override
                     public Observable<GroupedObservable<K, V>> call(Endpoint endpoint) {
                         // copy config, change host, port and id
-                        ConnectToGroupedObservable.Builder<K, V> configCopy = new ConnectToGroupedObservable.Builder<K, V>(config);
+                        ConnectToGroupedObservable.Builder<K, V> configCopy = new ConnectToGroupedObservable.Builder<>(config);
                         configCopy
                                 .host(endpoint.getHost())
                                 .port(endpoint.getPort())
@@ -57,7 +57,7 @@ public class DynamicConnection<T> {
                         return RemoteObservable.connect(configCopy.build()).getObservable();
                     }
                 };
-        return new DynamicConnection<GroupedObservable<K, V>>(toObservableFunc, endpoints);
+        return new DynamicConnection<>(toObservableFunc, endpoints);
     }
 
     public static <T> DynamicConnection<T> create(
@@ -67,7 +67,7 @@ public class DynamicConnection<T> {
                     @Override
                     public Observable<T> call(Endpoint endpoint) {
                         // copy config, change host, port and id
-                        ConnectToObservable.Builder<T> configCopy = new ConnectToObservable.Builder<T>(config);
+                        ConnectToObservable.Builder<T> configCopy = new ConnectToObservable.Builder<>(config);
                         configCopy
                                 .host(endpoint.getHost())
                                 .port(endpoint.getPort())
@@ -75,7 +75,7 @@ public class DynamicConnection<T> {
                         return RemoteObservable.connect(configCopy.build()).getObservable();
                     }
                 };
-        return new DynamicConnection<T>(toObservableFunc, endpoints);
+        return new DynamicConnection<>(toObservableFunc, endpoints);
     }
 
     public void close() {

@@ -55,7 +55,7 @@ public class CompressionUtilsTest {
         BufferedReader reader = new BufferedReader(new StringReader(testInput));
         List<MantisServerSentEvent> result = CompressionUtils.tokenize(reader, delimiter);
 
-        List<String> actual = result.stream().map(e -> e.getEventAsString()).collect(Collectors.toList());
+        List<String> actual = result.stream().map(MantisServerSentEvent::getEventAsString).collect(Collectors.toList());
         assertEquals("Delimiter: '" + delimiter + "'", Arrays.asList(event1,event2,event3), actual);
     }
 
@@ -75,7 +75,7 @@ public class CompressionUtilsTest {
         BufferedReader reader = new BufferedReader(new StringReader(testInput));
         List<MantisServerSentEvent> result = CompressionUtils.tokenize(reader, delimiter);
 
-        List<String> actual = result.stream().map(e -> e.getEventAsString()).collect(Collectors.toList());
+        List<String> actual = result.stream().map(MantisServerSentEvent::getEventAsString).collect(Collectors.toList());
         assertEquals("Delimiter: '" + delimiter + "'", Arrays.asList(event1,event2,event3), actual);
     }
 
@@ -101,7 +101,7 @@ public class CompressionUtilsTest {
         BufferedReader reader = new BufferedReader(new StringReader(testInput));
         List<MantisServerSentEvent> result = CompressionUtils.tokenize(reader, delimiter);
 
-        List<String> actual = result.stream().map(e -> e.getEventAsString()).collect(Collectors.toList());
+        List<String> actual = result.stream().map(MantisServerSentEvent::getEventAsString).collect(Collectors.toList());
         assertEquals("Delimiter: '" + delimiter + "'", Arrays.asList(event1,event2,event3), actual);
     }
 

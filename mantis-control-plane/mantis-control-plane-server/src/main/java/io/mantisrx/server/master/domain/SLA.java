@@ -60,9 +60,9 @@ public class SLA {
     @JsonIgnore
     private CronTrigger<NamedJob> scheduledTrigger;
     @JsonIgnore
-    private String triggerGroup = null;
+    private String triggerGroup;
     @JsonIgnore
-    private String triggerId = null;
+    private String triggerId;
 
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -107,18 +107,22 @@ public class SLA {
     }
 
     private void validate() throws IllegalArgumentException {
-        if (max < min)
+        if (max < min) {
             throw new IllegalArgumentException("Cannot have max=" + max + " < min=" + min);
-        if (min > MaxValueForSlaMin)
+        }
+        if (min > MaxValueForSlaMin) {
             throw new IllegalArgumentException("Specified min sla value " + min + " cannot be >" + MaxValueForSlaMin);
-        if (max > MaxValueForSlaMax)
+        }
+        if (max > MaxValueForSlaMax) {
             throw new IllegalArgumentException("Max sla value " + max + " cannot be >" + MaxValueForSlaMax);
+        }
     }
 
     // caller must lock to avoid concurrent access with destroyCron()
     private void initCron(NamedJob job) throws SchedulerException {
-        if (!hasCronSpec || triggerId != null)
+        if (!hasCronSpec || triggerId != null) {
             return;
+        }
         logger.info("Init'ing cron for " + job.getName());
         triggerGroup = job.getName() + "-" + this;
         try {
@@ -146,9 +150,9 @@ public class SLA {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((cronPolicy == null) ? 0 : cronPolicy.hashCode());
-        result = prime * result + ((cronSpec == null) ? 0 : cronSpec.hashCode());
-        result = prime * result + ((defaultPolicy == null) ? 0 : defaultPolicy.hashCode());
+        result = prime * result + (cronPolicy == null ? 0 : cronPolicy.hashCode());
+        result = prime * result + (cronSpec == null ? 0 : cronSpec.hashCode());
+        result = prime * result + (defaultPolicy == null ? 0 : defaultPolicy.hashCode());
         result = prime * result + (hasCronSpec ? 1231 : 1237);
         result = prime * result + max;
         result = prime * result + min;
@@ -157,26 +161,35 @@ public class SLA {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         SLA other = (SLA) obj;
-        if (cronPolicy != other.cronPolicy)
+        if (cronPolicy != other.cronPolicy) {
             return false;
+        }
         if (cronSpec == null) {
-            if (other.cronSpec != null)
+            if (other.cronSpec != null) {
                 return false;
-        } else if (!cronSpec.equals(other.cronSpec))
+            }
+        } else if (!cronSpec.equals(other.cronSpec)) {
             return false;
-        if (defaultPolicy != other.defaultPolicy)
+        }
+        if (defaultPolicy != other.defaultPolicy) {
             return false;
-        if (hasCronSpec != other.hasCronSpec)
+        }
+        if (hasCronSpec != other.hasCronSpec) {
             return false;
-        if (max != other.max)
+        }
+        if (max != other.max) {
             return false;
+        }
         return min == other.min;
     }
 

@@ -174,9 +174,7 @@ public class MQL {
      */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> projectSuperSet(Collection<Query> queries, Map<String, Object> datum) {
-        IFn superSetProjector = superSetProjectorCache.computeIfAbsent(new HashSet<Query>(queries), (qs) -> {
-            return computeSuperSetProjector(qs);
-        });
+        IFn superSetProjector = superSetProjectorCache.computeIfAbsent(new HashSet<Query>(queries), MQL::computeSuperSetProjector);
         return (Map<String, Object>) superSetProjector.invoke(datum);
     }
 
@@ -192,19 +190,19 @@ public class MQL {
     @SuppressWarnings("unchecked")
     public static Func1<Map<String, Object>, Boolean> getHavingPredicate(String query) {
         IFn func = (IFn) queryToHavingPred.invoke(query);
-        return (datum) -> (Boolean) func.invoke(datum);
+        return datum -> (Boolean) func.invoke(datum);
     }
 
     @SuppressWarnings("unchecked")
     public static Func1<Observable<Map<String, Object>>, Observable<Map<String, Object>>> getAggregateFn(String query) {
         IFn func = (IFn) queryToAggregateFn.invoke(query);
-        return (obs) -> (Observable<Map<String, Object>>) func.invoke(obs);
+        return obs -> (Observable<Map<String, Object>>) func.invoke(obs);
     }
 
     @SuppressWarnings("unchecked")
     public static Func1<Map<String, Object>, Map<String, Object>> getExtrapolationFn(String query) {
         IFn func = (IFn) queryToExtrapolationFn.invoke(query);
-        return (datum) -> (Map<String, Object>) func.invoke(datum);
+        return datum -> (Map<String, Object>) func.invoke(datum);
     }
 
     @SuppressWarnings("unchecked")
@@ -260,8 +258,8 @@ public class MQL {
      * @return A valid MQL query string assuming the input was valid.
      */
     public static String transformLegacyQuery(String criterion) {
-        return criterion.toLowerCase().equals("true") ? "select * where true" :
-            criterion.toLowerCase().equals("false") ? "select * where false" :
+        return "true".equals(criterion.toLowerCase()) ? "select * where true" :
+            "false".equals(criterion.toLowerCase()) ? "select * where false" :
                 criterion;
     }
 

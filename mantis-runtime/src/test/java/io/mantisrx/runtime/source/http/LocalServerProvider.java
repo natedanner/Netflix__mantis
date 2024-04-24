@@ -166,15 +166,19 @@ public class LocalServerProvider implements HttpServerProvider {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             Server server = (Server) o;
 
-            if (port != server.port) return false;
-            if (!host.equals(server.host)) return false;
-
-            return true;
+            if (port != server.port) {
+                return false;
+            }
+            return !!host.equals(server.host);
         }
 
         @Override

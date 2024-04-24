@@ -50,9 +50,9 @@ public class MetricsServer {
     private static final Logger logger = LoggerFactory.getLogger(MetricsServer.class);
     private final ObjectMapper mapper = new ObjectMapper();
     private HttpServer<ByteBuf, ServerSentEvent> server;
-    private int port;
-    private Map<String, String> tags;
-    private long publishRateInSeconds;
+    private final int port;
+    private final Map<String, String> tags;
+    private final long publishRateInSeconds;
 
     public MetricsServer(int port, long publishRateInSeconds, Map<String, String> tags) {
         this.port = port;
@@ -118,8 +118,9 @@ public class MetricsServer {
                                             for (String name : namesToFilter) {
                                                 if (name.indexOf('*') != -1) {
                                                     // check for ends with
-                                                    if (name.indexOf('*') == 0 && measurements.getName().endsWith(name.substring(1)))
+                                                    if (name.indexOf('*') == 0 && measurements.getName().endsWith(name.substring(1))) {
                                                         return true;
+                                                    }
                                                     // check for starts with
                                                     if (name.indexOf('*') > 0 && measurements.getName().startsWith(name.substring(0, name.indexOf('*')))) {
                                                         return true;

@@ -73,6 +73,6 @@ public class MantisJobMetadataViewTest {
         filterProvider.setFailOnUnknownId(false);
         String output = mapper.writer(filterProvider).writeValueAsString(metadataViewWithTerminate);
 
-        assertTrue(output.indexOf("\"terminatedAt\":999") > 0);
+        assertTrue(output.indexOf("\"terminatedAt\":999") >= 1);
     }
 }

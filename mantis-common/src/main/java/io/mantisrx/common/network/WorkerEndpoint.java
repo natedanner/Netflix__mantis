@@ -79,15 +79,27 @@ public class WorkerEndpoint extends Endpoint {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         WorkerEndpoint that = (WorkerEndpoint) o;
 
-        if (stage != that.stage) return false;
-        if (metricPort != that.metricPort) return false;
-        if (workerIndex != that.workerIndex) return false;
+        if (stage != that.stage) {
+            return false;
+        }
+        if (metricPort != that.metricPort) {
+            return false;
+        }
+        if (workerIndex != that.workerIndex) {
+            return false;
+        }
         return workerNum == that.workerNum;
 
     }

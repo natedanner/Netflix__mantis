@@ -33,7 +33,7 @@ import rx.functions.Func1;
 
 public class EventFilterTest {
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void missingClientIdFails() {

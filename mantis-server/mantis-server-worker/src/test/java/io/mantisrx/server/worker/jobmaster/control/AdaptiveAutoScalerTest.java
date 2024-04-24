@@ -64,7 +64,7 @@ public class AdaptiveAutoScalerTest {
                 ((Long) numWorkers.get()).intValue(),
                 "message"))
                 .compose(autoScaler)
-                .map(x -> (Long) x)
+                .map(Long.class::cast)
                 .doOnNext(numWorkers::set)
                 .subscribe(testSubscriber);
 
@@ -93,7 +93,7 @@ public class AdaptiveAutoScalerTest {
                 ((Long) numWorkers.get()).intValue(),
                 "message"))
                 .compose(autoScaler)
-                .map(x -> (Long) x)
+                .map(Long.class::cast)
                 .doOnNext(numWorkers::set)
                 .subscribe(testSubscriber);
 
@@ -131,7 +131,7 @@ public class AdaptiveAutoScalerTest {
                         "message"))
 
                 .compose(autoScaler)
-                .map(x -> (Long) x)
+                .map(Long.class::cast)
                 .doOnNext(n -> {
                     if (count.get() > 4) {
                         numWorkers.set(n);
@@ -172,7 +172,7 @@ public class AdaptiveAutoScalerTest {
                 ((Long) numWorkers.get()).intValue(),
                 "message"))
                 .compose(autoScaler)
-                .map(x -> (Long) x)
+                .map(Long.class::cast)
                 .doOnNext(numWorkers::set)
                 .subscribe(testSubscriber);
 

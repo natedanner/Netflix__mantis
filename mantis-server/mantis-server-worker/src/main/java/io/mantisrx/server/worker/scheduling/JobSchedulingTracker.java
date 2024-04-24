@@ -32,7 +32,7 @@ import rx.observables.GroupedObservable;
 public class JobSchedulingTracker {
 
     private static final Logger logger = LoggerFactory.getLogger(JobSchedulingTracker.class);
-    private Observable<JobSchedulingInfo> schedulingChangesForJobId;
+    private final Observable<JobSchedulingInfo> schedulingChangesForJobId;
 
     public JobSchedulingTracker(Observable<JobSchedulingInfo> schedulingChangesForJobId) {
         this.schedulingChangesForJobId = schedulingChangesForJobId;
@@ -44,8 +44,8 @@ public class JobSchedulingTracker {
                 .filter(new Func1<WorkerIndexChange, Boolean>() {
                     @Override
                     public Boolean call(WorkerIndexChange newWorkerChange) {
-                        return (newWorkerChange.getNewState().getState()
-                                == MantisJobState.Started);
+                        return newWorkerChange.getNewState().getState()
+                                == MantisJobState.Started;
                     }
                 });
     }
@@ -87,7 +87,7 @@ public class JobSchedulingTracker {
                                                         }
                                                         WorkerHost previous = currentAndPrevious.get(0);
                                                         WorkerHost current = currentAndPrevious.get(1);
-                                                        return (previous.getWorkerNumber() != current.getWorkerNumber());
+                                                        return previous.getWorkerNumber() != current.getWorkerNumber();
                                                     }
                                                 })
                                                 .map(new Func1<List<WorkerHost>, WorkerIndexChange>() {
@@ -120,7 +120,7 @@ public class JobSchedulingTracker {
                 .filter(new Func1<WorkerAssignments, Boolean>() {
                     @Override
                     public Boolean call(WorkerAssignments assignments) {
-                        return (assignments.getStage() == stageNumber);
+                        return assignments.getStage() == stageNumber;
                     }
                 });
     }

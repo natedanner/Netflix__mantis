@@ -61,9 +61,9 @@ class ResourceManagerGatewayCxn extends ExponentialBackoffAbstractScheduledServi
     private final TaskExecutor taskExecutor;
     // flag representing if the task executor has been registered with the resource manager
     @Getter
-    private volatile boolean registered = false;
+    private volatile boolean registered;
 
-    private boolean hasRan = false;
+    private boolean hasRan;
     private final Counter heartbeatTimeoutCounter;
     private final Counter heartbeatFailureCounter;
     private final Counter taskExecutorRegistrationFailureCounter;

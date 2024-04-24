@@ -107,7 +107,7 @@ public class RemoteGroupedObservableTest {
                 }).toBlocking().forEach(new Action1<Result>() {
             @Override
             public void call(Result result) {
-                if (result.getKey().equals("odd")) {
+                if ("odd".equals(result.getKey())) {
                     Assert.assertEquals(25, result.getResults().intValue());
                     intRef.setValue(intRef.getValue() + 1);
                 } else {

@@ -23,8 +23,8 @@ import io.mantisrx.shaded.com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CounterMeasurement {
 
-    private String event;
-    private long count;
+    private final String event;
+    private final long count;
 
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)

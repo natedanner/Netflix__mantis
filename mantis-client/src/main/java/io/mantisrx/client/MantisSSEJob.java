@@ -39,7 +39,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
-public class MantisSSEJob implements Closeable {
+public final class MantisSSEJob implements Closeable {
 
     private static final String ConnectTimeoutSecsPropertyName = "MantisClientConnectTimeoutSecs";
     private static final Logger logger = LoggerFactory.getLogger(MantisSSEJob.class);
@@ -47,14 +47,15 @@ public class MantisSSEJob implements Closeable {
     private final Builder builder;
     private final Mode mode;
     private Observable<Observable<MantisServerSentEvent>> resultsObservable;
-    private String jobId = null;
+    private String jobId;
     private int forPartition = -1;
-    private int totalPartitions = 0;
+    private int totalPartitions;
     private MantisSSEJob(Builder builder, Mode mode) {
         this.builder = builder;
         this.mode = mode;
-        if (builder.connectTimeoutSecs > 0)
+        if (builder.connectTimeoutSecs > 0) {
             System.setProperty(ConnectTimeoutSecsPropertyName, String.valueOf(builder.connectTimeoutSecs));
+        }
     }
 
     @Override
@@ -63,8 +64,9 @@ public class MantisSSEJob implements Closeable {
             if (jobId != null) {
                 builder.mantisClient.killJob(jobId);
                 logger.info("Sent kill to master for job " + jobId);
-            } else
+            } else {
                 logger.warn("Unexpected to not have JobId to kill ephemeral job");
+            }
         }
     }
 
@@ -76,14 +78,16 @@ public class MantisSSEJob implements Closeable {
         final ConditionalRetry retryObject = new ConditionalRetry(null, "SinkClient_" + builder.name);
         return sinkClients
                 .switchMap((SinkClient<MantisServerSentEvent> serverSentEventSinkClient) -> {
-                    if (serverSentEventSinkClient.hasError())
+                    if (serverSentEventSinkClient.hasError()) {
                         return Observable.just(Observable.just(new MantisServerSentEvent(serverSentEventSinkClient.getError())));
+                    }
                     return serverSentEventSinkClient.getPartitionedResults(forPartition, totalPartitions);
                 })
                 .doOnError((Throwable throwable) -> {
                     logger.warn("Error getting sink Observable: " + throwable.getMessage());
-                    if (!(throwable instanceof NoSuchJobException))
+                    if (!(throwable instanceof NoSuchJobException)) {
                         retryObject.setErrorRef(throwable); // don't retry if not NoSuchJobException
+                    }
                 })
                 .retryWhen(retryObject.getRetryLogic())
                 ;
@@ -95,8 +99,9 @@ public class MantisSSEJob implements Closeable {
     }
 
     public synchronized Observable<Observable<MantisServerSentEvent>> connectAndGet() throws IllegalStateException {
-        if (mode != Mode.Connect)
+        if (mode != Mode.Connect) {
             throw new IllegalStateException("Can't call connect to sink");
+        }
         if (resultsObservable == null) {
             logger.info("Getting sink for job name " + builder.name);
             final Boolean exists = builder.mantisClient.namedJobExists(builder.name)
@@ -123,10 +128,12 @@ public class MantisSSEJob implements Closeable {
     }
 
     public synchronized Observable<Observable<MantisServerSentEvent>> submitAndGet() throws IllegalStateException {
-        if (mode != Mode.Submit)
+        if (mode != Mode.Submit) {
             throw new IllegalStateException("Can't submit job");
-        if (resultsObservable != null)
+        }
+        if (resultsObservable != null) {
             return resultsObservable;
+        }
         return Observable
                 .create(new Observable.OnSubscribe<Observable<MantisServerSentEvent>>() {
                     @Override
@@ -153,9 +160,8 @@ public class MantisSSEJob implements Closeable {
                         }
                     }
                 })
-                .doOnError((Throwable throwable) -> {
-                    logger.warn(throwable.getMessage());
-                })
+                .doOnError((Throwable throwable) ->
+                    logger.warn(throwable.getMessage()))
                 .lift(new DropOperator<>("client_submit_sse_share"))
                 .share()
                 .observeOn(Schedulers.io())
@@ -172,11 +178,11 @@ public class MantisSSEJob implements Closeable {
         private String jarVersion;
         private SinkParameters sinkParameters = new SinkParameters.Builder().build();
         private Action1<Throwable> onConnectionReset;
-        private boolean ephemeral = false;
+        private boolean ephemeral;
         private SchedulingInfo schedulingInfo;
         private JobSla jobSla;
-        private long connectTimeoutSecs = 0L;
-        private Observer<SinkConnectionsStatus> sinkConnectionsStatusObserver = null;
+        private long connectTimeoutSecs;
+        private Observer<SinkConnectionsStatus> sinkConnectionsStatusObserver;
         private long dataRecvTimeoutSecs = 5;
 
         public Builder(Properties properties) {
@@ -231,8 +237,9 @@ public class MantisSSEJob implements Closeable {
 
         public Builder jobSla(JobSla jobSla) {
             this.jobSla = jobSla;
-            if (jobSla != null)
+            if (jobSla != null) {
                 this.ephemeral = jobSla.getDurationType() == MantisJobDurationType.Transient;
+            }
             return this;
         }
 
@@ -261,8 +268,9 @@ public class MantisSSEJob implements Closeable {
         }
 
         public MantisSSEJob buildJobConnector(int forPartition, int totalPartitions) {
-            if (forPartition >= totalPartitions)
+            if (forPartition >= totalPartitions) {
                 throw new IllegalArgumentException("forPartition " + forPartition + " must be less than totalPartitions " + totalPartitions);
+            }
             MantisSSEJob job = new MantisSSEJob(this, Mode.Connect);
             job.forPartition = forPartition;
             job.totalPartitions = totalPartitions;

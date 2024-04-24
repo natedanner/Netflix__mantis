@@ -32,7 +32,7 @@ public abstract class Controller implements Observable.Operator<Double, Double> 
 
     private final Controller parent = this;
 
-    abstract protected Double processStep(Double error);
+    protected abstract Double processStep(Double error);
 
     @Override
     public Subscriber<? super Double> call(final Subscriber<? super Double> s) {

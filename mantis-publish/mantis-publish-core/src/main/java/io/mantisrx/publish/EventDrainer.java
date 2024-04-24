@@ -112,9 +112,8 @@ class EventDrainer implements Runnable {
                     LOG.warn("Exception processing events for stream {}", stream, e);
                     final int finalQueueDepth = queueDepth;
                     streamManager.getStreamMetrics(stream)
-                            .ifPresent(m -> {
-                                m.getMantisEventsDroppedProcessingExceptionCounter().increment(finalQueueDepth);
-                            });
+                            .ifPresent(m ->
+                                m.getMantisEventsDroppedProcessingExceptionCounter().increment(finalQueueDepth));
                 }
             }
             final long processingTime = clock.millis() - startTime;

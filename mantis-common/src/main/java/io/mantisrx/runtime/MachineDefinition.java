@@ -107,24 +107,29 @@ public class MachineDefinition implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         MachineDefinition other = (MachineDefinition) obj;
-        if (Double.doubleToLongBits(cpuCores) != Double.doubleToLongBits(other.cpuCores))
+        if (Double.doubleToLongBits(cpuCores) != Double.doubleToLongBits(other.cpuCores)) {
             return false;
-        if (Double.doubleToLongBits(diskMB) != Double.doubleToLongBits(other.diskMB))
+        }
+        if (Double.doubleToLongBits(diskMB) != Double.doubleToLongBits(other.diskMB)) {
             return false;
-        if (Double.doubleToLongBits(memoryMB) != Double.doubleToLongBits(other.memoryMB))
+        }
+        if (Double.doubleToLongBits(memoryMB) != Double.doubleToLongBits(other.memoryMB)) {
             return false;
-        if (Double.doubleToLongBits(networkMbps) != Double.doubleToLongBits(other.networkMbps))
+        }
+        if (Double.doubleToLongBits(networkMbps) != Double.doubleToLongBits(other.networkMbps)) {
             return false;
-        if (numPorts != other.numPorts)
-            return false;
-        return true;
+        }
+        return !(numPorts != other.numPorts);
     }
 
     // checks if the current machine can match the requirements of the passed machine definition

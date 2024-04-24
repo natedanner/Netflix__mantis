@@ -30,10 +30,12 @@ public class SLAEnforcer {
 	private static final Logger logger = LoggerFactory.getLogger(SLAEnforcer.class);
 	private final Optional<SLA> sla;
 	private final Comparator<JobInfo> comparator = (o1, o2) -> {
-        if (o2 == null)
+        if (o2 == null) {
             return -1;
-        if (o1 == null)
+        }
+        if (o1 == null) {
             return 1;
+        }
         return Long.compare(o1.jobId.getJobNum(), o2.jobId.getJobNum());
     };
 

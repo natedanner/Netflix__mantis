@@ -52,7 +52,7 @@ public class AbstractSubscriptionTrackerTest {
     private StreamManager streamManager;
     private TestSubscriptionTracker subscriptionTracker;
 
-	private final String SOURCE_JOB_NAME = "RequestEventSubTrackerTestJobCluster";
+	private static final String SOURCE_JOB_NAME = "RequestEventSubTrackerTestJobCluster";
 
     @BeforeEach
     public void setup() {
@@ -83,7 +83,7 @@ public class AbstractSubscriptionTrackerTest {
         );
         subscriptionTracker.setSubscriptions(ImmutableMap.of(SOURCE_JOB_NAME, nextSubs));
 
-        Set<String> subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(x -> x.getSubscriptionId()).collect(Collectors.toSet());
+        Set<String> subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(Subscription::getSubscriptionId).collect(Collectors.toSet());
         Set<String> expected = ImmutableSet.of("id1", "id2");
         assertEquals(expected, subIds);
     }
@@ -99,7 +99,7 @@ public class AbstractSubscriptionTrackerTest {
         );
         subscriptionTracker.setSubscriptions(ImmutableMap.of(SOURCE_JOB_NAME, nextSubs));
 
-        Set<String> subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(x -> x.getSubscriptionId()).collect(Collectors.toSet());
+        Set<String> subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(Subscription::getSubscriptionId).collect(Collectors.toSet());
         Set<String> expected = ImmutableSet.of("id1", "id2");
         assertEquals(expected, subIds);
     }
@@ -117,7 +117,7 @@ public class AbstractSubscriptionTrackerTest {
         );
         subscriptionTracker.setSubscriptions(ImmutableMap.of(SOURCE_JOB_NAME, nextSubs));
 
-        Set<String> subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(x -> x.getSubscriptionId()).collect(Collectors.toSet());
+        Set<String> subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(Subscription::getSubscriptionId).collect(Collectors.toSet());
         Set<String> expected = ImmutableSet.of("id1", "id2");
         assertEquals(expected, subIds);
 
@@ -132,7 +132,7 @@ public class AbstractSubscriptionTrackerTest {
         );
         subscriptionTracker.setSubscriptions(ImmutableMap.of(SOURCE_JOB_NAME, nextSubs));
 
-        subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(x -> x.getSubscriptionId()).collect(Collectors.toSet());
+        subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(Subscription::getSubscriptionId).collect(Collectors.toSet());
         expected = ImmutableSet.of("id1", "id2", "id3", "id4");
         assertEquals(expected, subIds);
     }
@@ -147,7 +147,7 @@ public class AbstractSubscriptionTrackerTest {
         );
         subscriptionTracker.setSubscriptions(ImmutableMap.of(SOURCE_JOB_NAME, nextSubs));
 
-        Set<String> subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(x -> x.getSubscriptionId()).collect(Collectors.toSet());
+        Set<String> subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(Subscription::getSubscriptionId).collect(Collectors.toSet());
         Set<String> expected = ImmutableSet.of("id1", "id2", "id3");
         assertEquals(expected, subIds);
 
@@ -159,7 +159,7 @@ public class AbstractSubscriptionTrackerTest {
         );
         subscriptionTracker.setSubscriptions(ImmutableMap.of(SOURCE_JOB_NAME, nextSubs));
 
-        subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(x -> x.getSubscriptionId()).collect(Collectors.toSet());
+        subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(Subscription::getSubscriptionId).collect(Collectors.toSet());
         expected = ImmutableSet.of("id1", "id2", "id3", "id4");
         assertEquals(expected, subIds);
 
@@ -169,7 +169,7 @@ public class AbstractSubscriptionTrackerTest {
         );
         subscriptionTracker.setSubscriptions(ImmutableMap.of(SOURCE_JOB_NAME, nextSubs));
 
-        subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(x -> x.getSubscriptionId()).collect(Collectors.toSet());
+        subIds = subscriptionTracker.getCurrentSubscriptions().stream().map(Subscription::getSubscriptionId).collect(Collectors.toSet());
         expected = ImmutableSet.of("id2", "id4");
         assertEquals(expected, subIds);
     }

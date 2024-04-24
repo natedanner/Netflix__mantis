@@ -46,9 +46,9 @@ public class MantisHttpClientImpl<I, O> extends HttpClientImpl<I, O> {
 
     private AtomicBoolean isClosed = new AtomicBoolean(false);
     private final Gauge numConnectionsTracked;
-    private final static String connectionTrackerMetricgroup = "ConnectionMonitor";
-    private final static String metricName = "numConnectionsTracked";
-    private final static String metricTagName = "uuid";
+    private static final String connectionTrackerMetricgroup = "ConnectionMonitor";
+    private static final String metricName = "numConnectionsTracked";
+    private static final String metricTagName = "uuid";
 
     public MantisHttpClientImpl(String name, ServerInfo serverInfo, Bootstrap clientBootstrap, PipelineConfigurator<HttpClientResponse<O>, HttpClientRequest<I>> pipelineConfigurator, ClientConfig clientConfig, ClientChannelFactory<HttpClientResponse<O>, HttpClientRequest<I>> channelFactory, ClientConnectionFactory<HttpClientResponse<O>, HttpClientRequest<I>, ? extends ObservableConnection<HttpClientResponse<O>, HttpClientRequest<I>>> connectionFactory, MetricEventsSubject<ClientMetricsEvent<?>> eventsSubject) {
         super(name, serverInfo, clientBootstrap, pipelineConfigurator, clientConfig, channelFactory, connectionFactory, eventsSubject);
@@ -112,6 +112,6 @@ public class MantisHttpClientImpl<I, O> extends HttpClientImpl<I, O> {
     }
 
     protected boolean isObservableConectionSet() {
-        return (this.observableConection != null);
+        return this.observableConection != null;
     }
 }

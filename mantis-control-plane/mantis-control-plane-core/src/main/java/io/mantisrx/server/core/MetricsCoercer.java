@@ -25,7 +25,7 @@ import org.skife.config.Coercible;
 
 public class MetricsCoercer implements Coercible<MetricsPublisher> {
 
-    private Properties props;
+    private final Properties props;
 
     public MetricsCoercer(Properties props) {
         this.props = props;

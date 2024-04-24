@@ -23,10 +23,10 @@ import java.util.Map;
 
 public class RemoteRxEvent {
 
-    private String name;
-    private Type type;
-    private byte[] data;
-    private Map<String, String> subscriptionParameters;
+    private final String name;
+    private final Type type;
+    private final byte[] data;
+    private final Map<String, String> subscriptionParameters;
     public RemoteRxEvent(String name,
                          Type type, byte[] data, Map<String, String> subscriptionParameters) {
         this.name = name;
@@ -36,7 +36,7 @@ public class RemoteRxEvent {
     }
 
     public static List<RemoteRxEvent> heartbeat() {
-        List<RemoteRxEvent> list = new ArrayList<RemoteRxEvent>(1);
+        List<RemoteRxEvent> list = new ArrayList<>(1);
         list.add(new RemoteRxEvent(null, Type.heartbeat, null, null));
         return list;
     }
@@ -58,13 +58,13 @@ public class RemoteRxEvent {
     }
 
     public static List<RemoteRxEvent> subscribed(String name, Map<String, String> subscriptionParameters) {
-        List<RemoteRxEvent> list = new ArrayList<RemoteRxEvent>(1);
+        List<RemoteRxEvent> list = new ArrayList<>(1);
         list.add(new RemoteRxEvent(name, Type.subscribed, null, subscriptionParameters));
         return list;
     }
 
     public static List<RemoteRxEvent> unsubscribed(String name) {
-        List<RemoteRxEvent> list = new ArrayList<RemoteRxEvent>(1);
+        List<RemoteRxEvent> list = new ArrayList<>(1);
         list.add(new RemoteRxEvent(name, Type.unsubscribed, null, null));
         return list;
     }

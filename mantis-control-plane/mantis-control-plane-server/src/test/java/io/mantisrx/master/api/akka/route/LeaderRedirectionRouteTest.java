@@ -53,7 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LeaderRedirectionRouteTest {
-    private final static Logger logger = LoggerFactory.getLogger(LeaderRedirectionRouteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(LeaderRedirectionRouteTest.class);
     private final ActorMaterializer materializer = ActorMaterializer.create(system);
     private final Http http = Http.get(system);
     private static Thread t;
@@ -78,8 +78,8 @@ public class LeaderRedirectionRouteTest {
         CompletionStage<HttpEntity.Strict> strictEntity = r.entity().toStrict(1000, materializer);
         return strictEntity.thenCompose(s ->
             s.getDataBytes()
-                .runFold(ByteString.emptyByteString(), (acc, b) -> acc.concat(b), materializer)
-                .thenApply(s2 -> s2.utf8String())
+                .runFold(ByteString.emptyByteString(), ByteString::concat, materializer)
+                .thenApply(ByteString::utf8String)
         );
     }
 
@@ -94,7 +94,7 @@ public class LeaderRedirectionRouteTest {
     }
 
     private static CompletionStage<ServerBinding> binding;
-    private static ActorSystem system = ActorSystem.create("MasterDescriptionRouteTest");
+    private static final ActorSystem system = ActorSystem.create("MasterDescriptionRouteTest");
 
     private static final MasterMonitor masterMonitor = new LocalMasterMonitor(fakeMasterDesc);
     private static final ILeadershipManager leadershipMgr = new LeadershipManagerLocalImpl(fakeMasterDesc);
@@ -202,8 +202,8 @@ public class LeaderRedirectionRouteTest {
                     CompletionStage<HttpEntity.Strict> strictEntity = r.entity().toStrict(1000, materializer);
                     return strictEntity.thenCompose(s ->
                         s.getDataBytes()
-                            .runFold(ByteString.emptyByteString(), (acc, b) -> acc.concat(b), materializer)
-                            .thenApply(s2 -> s2.utf8String())
+                            .runFold(ByteString.emptyByteString(), ByteString::concat, materializer)
+                            .thenApply(ByteString::utf8String)
                     );
                 })
                 .whenComplete((msg, t) -> {

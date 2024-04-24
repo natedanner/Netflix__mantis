@@ -40,8 +40,8 @@ public class MantisClutchConfigurationSelector implements Function1<Map<Clutch.M
     private final AtomicDouble trueCpuMin = new AtomicDouble(0.0);
     private final AtomicDouble trueNetworkMin = new AtomicDouble(0.0);
     private final long initializationTime = System.currentTimeMillis();
-    private final long ONE_DAY_MILLIS = 1000 * 60 * 60 * 24;
-    private final long TEN_MINUTES_MILLIS = 1000 * 60 * 10;
+    private final long oneDayMillis = 1000 * 60 * 60 * 24;
+    private final long tenMinutesMillis = 1000 * 60 * 10;
 
     public MantisClutchConfigurationSelector(Integer stageNumber, StageSchedulingInfo stageSchedulingInfo) {
         this.stageNumber = stageNumber;
@@ -62,15 +62,15 @@ public class MantisClutchConfigurationSelector implements Function1<Map<Clutch.M
         // Checking for high or low values;
 
         if (isSetpointHigh(sketches)
-            && System.currentTimeMillis() - initializationTime > ONE_DAY_MILLIS - TEN_MINUTES_MILLIS) {
+            && System.currentTimeMillis() - initializationTime > oneDayMillis - tenMinutesMillis) {
             setPoint *= 0.9;
         } else if (isSetpointLow(sketches)
-            && System.currentTimeMillis() - initializationTime > ONE_DAY_MILLIS - TEN_MINUTES_MILLIS) {
+            && System.currentTimeMillis() - initializationTime > oneDayMillis - tenMinutesMillis) {
             setPoint *= 1.11;
         }
 
         if (isUnderprovisioined(sketches)
-            && System.currentTimeMillis() - initializationTime > ONE_DAY_MILLIS) {
+            && System.currentTimeMillis() - initializationTime > oneDayMillis) {
           logger.info("Job is underprovisioned see previous messages to determine metric.");
         }
 

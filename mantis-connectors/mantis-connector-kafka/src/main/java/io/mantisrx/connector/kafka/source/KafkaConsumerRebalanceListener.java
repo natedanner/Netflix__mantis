@@ -61,7 +61,7 @@ public class KafkaConsumerRebalanceListener<S> implements ConsumerRebalanceListe
             for (TopicPartition tp : partitions) {
                 Optional<S> checkpointState = checkpointStrategy.loadCheckpoint(tp);
                 checkpointState
-                    .filter(x -> x instanceof OffsetAndMetadata)
+                    .filter(OffsetAndMetadata.class::isInstance)
                     .map(OffsetAndMetadata.class::cast)
                     .ifPresent(oam -> {
                         long offset = oam.offset();

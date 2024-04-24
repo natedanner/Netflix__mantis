@@ -68,8 +68,8 @@ class MantisEventAggregator extends ChannelOutboundHandlerAdapter {
     private final ObjectWriter objectWriter;
     private final boolean compress;
     private ScheduledFuture<?> writerTimeout;
-    private long flushIntervalMs;
-    private int flushIntervalBytes;
+    private final long flushIntervalMs;
+    private final int flushIntervalBytes;
     private MantisEventEnvelope currentMessage;
     private int currentMessageSize;
 

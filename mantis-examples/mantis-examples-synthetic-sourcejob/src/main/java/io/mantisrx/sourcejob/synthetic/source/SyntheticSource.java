@@ -47,12 +47,11 @@ public class SyntheticSource implements Source<String> {
     public Observable<Observable<String>> call(Context context, Index index) {
         return Observable.just(Observable
                 .interval(dataGenerateRateMsec, TimeUnit.MILLISECONDS)
-                .map((tick) -> generateEvent())
-                .map((event) -> event.toJsonString())
+                .map(tick -> generateEvent())
+                .map(RequestEvent::toJsonString)
                 .filter(Objects::nonNull)
-                .doOnNext((event) -> {
-                    log.debug("Generated Event {}", event);
-                }));
+                .doOnNext(event ->
+                    log.debug("Generated Event {}", event)));
     }
 
     @Override

@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class QueryRegistry {
+public final class QueryRegistry {
 
     public static final String ANY = "ANY";
 
@@ -53,7 +53,7 @@ public class QueryRegistry {
         checkNotNull("subscriptionId", subId);
         checkNotNull("query", query);
         checkNotNull("targetAppName", targetApp);
-        Map<String, String> addParams = (additionalParams == null) ? emptyMap : additionalParams;
+        Map<String, String> addParams = additionalParams == null ? emptyMap : additionalParams;
 
         appToSubscriptionMap.putIfAbsent(targetApp, new QueryMap(clientIdPrefix));
 
@@ -70,7 +70,7 @@ public class QueryRegistry {
     }
 
     public List<MantisServerSubscription> getCurrentSubscriptionsForApp(String app) {
-        List<MantisServerSubscription> subsForApp = (appToSubscriptionMap.containsKey(app)) ? appToSubscriptionMap.get(app).getCurrentSubscriptions() : new ArrayList<>();
+        List<MantisServerSubscription> subsForApp = appToSubscriptionMap.containsKey(app) ? appToSubscriptionMap.get(app).getCurrentSubscriptions() : new ArrayList<>();
         if (!app.equals(ANY) && appToSubscriptionMap.containsKey(ANY)) {
             subsForApp.addAll(appToSubscriptionMap.get(ANY).getCurrentSubscriptions());
         }
@@ -95,9 +95,8 @@ public class QueryRegistry {
 
     public Map<String, List<MantisServerSubscription>> getAllSubscriptions() {
         Map<String, List<MantisServerSubscription>> allSubMap = new HashMap<>();
-        appToSubscriptionMap.forEach((s, q) -> {
-            allSubMap.put(s, q.getCurrentSubscriptions());
-        });
+        appToSubscriptionMap.forEach((s, q) ->
+            allSubMap.put(s, q.getCurrentSubscriptions()));
 
         return allSubMap;
     }
@@ -107,7 +106,7 @@ public class QueryRegistry {
     }
 
     public static class Builder {
-        private String prefix = null;
+        private String prefix;
 
         public Builder() {
         }

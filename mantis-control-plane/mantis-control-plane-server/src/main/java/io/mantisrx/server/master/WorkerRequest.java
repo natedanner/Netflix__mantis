@@ -35,26 +35,26 @@ public class WorkerRequest {
     private final String user;
     // preferred Cluster to launch the worker on
     private final Optional<String> preferredCluster;
-    private String jobName;
-    private String jobId;
-    private int workerIndex;
-    private int workerNumber;
-    private URL jobJarUrl;
-    private int workerStage;
-    private int totalStages;
-    private MachineDefinition definition;
-    private int numInstancesAtStage;
-    private int numPortsPerInstance;
+    private final String jobName;
+    private final String jobId;
+    private final int workerIndex;
+    private final int workerNumber;
+    private final URL jobJarUrl;
+    private final int workerStage;
+    private final int totalStages;
+    private final MachineDefinition definition;
+    private final int numInstancesAtStage;
+    private final int numPortsPerInstance;
     private int metricsPort = -1;
     private int debugPort = -1;
     private int consolePort = -1;
     private int customPort = -1;
-    private List<Integer> ports;
-    private List<Parameter> parameters;
-    private JobSla jobSla;
-    private List<JobConstraints> hardConstraints;
-    private List<JobConstraints> softConstraints;
-    private SchedulingInfo schedulingInfo;
+    private final List<Integer> ports;
+    private final List<Parameter> parameters;
+    private final JobSla jobSla;
+    private final List<JobConstraints> hardConstraints;
+    private final List<JobConstraints> softConstraints;
+    private final SchedulingInfo schedulingInfo;
 
     public WorkerRequest(MachineDefinition definition, String jobId,
                          int workerIndex, int workerNumber, URL jobJarUrl, int workerStage, int totalStages,

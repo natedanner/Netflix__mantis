@@ -65,13 +65,13 @@ public class TwitterDslJob extends MantisJobProvider<String> {
                 }
             })
             // filter out english tweets
-            .filter((eventMap) -> {
+            .filter(eventMap -> {
                 if(eventMap.containsKey("lang") && eventMap.containsKey("text")) {
                     String lang = (String)eventMap.get("lang");
                     return "en".equalsIgnoreCase(lang);
                 }
                 return false;
-            }).map((eventMap) -> (String) eventMap.get("text"))
+            }).map(eventMap -> (String) eventMap.get("text"))
             // tokenize the tweets into words
             .flatMap(this::tokenize)
             .keyBy(WordCountPair::getWord)

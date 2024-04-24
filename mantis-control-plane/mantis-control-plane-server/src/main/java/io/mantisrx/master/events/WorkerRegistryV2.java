@@ -86,7 +86,7 @@ public class WorkerRegistryV2 implements WorkerRegistry, WorkerEventSubscriber {
             .flatMap(workerList -> workerList.stream()
                     .filter(wm -> Optional.ofNullable(resourceCluster).equals(wm.getResourceCluster()))
                     .filter(wm -> WorkerState.isRunningState(wm.getState()))
-                    .map(workerMeta -> workerMeta.getWorkerId()))
+                    .map(IMantisWorkerMetadata::getWorkerId))
             .collect(Collectors.toSet());
 
     }
@@ -106,7 +106,7 @@ public class WorkerRegistryV2 implements WorkerRegistry, WorkerEventSubscriber {
                 .collect(toMap(
                     IMantisWorkerMetadata::getWorkerId,
                     IMantisWorkerMetadata::getSlaveID,
-                    (s1, s2) -> (s1 != null) ? s1 : s2));
+                    (s1, s2) -> s1 != null ? s1 : s2));
     }
 
     /**
@@ -126,7 +126,7 @@ public class WorkerRegistryV2 implements WorkerRegistry, WorkerEventSubscriber {
         boolean isValid = false;
         if(mantisWorkerMetadataList != null) {
 
-            isValid = mantisWorkerMetadataList.stream().anyMatch((mData) -> mData.getWorkerId().equals(workerId));
+            isValid = mantisWorkerMetadataList.stream().anyMatch(mData -> mData.getWorkerId().equals(workerId));
         } else {
             logger.warn("No such job {} found in job To worker map ", jIdOp.get());
         }

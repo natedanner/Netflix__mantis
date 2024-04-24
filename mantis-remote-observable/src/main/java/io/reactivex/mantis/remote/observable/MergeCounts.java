@@ -24,7 +24,7 @@ public class MergeCounts {
 
     private static final Logger logger = LoggerFactory.getLogger(MergeCounts.class);
 
-    private int expectedTerminalCount;
+    private final int expectedTerminalCount;
     private int currentTerminalCount;
 
     public MergeCounts(int expectedTerminalCount) {
@@ -35,7 +35,7 @@ public class MergeCounts {
         currentTerminalCount++;
         logger.debug("Current terminal count: " + currentTerminalCount +
                 " Expected terminal count: " + expectedTerminalCount);
-        return (currentTerminalCount == expectedTerminalCount);
+        return currentTerminalCount == expectedTerminalCount;
     }
 
 }

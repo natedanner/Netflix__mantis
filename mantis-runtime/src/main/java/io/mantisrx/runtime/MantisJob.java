@@ -22,6 +22,6 @@ import io.mantisrx.runtime.source.Source;
 public class MantisJob<T> {
 
     public static <T> SourceHolder<T> source(Source<T> source) {
-        return new SourceHolder<T>(source);
+        return new SourceHolder<>(source);
     }
 }

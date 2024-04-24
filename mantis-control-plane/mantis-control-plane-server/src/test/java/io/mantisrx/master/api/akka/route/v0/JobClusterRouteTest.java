@@ -95,8 +95,8 @@ public class JobClusterRouteTest {
         CompletionStage<HttpEntity.Strict> strictEntity = r.entity().toStrict(1000, materializer);
         return strictEntity.thenCompose(s ->
             s.getDataBytes()
-                .runFold(ByteString.emptyByteString(), (acc, b) -> acc.concat(b), materializer)
-                .thenApply(s2 -> s2.utf8String())
+                .runFold(ByteString.emptyByteString(), ByteString::concat, materializer)
+                .thenApply(ByteString::utf8String)
         );
     }
 
@@ -111,7 +111,7 @@ public class JobClusterRouteTest {
     }
 
     private static CompletionStage<ServerBinding> binding;
-    private static ActorSystem system = ActorSystem.create("JobClusterRoutes");
+    private static final ActorSystem system = ActorSystem.create("JobClusterRoutes");
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -438,8 +438,7 @@ public class JobClusterRouteTest {
                     assertEquals("sine-function-rc", jc.getName());
                     assertEquals(6, jc.getLabels().size());
                     List<Label> rcLabels = jc.getLabels().stream()
-                        .filter(l -> l.getName().equals("_mantis.resourceCluster") && l.getValue().equals(
-                            "mantisagent")).collect(Collectors.toList());
+                        .filter(l -> "_mantis.resourceCluster".equals(l.getName()) && "mantisagent".equals(l.getValue())).collect(Collectors.toList());
                     assertEquals(1, rcLabels.size());
                 } catch (Exception e) {
                     logger.error("failed to deser json {}", responseMessage, e);

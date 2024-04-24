@@ -209,7 +209,7 @@ class ResourceClustersManagerActor extends AbstractActor {
         if (resourceClusterActorMap.get(clusterID) != null) {
             return resourceClusterActorMap.get(clusterID);
         } else {
-            return resourceClusterActorMap.computeIfAbsent(clusterID, (dontCare) -> {
+            return resourceClusterActorMap.computeIfAbsent(clusterID, dontCare -> {
                 ActorRef rcActorRef = createResourceClusterActorFor(clusterID);
                 getContext().watch(rcActorRef);
                 ActorRef scalerActorRef = createResourceClusterScalerActorFor(clusterID, rcActorRef);

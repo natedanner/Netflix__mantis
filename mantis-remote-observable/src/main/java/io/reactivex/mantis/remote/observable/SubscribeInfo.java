@@ -21,11 +21,11 @@ import java.util.Map;
 
 public class SubscribeInfo {
 
-    private String host;
-    private int port;
-    private String name;
-    private Map<String, String> subscribeParameters;
-    private int subscribeRetryAttempts;
+    private final String host;
+    private final int port;
+    private final String name;
+    private final Map<String, String> subscribeParameters;
+    private final int subscribeRetryAttempts;
 
     public SubscribeInfo(String host, int port, String name,
                          Map<String, String> subscribeParameters,

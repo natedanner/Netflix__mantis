@@ -25,7 +25,7 @@ import rx.Observable;
 import rx.subjects.ReplaySubject;
 
 
-public class IngressPolicies {
+public final class IngressPolicies {
 
     private IngressPolicies() {}
 
@@ -35,7 +35,7 @@ public class IngressPolicies {
 
     public static IngressPolicy allowOnlyLocalhost() {
         ReplaySubject<Set<String>> subject = ReplaySubject.create();
-        Set<String> list = new HashSet<String>();
+        Set<String> list = new HashSet<>();
         list.add("127.0.0.1");
         subject.onNext(list);
         return new InetAddressWhiteListIngressPolicy(subject);

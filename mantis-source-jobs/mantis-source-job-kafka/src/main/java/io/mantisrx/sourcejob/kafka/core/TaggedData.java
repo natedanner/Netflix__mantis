@@ -27,7 +27,7 @@ import java.util.Set;
 
 public class TaggedData implements JsonType {
 
-    private final Set<String> matchedClients = new HashSet<String>();
+    private final Set<String> matchedClients = new HashSet<>();
     private Map<String, Object> payLoad;
 
     @JsonCreator

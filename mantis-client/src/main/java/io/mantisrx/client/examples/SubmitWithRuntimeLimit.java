@@ -82,8 +82,9 @@ public class SubmitWithRuntimeLimit {
                                 .doOnNext(new Action1<MantisServerSentEvent>() {
                                     @Override
                                     public void call(MantisServerSentEvent event) {
-                                        if (completed.get())
+                                        if (completed.get()) {
                                             System.out.println("FAILURE");
+                                        }
                                         System.out.println("Got: " + event.getEventAsString());
                                     }
                                 });

@@ -118,7 +118,7 @@ import org.testng.annotations.Test;
 import rx.Observable;
 
 public class JobRouteTest {
-    private final static Logger logger = LoggerFactory.getLogger(JobRouteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobRouteTest.class);
     private final ActorMaterializer materializer = ActorMaterializer.create(system);
     private final Http http = Http.get(system);
     private static Thread t;
@@ -139,9 +139,9 @@ public class JobRouteTest {
                                                 s.getDataBytes()
                                                  .runFold(
                                                          ByteString.emptyByteString(),
-                                                         (acc, b) -> acc.concat(b),
+                                                         ByteString::concat,
                                                          materializer)
-                                                 .thenApply(s2 -> s2.utf8String())
+                                                 .thenApply(ByteString::utf8String)
         );
     }
 
@@ -156,9 +156,9 @@ public class JobRouteTest {
                                                 s.getDataBytes()
                                                  .runFold(
                                                          ByteString.emptyByteString(),
-                                                         (acc, b) -> acc.concat(b),
+                                                         ByteString::concat,
                                                          materializer)
-                                                 .thenApply(s2 -> s2.utf8String())
+                                                 .thenApply(ByteString::utf8String)
         );
     }
 
@@ -174,7 +174,7 @@ public class JobRouteTest {
     }
 
     private static CompletionStage<ServerBinding> binding;
-    private static ActorSystem system = ActorSystem.create("JobRoutes");
+    private static final ActorSystem system = ActorSystem.create("JobRoutes");
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -365,9 +365,9 @@ public class JobRouteTest {
                                                     s.getDataBytes()
                                                      .runFold(
                                                              ByteString.emptyByteString(),
-                                                             (acc, b) -> acc.concat(b),
+                                                             ByteString::concat,
                                                              materializer)
-                                                     .thenApply(s2 -> s2.utf8String()));
+                                                     .thenApply(ByteString::utf8String));
         }).whenComplete((msg, t) -> {
             String responseMessage = getResponseMessage(msg, t);
             logger.info("got response {}", responseMessage);
@@ -480,10 +480,10 @@ public class JobRouteTest {
                     assertEquals(mjm.getJobMetadata().getJobId(), "sine-function-1");
                     assertEquals(mjm.getJobMetadata().getName(), "sine-function");
 
-                    assertTrue(mjm.getStageMetadataList().size() > 0);
+                    assertTrue(!mjm.getStageMetadataList().isEmpty());
                     MantisStageMetadataWritable msm = mjm.getStageMetadataList().get(0);
                     assertEquals(1, msm.getNumWorkers());
-                    assertTrue(mjm.getWorkerMetadataList().size() > 0);
+                    assertTrue(!mjm.getWorkerMetadataList().isEmpty());
                     MantisWorkerMetadataWritable mwm = mjm.getWorkerMetadataList().get(0);
                     assertEquals("sine-function-1", mwm.getJobId());
                     assertEquals(false, mwm.getCluster().isPresent());
@@ -515,10 +515,10 @@ public class JobRouteTest {
                     assertEquals(mjm.getJobMetadata().getJobId(), "sine-function-1");
                     assertEquals(mjm.getJobMetadata().getName(), "sine-function");
 
-                    assertTrue(mjm.getStageMetadataList().size() > 0);
+                    assertTrue(!mjm.getStageMetadataList().isEmpty());
                     MantisStageMetadataWritable msm = mjm.getStageMetadataList().get(0);
                     assertEquals(1, msm.getNumWorkers());
-                    assertTrue(mjm.getWorkerMetadataList().size() > 0);
+                    assertTrue(!mjm.getWorkerMetadataList().isEmpty());
                     MantisWorkerMetadataWritable mwm = mjm.getWorkerMetadataList().get(0);
                     assertEquals("sine-function-1", mwm.getJobId());
                     assertEquals(false, mwm.getCluster().isPresent());
@@ -614,7 +614,7 @@ public class JobRouteTest {
                 })
                 .doOnError(t -> logger.warn("onError", t))
                 .doOnCompleted(() -> logger.info("onCompleted"))
-                .doAfterTerminate(() -> latch.countDown())
+                .doAfterTerminate(latch::countDown)
                 .subscribe();
         latch.await();
     }
@@ -662,7 +662,7 @@ public class JobRouteTest {
                 .take(1)
                 .doOnError(t -> logger.warn("onError", t))
                 .doOnCompleted(() -> logger.info("onCompleted"))
-                .doAfterTerminate(() -> latch.countDown())
+                .doAfterTerminate(latch::countDown)
                 .subscribe();
         latch.await();
     }

@@ -38,7 +38,7 @@ public class CompressionUtils {
 
     public static final String MANTIS_SSE_DELIMITER = "$$$";
     public static final byte[] MANTIS_SSE_DELIMITER_BINARY = MANTIS_SSE_DELIMITER.getBytes();
-    private static Logger logger = LoggerFactory.getLogger(CompressionUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(CompressionUtils.class);
 
     public static String compressAndBase64Encode(List<String> events, boolean useSnappy) {
         return compressAndBase64Encode(events, useSnappy, MANTIS_SSE_DELIMITER_BINARY);
@@ -192,9 +192,9 @@ public class CompressionUtils {
             } catch (IOException e) {
                 logger.error(e.getMessage());
             }
-            return new ArrayList<MantisServerSentEvent>();
+            return new ArrayList<>();
         } else {
-            List<MantisServerSentEvent> s = new ArrayList<MantisServerSentEvent>();
+            List<MantisServerSentEvent> s = new ArrayList<>();
             s.add(new MantisServerSentEvent(encodedString));
             return s;
         }
@@ -261,7 +261,7 @@ public class CompressionUtils {
         return msseList;
     }
 
-    static List<MantisServerSentEvent> tokenize_1(BufferedReader bf) throws IOException {
+    static List<MantisServerSentEvent> tokenize1(BufferedReader bf) throws IOException {
         StringBuilder sb = new StringBuilder();
         String line;
         List<MantisServerSentEvent> msseList = new ArrayList<>();
@@ -296,7 +296,7 @@ public class CompressionUtils {
         return msseList;
     }
 
-    static List<MantisServerSentEvent> tokenize_2(BufferedReader bf) throws IOException {
+    static List<MantisServerSentEvent> tokenize2(BufferedReader bf) throws IOException {
         StringBuilder sb = new StringBuilder();
         String line;
         List<MantisServerSentEvent> msseList = new ArrayList<>();
@@ -346,9 +346,9 @@ public class CompressionUtils {
             } catch (IOException e) {
                 logger.error(e.getMessage());
             }
-            return new ArrayList<MantisServerSentEvent>();
+            return new ArrayList<>();
         } else {
-            List<MantisServerSentEvent> s = new ArrayList<MantisServerSentEvent>();
+            List<MantisServerSentEvent> s = new ArrayList<>();
             s.add(new MantisServerSentEvent(encodedString));
             return s;
         }
@@ -390,14 +390,12 @@ public class CompressionUtils {
     static BufferedReader snappyDecompress(byte[] data) throws IOException {
         byte[] decompressed = Snappy.uncompress(data);
         ByteArrayInputStream bais = new ByteArrayInputStream(decompressed);
-        BufferedReader bf = new BufferedReader(new InputStreamReader(bais, "UTF-8"));
-        return bf;
+        return new BufferedReader(new InputStreamReader(bais, "UTF-8"));
     }
 
     static BufferedReader gzipDecompress(byte[] data) throws IOException {
         GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(data));
-        BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
-        return bf;
+        return new BufferedReader(new InputStreamReader(gis, "UTF-8"));
     }
 
     public static void main(String[] args) {

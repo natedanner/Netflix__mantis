@@ -77,7 +77,7 @@ import org.slf4j.LoggerFactory;
 import rx.Observer;
 
 public class AgentClusterRouteTest {
-    private final static Logger logger = LoggerFactory.getLogger(AgentClusterRouteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AgentClusterRouteTest.class);
     private final ActorMaterializer materializer = ActorMaterializer.create(system);
     private final Http http = Http.get(system);
     private static Thread t;
@@ -94,8 +94,8 @@ public class AgentClusterRouteTest {
         CompletionStage<HttpEntity.Strict> strictEntity = r.entity().toStrict(1000, materializer);
         return strictEntity.thenCompose(s ->
             s.getDataBytes()
-                .runFold(ByteString.emptyByteString(), (acc, b) -> acc.concat(b), materializer)
-                .thenApply(s2 -> s2.utf8String())
+                .runFold(ByteString.emptyByteString(), ByteString::concat, materializer)
+                .thenApply(ByteString::utf8String)
         );
     }
 
@@ -110,7 +110,7 @@ public class AgentClusterRouteTest {
     }
 
     private static CompletionStage<ServerBinding> binding;
-    private static ActorSystem system = ActorSystem.create("AgentClusterRoutes");
+    private static final ActorSystem system = ActorSystem.create("AgentClusterRoutes");
 
     @BeforeClass
     public static void setup() throws InterruptedException {

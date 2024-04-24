@@ -31,19 +31,19 @@ import java.util.concurrent.TimeUnit;
 
 public class TimedChunker<T> implements Callable<Void> {
 
-    private static ThreadFactory namedFactory = new NamedThreadFactory("TimedChunkerGroup");
-    private MonitoredQueue<T> buffer;
-    private ChunkProcessor<T> processor;
-    private ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor(namedFactory);
-    private int maxBufferLength;
-    private int maxTimeMSec;
-    private ConnectionManager<T> connectionManager;
-    private List<T> internalBuffer;
+    private static final ThreadFactory namedFactory = new NamedThreadFactory("TimedChunkerGroup");
+    private final MonitoredQueue<T> buffer;
+    private final ChunkProcessor<T> processor;
+    private final ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor(namedFactory);
+    private final int maxBufferLength;
+    private final int maxTimeMSec;
+    private final ConnectionManager<T> connectionManager;
+    private final List<T> internalBuffer;
 
-    private Counter interrupted;
-    private Counter numEventsDrained;
-    private Counter drainTriggeredByTimer;
-    private Counter drainTriggeredByBatch;
+    private final Counter interrupted;
+    private final Counter numEventsDrained;
+    private final Counter drainTriggeredByTimer;
+    private final Counter drainTriggeredByBatch;
 
     public TimedChunker(MonitoredQueue<T> buffer, int maxBufferLength,
                         int maxTimeMSec, ChunkProcessor<T> processor,
@@ -101,14 +101,14 @@ public class TimedChunker<T> implements Callable<Void> {
     }
 
     private void drain() {
-        if (internalBuffer.size() > 0) {
+        if (!internalBuffer.isEmpty()) {
             List<T> copy = new ArrayList<>(internalBuffer.size());
             synchronized (internalBuffer) {
                 // internalBuffer content may have changed since acquiring the lock.
                 copy.addAll(internalBuffer);
                 internalBuffer.clear();
             }
-            if (copy.size() > 0) {
+            if (!copy.isEmpty()) {
                 processor.process(connectionManager, copy);
                 numEventsDrained.increment(copy.size());
             }

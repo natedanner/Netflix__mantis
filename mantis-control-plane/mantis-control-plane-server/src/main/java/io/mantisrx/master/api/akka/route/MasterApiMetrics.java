@@ -20,7 +20,7 @@ import io.mantisrx.common.metrics.Counter;
 import io.mantisrx.common.metrics.Metrics;
 import io.mantisrx.common.metrics.MetricsRegistry;
 
-public class MasterApiMetrics {
+public final class MasterApiMetrics {
     private final Counter resp2xx;
     private final Counter resp4xx;
     private final Counter resp5xx;
@@ -49,7 +49,7 @@ public class MasterApiMetrics {
         this.throttledRequestCount = metrics.getCounter("throttledRequestCount");
     }
 
-    public static final MasterApiMetrics getInstance() {
+    public static MasterApiMetrics getInstance() {
         return INSTANCE;
     }
 

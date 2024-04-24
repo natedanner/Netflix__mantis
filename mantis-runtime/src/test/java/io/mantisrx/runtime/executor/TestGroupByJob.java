@@ -43,7 +43,7 @@ import rx.schedulers.Schedulers;
 
 public class TestGroupByJob extends MantisJobProvider<Pair> {
 
-    private List<Pair> itemsWritten = new LinkedList<>();
+    private final List<Pair> itemsWritten = new LinkedList<>();
 
     public static void main(String[] args) {
         LocalJobExecutorNetworked.execute(new TestGroupByJob().getJobInstance());

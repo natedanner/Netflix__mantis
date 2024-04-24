@@ -44,14 +44,13 @@ public class CollectStage implements ScalarComputation<RequestAggregation,String
     public Observable<String> call(Context context, Observable<RequestAggregation> requestAggregationO) {
         return requestAggregationO
                 .window(5, TimeUnit.SECONDS)
-                .flatMap((requestAggO) -> requestAggO
-                        .reduce(new RequestAggregationAccumulator(),(acc, requestAgg) -> acc.addAggregation(requestAgg))
+                .flatMap(requestAggO -> requestAggO
+                        .reduce(new RequestAggregationAccumulator(),CollectStage.RequestAggregationAccumulator::addAggregation)
                         .map(RequestAggregationAccumulator::generateReport)
-                        .doOnNext((report) -> {
-                            log.debug("Generated Collection report {}", report);
-                        })
+                        .doOnNext(report ->
+                            log.debug("Generated Collection report {}", report))
                 )
-                .map((report) -> {
+                .map(report -> {
                     try {
                         return mapper.writeValueAsString(report);
                     } catch (JsonProcessingException e) {

@@ -47,7 +47,7 @@ public class RemoteRxServer {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteRxServer.class);
     private static boolean enableHeartBeating = true;
-    private static boolean enableNettyLogging = false;
+    private static boolean enableNettyLogging;
     private static boolean enableCompression = true;
     private static int maxFrameLength = 5242880; // 5 MB max frame
     private static int writeBufferTimeMSec = 100; // 100 millisecond buffer
@@ -72,7 +72,7 @@ public class RemoteRxServer {
     public RemoteRxServer(Builder builder) {
         port = builder.getPort();
         // setup configuration state for server
-        Map<String, ServeConfig> configuredObservables = new HashMap<String, ServeConfig>();
+        Map<String, ServeConfig> configuredObservables = new HashMap<>();
         // add configs
         for (ServeConfig config : builder.getObservablesConfigured()) {
             String observableName = config.getName();
@@ -146,19 +146,19 @@ public class RemoteRxServer {
     private void loadFastProperties() {
         String enableHeartBeatingStr =
                 ServiceRegistry.INSTANCE.getPropertiesService().getStringValue("mantis.netty.enableHeartBeating", "true");
-        if (enableHeartBeatingStr.equals("false")) {
+        if ("false".equals(enableHeartBeatingStr)) {
             enableHeartBeating = false;
         }
 
         String enableNettyLoggingStr =
                 ServiceRegistry.INSTANCE.getPropertiesService().getStringValue("mantis.netty.enableLogging", "false");
-        if (enableNettyLoggingStr.equals("true")) {
+        if ("true".equals(enableNettyLoggingStr)) {
             enableNettyLogging = true;
         }
 
         String enableCompressionStr =
                 ServiceRegistry.INSTANCE.getPropertiesService().getStringValue("mantis.netty.enableCompression", "true");
-        if (enableCompressionStr.equals("false")) {
+        if ("false".equals(enableCompressionStr)) {
             enableCompression = false;
         }
 
@@ -180,7 +180,7 @@ public class RemoteRxServer {
         private int port;
         @SuppressWarnings("rawtypes")
         private Set<ServeConfig> observablesConfigured
-                = new HashSet<ServeConfig>();
+                = new HashSet<>();
         private IngressPolicy ingressPolicy = IngressPolicies.allowAll();
 
         public Builder port(int port) {

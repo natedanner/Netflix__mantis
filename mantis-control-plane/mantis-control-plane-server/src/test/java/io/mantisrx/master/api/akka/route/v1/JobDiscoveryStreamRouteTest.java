@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 import rx.Observable;
 
 public class JobDiscoveryStreamRouteTest extends RouteTestBase {
-    private final static Logger logger = LoggerFactory.getLogger(JobDiscoveryStreamRouteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobDiscoveryStreamRouteTest.class);
     private static Thread t;
     private static final int SERVER_PORT = 8201;
 

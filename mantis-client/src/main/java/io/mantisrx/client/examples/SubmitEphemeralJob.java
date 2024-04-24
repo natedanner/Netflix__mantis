@@ -108,10 +108,11 @@ public class SubmitEphemeralJob {
                         }
                     })
                     .subscribe();
-            if (latch.await(50, TimeUnit.SECONDS))
+            if (latch.await(50, TimeUnit.SECONDS)) {
                 System.out.println("SUCCESS");
-            else
+            } else {
                 System.out.println("FAILURE");
+            }
             //            final Observable<Observable<MantisServerSentEvent>> o2 = job2.submitAndGet();
             //            s2 = o2
             //                    .doOnNext(new Action1<Observable<MantisServerSentEvent>>() {
@@ -132,10 +133,11 @@ public class SubmitEphemeralJob {
             //                        }
             //                    })
             //                    .subscribe();
-            if (latch.await(50, TimeUnit.SECONDS))
+            if (latch.await(50, TimeUnit.SECONDS)) {
                 System.out.println("SUCCESS");
-            else
+            } else {
                 System.out.println("FAILURE");
+            }
             Thread.sleep(30000000);
             subscription1.unsubscribe(); // unsubscribe to close connection to sink
             //            s2.unsubscribe();

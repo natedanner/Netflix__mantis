@@ -302,7 +302,7 @@ public class RunningWorker {
         private Observable<Integer> stageTotalWorkersObservable;
         private Observable<JobSchedulingInfo> jobSchedulingInfoObservable;
         private PublishSubject<Boolean> requestSubject;
-        private boolean hasJobMaster = false;
+        private boolean hasJobMaster;
 
         public Builder workerInfo(WorkerInfo workerInfo) {
             this.workerInfo = workerInfo;

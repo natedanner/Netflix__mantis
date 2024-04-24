@@ -107,8 +107,12 @@ public class JobDefinition {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         JobDefinition that = (JobDefinition) o;
         return subscriptionTimeoutSecs == that.subscriptionTimeoutSecs &&
                 withNumberOfStages == that.withNumberOfStages &&
@@ -142,10 +146,12 @@ public class JobDefinition {
     }
 
     private void validateSla() throws InvalidJobException {
-        if (jobSla == null)
+        if (jobSla == null) {
             throw new InvalidJobException("No Job SLA provided (likely incorrect job submit request)");
-        if (jobSla.getDurationType() == null)
+        }
+        if (jobSla.getDurationType() == null) {
             throw new InvalidJobException("Invalid null duration type in job sla (likely incorrect job submit request");
+        }
     }
 
     public void validateSchedulingInfo() throws InvalidJobException {
@@ -163,12 +169,15 @@ public class JobDefinition {
     }
 
     private void validateSchedulingInfo(boolean schedulingInfoOptional) throws InvalidJobException {
-        if (schedulingInfoOptional && schedulingInfo == null)
+        if (schedulingInfoOptional && schedulingInfo == null) {
             return;
-        if (schedulingInfo == null)
+        }
+        if (schedulingInfo == null) {
             throw new InvalidJobException("No scheduling info provided");
-        if (schedulingInfo.getStages() == null)
+        }
+        if (schedulingInfo.getStages() == null) {
             throw new InvalidJobException("No stages defined in scheduling info");
+        }
         int withNumberOfStages = schedulingInfo.getStages().size();
         int startingIdx = 1;
         if (schedulingInfo.forStage(0) != null) {
@@ -178,19 +187,25 @@ public class JobDefinition {
         }
         for (int i = startingIdx; i <= withNumberOfStages; i++) {
             StageSchedulingInfo stage = schedulingInfo.getStages().get(i);
-            if (stage == null)
+            if (stage == null) {
                 throw new InvalidJobException("No definition for stage " + i + " in scheduling info for " + withNumberOfStages + " stage job");
-            if (stage.getNumberOfInstances() < 1)
+            }
+            if (stage.getNumberOfInstances() < 1) {
                 throw new InvalidJobException("Number of instance for stage " + i + " must be >0, not " + stage.getNumberOfInstances());
+            }
             MachineDefinition machineDefinition = stage.getMachineDefinition();
-            if (machineDefinition.getCpuCores() <= 0)
+            if (machineDefinition.getCpuCores() <= 0) {
                 throw new InvalidJobException("cpuCores must be >0.0, not " + machineDefinition.getCpuCores());
-            if (machineDefinition.getMemoryMB() <= 0)
+            }
+            if (machineDefinition.getMemoryMB() <= 0) {
                 throw new InvalidJobException("memory must be <0.0, not " + machineDefinition.getMemoryMB());
-            if (machineDefinition.getDiskMB() < 0)
+            }
+            if (machineDefinition.getDiskMB() < 0) {
                 throw new InvalidJobException("disk must be >=0, not " + machineDefinition.getDiskMB());
-            if (machineDefinition.getNumPorts() < 0)
+            }
+            if (machineDefinition.getNumPorts() < 0) {
                 throw new InvalidJobException("numPorts must be >=0, not " + machineDefinition.getNumPorts());
+            }
         }
     }
 
@@ -274,11 +289,11 @@ public class JobDefinition {
 
         private List<Label> labels;
 
-        private String artifactName = null;
-        private String version = null;
+        private String artifactName;
+        private String version;
 
         private JobSla jobSla = new JobSla(0, 0, JobSla.StreamSLAType.Lossy, MantisJobDurationType.Transient, null);
-        private long subscriptionTimeoutSecs = 0L;
+        private long subscriptionTimeoutSecs;
         private SchedulingInfo schedulingInfo;
         private DeploymentStrategy deploymentStrategy;
         private int withNumberOfStages = 1;

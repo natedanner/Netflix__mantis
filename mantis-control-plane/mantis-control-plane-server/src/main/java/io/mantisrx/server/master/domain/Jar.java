@@ -38,7 +38,7 @@ public class Jar {
                @JsonProperty("schedulingInfo") SchedulingInfo schedulingInfo) {
         this.url = url;
         this.uploadedAt = uploadedAt;
-        this.version = (version == null || version.isEmpty()) ?
+        this.version = version == null || version.isEmpty() ?
                 "" + System.currentTimeMillis() :
                 version;
         this.schedulingInfo = schedulingInfo;

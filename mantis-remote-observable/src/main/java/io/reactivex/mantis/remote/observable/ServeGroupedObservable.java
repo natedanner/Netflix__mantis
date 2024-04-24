@@ -48,11 +48,11 @@ public class ServeGroupedObservable<K, V> extends ServeConfig<K, Group<String, V
 
     private static final Logger logger = LoggerFactory.getLogger(ServeGroupedObservable.class);
 
-    private Encoder<String> keyEncoder;
-    private Encoder<V> valueEncoder;
+    private final Encoder<String> keyEncoder;
+    private final Encoder<V> valueEncoder;
     private int groupBufferTimeMSec = 250;
     private long expiryInSecs = Long.MAX_VALUE;
-    private Counter groupsExpiredCounter;
+    private final Counter groupsExpiredCounter;
 
     public ServeGroupedObservable(Builder<K, V> builder) {
         super(builder.name, builder.slottingStrategy, builder.filterFunction,
@@ -61,7 +61,7 @@ public class ServeGroupedObservable<K, V> extends ServeConfig<K, Group<String, V
         // TODO this should be pushed into builder, default is 0 buffer
         String groupBufferTimeMSecStr =
                 ServiceRegistry.INSTANCE.getPropertiesService().getStringValue("mantis.remoteObservable.groupBufferMSec", "250");
-        if (groupBufferTimeMSecStr != null && !groupBufferTimeMSecStr.equals("250")) {
+        if (groupBufferTimeMSecStr != null && !"250".equals(groupBufferTimeMSecStr)) {
             groupBufferTimeMSec = Integer.parseInt(groupBufferTimeMSecStr);
         }
 
@@ -269,7 +269,7 @@ public class ServeGroupedObservable<K, V> extends ServeConfig<K, Group<String, V
         }
 
         public ServeGroupedObservable<K, V> build() {
-            return new ServeGroupedObservable<K, V>(this);
+            return new ServeGroupedObservable<>(this);
         }
     }
 }

@@ -28,7 +28,7 @@ import rx.Observable;
 import rx.Observer;
 
 
-public class ContextualHttpSource<E> implements Source<ServerContext<E>> {
+public final class ContextualHttpSource<E> implements Source<ServerContext<E>> {
 
     private final HttpSourceImpl<ByteBuf, E, ServerContext<E>> impl;
 
@@ -67,7 +67,7 @@ public class ContextualHttpSource<E> implements Source<ServerContext<E>> {
         impl.close();
     }
 
-    public static class Builder<E> {
+    public static final class Builder<E> {
 
         private final HttpSourceImpl.Builder<ByteBuf, E, ServerContext<E>> builderImpl;
 

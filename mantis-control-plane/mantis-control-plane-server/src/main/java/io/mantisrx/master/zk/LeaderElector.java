@@ -33,10 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LeaderElector extends BaseService {
+public final class LeaderElector extends BaseService {
     private static final Logger logger = LoggerFactory.getLogger(LeaderElector.class);
 
-    private volatile boolean started = false;
+    private volatile boolean started;
 
     private final ObjectMapper jsonMapper;
     private final ILeadershipManager leadershipManager;

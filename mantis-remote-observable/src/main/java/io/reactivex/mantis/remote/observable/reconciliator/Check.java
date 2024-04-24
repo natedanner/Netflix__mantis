@@ -18,10 +18,10 @@ package io.reactivex.mantis.remote.observable.reconciliator;
 
 public class Check<T> {
 
-    private T expected;
-    private T actual;
-    private boolean passedCheck;
-    private long timestamp;
+    private final T expected;
+    private final T actual;
+    private final boolean passedCheck;
+    private final long timestamp;
 
     public Check(T expected, T actual,
                  boolean passedCheck, long timestamp) {

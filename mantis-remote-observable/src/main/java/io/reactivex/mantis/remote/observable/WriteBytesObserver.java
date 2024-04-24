@@ -78,7 +78,6 @@ public class WriteBytesObserver<T> extends SafeWriter implements Action1<List<Re
             }
             serverMetrics.incrementNextFailureCount();
         }
-        ;
     }
 
 }

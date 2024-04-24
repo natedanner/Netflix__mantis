@@ -23,19 +23,19 @@ import rx.functions.Func1;
 
 public class AsyncConnection<T> {
 
-    private String host;
-    private int port;
+    private final String host;
+    private final int port;
 
     // connections sharing data
     // should have the same group Id:  test-job
     // a fixed number of slotId's:	[1-5]
     // and a unique id:	monotonically increasing number
-    private String groupId;
-    private String slotId;
-    private String id;
+    private final String groupId;
+    private final String slotId;
+    private final String id;
 
-    private Observer<List<byte[]>> subject;
-    private Func1<T, Boolean> predicate;
+    private final Observer<List<byte[]>> subject;
+    private final Func1<T, Boolean> predicate;
 
     public AsyncConnection(String host, int port, String id,
                            String slotId,
@@ -93,25 +93,30 @@ public class AsyncConnection<T> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + (id == null ? 0 : id.hashCode());
         return result;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         AsyncConnection<T> other = (AsyncConnection<T>) obj;
         if (id == null) {
-            if (other.id != null)
+            if (other.id != null) {
                 return false;
-        } else if (!id.equals(other.id))
+            }
+        } else if (!id.equals(other.id)) {
             return false;
+        }
         return true;
     }
 }

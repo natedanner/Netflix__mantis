@@ -85,7 +85,7 @@ public class FixedConnectionSetTest {
         server2.start();
 
         ReplaySubject<List<Endpoint>> subject = ReplaySubject.create();
-        List<Endpoint> endpoints = new LinkedList<Endpoint>();
+        List<Endpoint> endpoints = new LinkedList<>();
         endpoints.add(new Endpoint("localhost", server1Port));
         endpoints.add(new Endpoint("localhost", server2Port));
         subject.onNext(endpoints);

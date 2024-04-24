@@ -21,7 +21,7 @@ import io.mantisrx.server.master.scheduler.WorkerResourceStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WorkerStateAdapter {
+public final class WorkerStateAdapter {
     private static final Logger logger = LoggerFactory.getLogger(WorkerStateAdapter.class);
     // Mark constructor private as this class is not intended to be instantiated
     private WorkerStateAdapter() {}

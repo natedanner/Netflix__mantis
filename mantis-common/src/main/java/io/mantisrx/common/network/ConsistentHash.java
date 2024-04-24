@@ -53,7 +53,7 @@ public class ConsistentHash<T> {
 
     private final HashFunction hashAlgo;
     private final NodeConfiguration<T> nodeConfig;
-    private final SortedMap<Long, T> ring = new TreeMap<Long, T>();
+    private final SortedMap<Long, T> ring = new TreeMap<>();
 
 
     public ConsistentHash(HashFunction hashAlgo,

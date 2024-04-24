@@ -36,7 +36,7 @@ import rx.functions.Func1;
 
 public class TestJobSingleStage extends MantisJobProvider<Integer> {
 
-    private List<Integer> itemsWritten = new LinkedList<Integer>();
+    private final List<Integer> itemsWritten = new LinkedList<>();
 
     public static void main(String[] args) throws InterruptedException {
         LocalJobExecutorNetworked.execute(new TestJobSingleStage().getJobInstance());

@@ -27,7 +27,7 @@ import rx.Observable;
 import rx.Observer;
 
 
-public class HttpSource<E, T> implements Source<T> {
+public final class HttpSource<E, T> implements Source<T> {
 
     private final HttpSourceImpl<ByteBuf, E, T> impl;
 
@@ -70,7 +70,7 @@ public class HttpSource<E, T> implements Source<T> {
         impl.close();
     }
 
-    public static class Builder<E, T> {
+    public static final class Builder<E, T> {
 
         private final HttpSourceImpl.Builder<ByteBuf, E, T> builderImpl;
 

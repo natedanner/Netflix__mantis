@@ -18,9 +18,9 @@ package io.reactivex.mantis.network.push;
 
 public class KeyValuePair<K, V> {
 
-    private long keyBytesHashed;
-    private byte[] keyBytes;
-    private V value;
+    private final long keyBytesHashed;
+    private final byte[] keyBytes;
+    private final V value;
 
     public KeyValuePair(long keyBytesHashed, byte[] keyBytes, V value) {
         this.keyBytesHashed = keyBytesHashed;

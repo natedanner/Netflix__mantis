@@ -25,8 +25,8 @@ import java.util.Optional;
 public class WorkerMigrationConfig {
 
     public static final WorkerMigrationConfig DEFAULT = new WorkerMigrationConfig(MigrationStrategyEnum.PERCENTAGE, "{\"percentToMove\":25,\"intervalMs\":60000}");
-    private MigrationStrategyEnum strategy;
-    private String configString;
+    private final MigrationStrategyEnum strategy;
+    private final String configString;
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)
     public WorkerMigrationConfig(@JsonProperty("strategy") final MigrationStrategyEnum strategy,
@@ -53,12 +53,18 @@ public class WorkerMigrationConfig {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         WorkerMigrationConfig that = (WorkerMigrationConfig) o;
 
-        if (strategy != that.strategy) return false;
+        if (strategy != that.strategy) {
+            return false;
+        }
         return configString != null ? configString.equals(that.configString) : that.configString == null;
 
     }

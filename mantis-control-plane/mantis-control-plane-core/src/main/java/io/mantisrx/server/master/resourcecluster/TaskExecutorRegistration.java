@@ -85,7 +85,7 @@ public class TaskExecutorRegistration {
         this.hostname = hostname;
         this.workerPorts = workerPorts;
         this.machineDefinition = machineDefinition;
-        this.taskExecutorAttributes = (taskExecutorAttributes == null) ? ImmutableMap.of() : taskExecutorAttributes;
+        this.taskExecutorAttributes = taskExecutorAttributes == null ? ImmutableMap.of() : taskExecutorAttributes;
     }
 
     /**

@@ -232,7 +232,7 @@ public class ListObjectTests {
                 .withLimit(5)
                 .withOffset(11)
                 .build().list;
-        assert list.size() == 0;
+        assert list.isEmpty();
     }
 
 
@@ -245,7 +245,7 @@ public class ListObjectTests {
                 .withObjects(objects, TestObject.class)
                 .withOffset(0)
                 .build().list;
-        assert list.size() == 0;
+        assert list.isEmpty();
     }
 
 

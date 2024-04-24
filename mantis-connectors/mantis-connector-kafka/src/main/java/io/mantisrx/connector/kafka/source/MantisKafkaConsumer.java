@@ -61,7 +61,7 @@ public class MantisKafkaConsumer<S> {
     private final TopicPartitionStateManager partitionStateManager;
     private final AtomicLong pollTimestamp = new AtomicLong(System.currentTimeMillis());
     private final AtomicLong pollReturnedDataTimestamp = new AtomicLong(System.currentTimeMillis());
-    private volatile Subscription metricSubscription = null;
+    private volatile Subscription metricSubscription;
 
 
     public MantisKafkaConsumer(final int consumerId,
@@ -81,7 +81,7 @@ public class MantisKafkaConsumer<S> {
 
     private void setupMetricPublish() {
         if (metricSubscription == null) {
-            this.metricSubscription = Observable.interval(1, TimeUnit.SECONDS).subscribe((tick) -> {
+            this.metricSubscription = Observable.interval(1, TimeUnit.SECONDS).subscribe(tick -> {
                 consumerMetrics.recordTimeSinceLastPollMs(timeSinceLastPollMs());
                 consumerMetrics.recordTimeSinceLastPollWithDataMs(timeSinceLastPollWithDataMs());
             });
@@ -109,11 +109,11 @@ public class MantisKafkaConsumer<S> {
     }
 
     public long timeSinceLastPollMs() {
-        return (System.currentTimeMillis() - pollTimestamp.get());
+        return System.currentTimeMillis() - pollTimestamp.get();
     }
 
     public long timeSinceLastPollWithDataMs() {
-        return (System.currentTimeMillis() - pollReturnedDataTimestamp.get());
+        return System.currentTimeMillis() - pollReturnedDataTimestamp.get();
     }
 
     public ConsumerMetrics getConsumerMetrics() {
@@ -199,8 +199,12 @@ public class MantisKafkaConsumer<S> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MantisKafkaConsumer that = (MantisKafkaConsumer) o;
         return consumerId == that.consumerId &&
             consumer.equals(that.consumer) &&
@@ -316,9 +320,8 @@ public class MantisKafkaConsumer<S> {
 
             if (kafkaSourceConfig.getStaticPartitionAssignmentEnabled()) {
                 final KafkaConsumerRebalanceListener kafkaConsumerRebalanceListener = new KafkaConsumerRebalanceListener(consumer, partitionStateManager, strategy);
-                kafkaSourceConfig.getTopicPartitionCounts().ifPresent(topicPartitionCounts -> {
-                    doStaticPartitionAssignment(consumer, kafkaConsumerRebalanceListener, consumerIndex, totalNumConsumersForJob, topicPartitionCounts, registry);
-                });
+                kafkaSourceConfig.getTopicPartitionCounts().ifPresent(topicPartitionCounts ->
+                    doStaticPartitionAssignment(consumer, kafkaConsumerRebalanceListener, consumerIndex, totalNumConsumersForJob, topicPartitionCounts, registry));
             } else {
                 if (kafkaSourceConfig.getCheckpointStrategy() != CheckpointStrategyOptions.NONE) {
                     consumer.subscribe(kafkaSourceConfig.getTopics(),

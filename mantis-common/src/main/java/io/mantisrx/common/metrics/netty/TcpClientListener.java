@@ -133,7 +133,7 @@ public class TcpClientListener<T extends ClientMetricsEvent<?>> extends ClientMe
     }
 
     public static TcpClientListener<ClientMetricsEvent<ClientMetricsEvent.EventType>> newListener(String monitorId) {
-        return new TcpClientListener<ClientMetricsEvent<ClientMetricsEvent.EventType>>(monitorId);
+        return new TcpClientListener<>(monitorId);
     }
 
     @Override

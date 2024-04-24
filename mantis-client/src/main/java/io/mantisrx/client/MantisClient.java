@@ -56,14 +56,12 @@ public class MantisClient {
         @Override
         public Observable<EndpointChange> locatePartitionedSinkForJob(final String jobId, final int forPartition, final int totalPartitions) {
             return clientWrapper.getMasterClientApi()
-                    .flatMap((MantisMasterGateway mantisMasterClientApi) -> {
-                        return mantisMasterClientApi.getSinkStageNum(jobId)
+                    .flatMap((MantisMasterGateway mantisMasterClientApi) -> mantisMasterClientApi.getSinkStageNum(jobId)
                                 .take(1) // only need to figure out sink stage number once
                                 .flatMap((Integer integer) -> {
                                     logger.info("Getting sink locations for " + jobId);
                                     return clientWrapper.getSinkLocations(jobId, integer, forPartition, totalPartitions);
-                                });
-                    });
+                                }));
         }
     };
 
@@ -163,8 +161,9 @@ public class MantisClient {
                     return newJobIdIsGreater(lastJobIdRef.get(), newJobId);
                 })
                 .map((final String jobId) -> {
-                    if (MasterClientWrapper.InvalidNamedJob.equals(jobId))
-                        return getErrorSinkClient(jobId);
+            if (MasterClientWrapper.InvalidNamedJob.equals(jobId)) {
+                return getErrorSinkClient(jobId);
+            }
                     lastJobIdRef.set(jobId);
                     logger.info("Connecting to job " + jobName + " with new jobId=" + jobId);
                     return getSinkClientByJobId(jobId, sinkConnectionFunc, sinkConnectionsStatusObserver, dataRecvTimeoutSecs);
@@ -172,14 +171,17 @@ public class MantisClient {
     }
 
     private Boolean newJobIdIsGreater(String oldJobId, String newJobId) {
-        if (oldJobId == null)
+        if (oldJobId == null) {
             return true;
+        }
         final int oldIdx = oldJobId.lastIndexOf('-');
-        if (oldIdx < 0)
+        if (oldIdx < 0) {
             return true;
+        }
         final int newIdx = newJobId.lastIndexOf('-');
-        if (newIdx < 0)
+        if (newIdx < 0) {
             return true;
+        }
         try {
             int old = Integer.parseInt(oldJobId.substring(oldIdx + 1));
             int newJ = Integer.parseInt(newJobId.substring(newIdx + 1));
@@ -222,22 +224,20 @@ public class MantisClient {
                                                   Observer<SinkConnectionsStatus> sinkConnectionsStatusObserver, long dataRecvTimeoutSecs) {
         PublishSubject<MasterClientWrapper.JobSinkNumWorkers> numSinkWrkrsSubject = PublishSubject.create();
         clientWrapper.addNumSinkWorkersObserver(numSinkWrkrsSubject);
-        return new SinkClientImpl<T>(jobId, sinkConnectionFunc, getSinkLocator(),
+        return new SinkClientImpl<>(jobId, sinkConnectionFunc, getSinkLocator(),
                 numSinkWrkrsSubject
-                        .filter((jobSinkNumWorkers) -> jobId.equals(jobSinkNumWorkers.getJobId())),
+                        .filter(jobSinkNumWorkers -> jobId.equals(jobSinkNumWorkers.getJobId())),
                 sinkConnectionsStatusObserver, dataRecvTimeoutSecs, this.disablePingFiltering);
     }
 
     public String submitJob(final String name, final String version, final List<Parameter> parameters,
                             final JobSla jobSla, final SchedulingInfo schedulingInfo) throws Exception {
         return clientWrapper.getMasterClientApi()
-                .flatMap((MantisMasterGateway mantisMasterClientApi) -> {
-                    return mantisMasterClientApi.submitJob(name, version, parameters, jobSla, schedulingInfo)
-                            .onErrorResumeNext((t) -> {
+                .flatMap((MantisMasterGateway mantisMasterClientApi) -> mantisMasterClientApi.submitJob(name, version, parameters, jobSla, schedulingInfo)
+                            .onErrorResumeNext(t -> {
                                 logger.warn(t.getMessage());
                                 return Observable.empty();
-                            });
-                })
+                            }))
                 .take(1)
                 .toBlocking()
                 .first()
@@ -248,13 +248,11 @@ public class MantisClient {
                             final JobSla jobSla, final long subscriptionTimeoutSecs,
                             final SchedulingInfo schedulingInfo) throws Exception {
         return clientWrapper.getMasterClientApi()
-                .flatMap((MantisMasterGateway mantisMasterClientApi) -> {
-                            return mantisMasterClientApi.submitJob(name, version, parameters, jobSla, subscriptionTimeoutSecs, schedulingInfo)
+                .flatMap((MantisMasterGateway mantisMasterClientApi) -> mantisMasterClientApi.submitJob(name, version, parameters, jobSla, subscriptionTimeoutSecs, schedulingInfo)
                                     .onErrorResumeNext((Throwable t) -> {
                                         logger.warn(t.getMessage());
                                         return Observable.empty();
-                                    });
-                        }
+                                    })
                 )
                 .take(1)
                 .toBlocking()
@@ -266,13 +264,11 @@ public class MantisClient {
                             final JobSla jobSla, final long subscriptionTimeoutSecs,
                             final SchedulingInfo schedulingInfo, final boolean readyForJobMaster) throws Exception {
         return clientWrapper.getMasterClientApi()
-                .flatMap((MantisMasterGateway mantisMasterClientApi) -> {
-                    return mantisMasterClientApi.submitJob(name, version, parameters, jobSla, subscriptionTimeoutSecs, schedulingInfo, readyForJobMaster)
+                .flatMap((MantisMasterGateway mantisMasterClientApi) -> mantisMasterClientApi.submitJob(name, version, parameters, jobSla, subscriptionTimeoutSecs, schedulingInfo, readyForJobMaster)
                             .onErrorResumeNext((Throwable t) -> {
                                 logger.warn(t.getMessage());
                                 return Observable.empty();
-                            });
-                })
+                            }))
                 .take(1)
                 .toBlocking()
                 .first()
@@ -281,13 +277,11 @@ public class MantisClient {
 
     public void killJob(final String jobId) {
         clientWrapper.getMasterClientApi()
-                .flatMap((MantisMasterGateway mantisMasterClientApi) -> {
-                    return mantisMasterClientApi.killJob(jobId)
+                .flatMap((MantisMasterGateway mantisMasterClientApi) -> mantisMasterClientApi.killJob(jobId)
                             .onErrorResumeNext((Throwable t) -> {
                                 logger.warn(t.getMessage());
                                 return Observable.empty();
-                            });
-                })
+                            }))
                 .take(1)
                 .toBlocking()
                 .first();
@@ -331,9 +325,7 @@ public class MantisClient {
      */
     public Observable<String> getJobsOfNamedJob(final String name, final MantisJobState.MetaState state) {
         return clientWrapper.getMasterClientApi()
-                .flatMap((MantisMasterGateway mantisMasterClientApi) -> {
-                    return mantisMasterClientApi.getJobsOfNamedJob(name, state);
-                })
+                .flatMap((MantisMasterGateway mantisMasterClientApi) -> mantisMasterClientApi.getJobsOfNamedJob(name, state))
                 .first();
     }
 
@@ -342,9 +334,7 @@ public class MantisClient {
      */
     public Observable<String> getJobStatusObservable(final String jobId) {
         return clientWrapper.getMasterClientApi()
-                .flatMap((MantisMasterGateway mantisMasterClientApi) -> {
-                    return mantisMasterClientApi.getJobStatusObservable(jobId);
-                });
+                .flatMap((MantisMasterGateway mantisMasterClientApi) -> mantisMasterClientApi.getJobStatusObservable(jobId));
 
     }
 
@@ -353,7 +343,7 @@ public class MantisClient {
      */
     public Observable<JobSchedulingInfo> getSchedulingChanges(final String jobId) {
         return clientWrapper.getMasterClientApi()
-                .flatMap((masterClientApi) -> masterClientApi.schedulingChanges(jobId));
+                .flatMap(masterClientApi -> masterClientApi.schedulingChanges(jobId));
     }
 
     /**

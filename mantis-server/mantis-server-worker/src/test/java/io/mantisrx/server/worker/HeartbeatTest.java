@@ -38,8 +38,9 @@ public class HeartbeatTest {
         Assert.assertEquals(2, payloads.size());
         int value = 0;
         for (Status.Payload p : payloads) {
-            if (StatusPayloads.Type.valueOf(p.getType()) == StatusPayloads.Type.IncomingDataDrop)
+            if (StatusPayloads.Type.valueOf(p.getType()) == StatusPayloads.Type.IncomingDataDrop) {
                 value = Integer.parseInt(p.getData());
+            }
         }
         Assert.assertEquals(val2, value);
         payloads = heartbeat.getCurrentHeartbeatStatus().getPayloads();

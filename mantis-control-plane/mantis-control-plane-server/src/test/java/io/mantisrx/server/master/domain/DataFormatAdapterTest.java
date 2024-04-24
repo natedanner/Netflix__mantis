@@ -77,7 +77,7 @@ public class DataFormatAdapterTest {
     @Test
     public void jobClusterConfigToJarTest() {
 
-        long uploadedAt = 1234l;
+        long uploadedAt = 1234L;
         String artifactName = "artifact1";
         String version = "0.0.1";
         JobClusterConfig config = new JobClusterConfig(artifactName, uploadedAt, version, DEFAULT_SCHED_INFO);
@@ -208,7 +208,7 @@ public class DataFormatAdapterTest {
         labels.add(label);
 
 
-        long uAt = 1234l;
+        long uAt = 1234L;
         JobClusterConfig jobClusterConfig =  new JobClusterConfig.Builder()
                 .withArtifactName(artifactName)
                 .withSchedulingInfo(DEFAULT_SCHED_INFO)
@@ -300,8 +300,8 @@ public class DataFormatAdapterTest {
         String jobId = "name-1";
         String version = "0.0.1";
         JobState jobState = JobState.Completed;
-        long submittedAt = 1234l;
-        long terminatedAt = 2234l;
+        long submittedAt = 1234L;
+        long terminatedAt = 2234L;
         String me = "me";
         List<Label> labels = new ArrayList<>();
         labels.add(new Label("l1","v1"));
@@ -371,17 +371,17 @@ public class DataFormatAdapterTest {
         WorkerPorts workerPorts = new WorkerPorts(ports);
         int workerNum = 1;
         int workerIndex = 0;
-        long startingAt = 1234l;
+        long startingAt = 1234L;
         int stageNum = 1;
         String slaveid = "slaveId1";
         String slave = "slave1";
         int resubmitCnt = 1;
         int portNums = ports.size();
-        long launchedAt = 1000l;
+        long launchedAt = 1000L;
         JobId jobId = new JobId("cname", 1);
-        long acceptedAt = 999l;
-        long completedAt = 2000l;
-        long startedAt = 1001l;
+        long acceptedAt = 999L;
+        long completedAt = 2000L;
+        long startedAt = 1001L;
         int resubOf = 42;
         JobWorker worker = new JobWorker.Builder()
             .withPreferredCluster(prefCluster)
@@ -495,17 +495,17 @@ public class DataFormatAdapterTest {
         WorkerPorts workerPorts = new WorkerPorts(ports);
         int workerNum = 1;
         int workerIndex = 0;
-        long startingAt = 1234l;
+        long startingAt = 1234L;
         int stageNum = 1;
         String slaveid = "slaveId1";
         String slave = "slave1";
         int resubmitCnt = 1;
         int portNums = ports.size();
-        long launchedAt = 1000l;
+        long launchedAt = 1000L;
         JobId jobId = new JobId("cname", 1);
-        long acceptedAt = 999l;
-        long completedAt = 2000l;
-        long startedAt = 1001l;
+        long acceptedAt = 999L;
+        long completedAt = 2000L;
+        long startedAt = 1001L;
         int resubOf = 42;
         JobWorker worker = new JobWorker.Builder()
             .withPreferredCluster(prefCluster)
@@ -591,17 +591,17 @@ public class DataFormatAdapterTest {
         WorkerPorts workerPorts = new WorkerPorts(ports);
         int workerNum = 1;
         int workerIndex = 0;
-        long startingAt = 1234l;
+        long startingAt = 1234L;
         int stageNum = 1;
         String slaveid = "slaveId1";
         String slave = "slave1";
         int resubmitCnt = 1;
         int portNums = ports.size();
-        long launchedAt = 1000l;
+        long launchedAt = 1000L;
         JobId jobId = new JobId("cname", 1);
-        long acceptedAt = 999l;
-        long completedAt = 2000l;
-        long startedAt = 1001l;
+        long acceptedAt = 999L;
+        long completedAt = 2000L;
+        long startedAt = 1001L;
         int resubOf = 42;
         JobWorker worker = new JobWorker.Builder()
             .withPreferredCluster(prefCluster)

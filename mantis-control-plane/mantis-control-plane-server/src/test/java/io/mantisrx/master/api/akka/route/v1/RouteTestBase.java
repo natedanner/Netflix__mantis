@@ -44,18 +44,17 @@ import org.slf4j.LoggerFactory;
 import org.testng.util.Strings;
 
 public abstract class RouteTestBase {
-    private final static Logger logger = LoggerFactory.getLogger(RouteTestBase.class);
+    private static final Logger logger = LoggerFactory.getLogger(RouteTestBase.class);
 
     static ActorSystem system;
     static Materializer materializer;
     static Http http;
     private final String testName;
-    final private int serverPort;
+    private final int serverPort;
 
-    static ResponseValidatorFunc EMPTY_RESPONSE_VALIDATOR = (msg) -> {
+    static ResponseValidatorFunc EMPTY_RESPONSE_VALIDATOR = msg ->
 
         assertTrue(String.format("response [%s] is not empty", msg), Strings.isNullOrEmpty(msg));
-    };
 
     RouteTestBase(String testName, int port) {
         this.testName = testName;
@@ -198,13 +197,11 @@ public abstract class RouteTestBase {
 
     boolean isClusterExist(String clusterName) {
 
-        final boolean result =
-                http.singleRequest(HttpRequest.GET(getJobClusterInstanceEndpoint(clusterName)))
+        return http.singleRequest(HttpRequest.GET(getJobClusterInstanceEndpoint(clusterName)))
                     .thenApply(r -> r.status().intValue() != 404)
                     .toCompletableFuture()
                     .handle((x, y) -> x)
                     .join();
-        return result;
 
     }
 

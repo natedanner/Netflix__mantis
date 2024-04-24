@@ -108,33 +108,41 @@ public class Endpoint {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((host == null) ? 0 : host.hashCode());
+        result = prime * result + (host == null ? 0 : host.hashCode());
         result = prime * result + port;
-        result = prime * result + ((slotId == null) ? 0 : slotId.hashCode());
+        result = prime * result + (slotId == null ? 0 : slotId.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Endpoint other = (Endpoint) obj;
         if (host == null) {
-            if (other.host != null)
+            if (other.host != null) {
                 return false;
-        } else if (!host.equals(other.host))
+            }
+        } else if (!host.equals(other.host)) {
             return false;
-        if (port != other.port)
+        }
+        if (port != other.port) {
             return false;
+        }
         if (slotId == null) {
-            if (other.slotId != null)
+            if (other.slotId != null) {
                 return false;
-        } else if (!slotId.equals(other.slotId))
+            }
+        } else if (!slotId.equals(other.slotId)) {
             return false;
+        }
         return true;
     }
 }

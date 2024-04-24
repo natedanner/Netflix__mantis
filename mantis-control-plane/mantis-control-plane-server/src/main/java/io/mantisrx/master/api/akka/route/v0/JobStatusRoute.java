@@ -49,7 +49,7 @@ public class JobStatusRoute extends BaseRoute {
     private Route getJobStatusRoutes() {
         return route(
             get(() -> route(
-                path(segment("job").slash("status").slash(PathMatchers.segment()), (jobId) -> {
+                path(segment("job").slash("status").slash(PathMatchers.segment()), jobId -> {
                     logger.info("/job/status/{} called", jobId);
                     Flow<Message, Message, NotUsed> webSocketFlow = jobStatusRouteHandler.jobStatus(jobId);
                     return handleWebSocketMessages(webSocketFlow);

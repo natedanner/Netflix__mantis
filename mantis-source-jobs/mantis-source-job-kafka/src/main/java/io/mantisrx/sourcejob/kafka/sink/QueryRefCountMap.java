@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 
 final class QueryRefCountMap {
 
-    private static Logger logger = Logger.getLogger(QueryRefCountMap.class);
+    private static final Logger logger = Logger.getLogger(QueryRefCountMap.class);
     public static final QueryRefCountMap INSTANCE = new QueryRefCountMap();
     private final ConcurrentHashMap<String, AtomicInteger> refCntMap = new ConcurrentHashMap<>();
 

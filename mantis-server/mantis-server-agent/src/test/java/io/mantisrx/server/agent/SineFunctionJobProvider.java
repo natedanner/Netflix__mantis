@@ -55,18 +55,16 @@ public class SineFunctionJobProvider extends MantisJobProvider<Point> {
         .withPredicate(new Predicate<>(
             "filter=even, returns even x parameters; filter=odd, returns odd x parameters.",
             parameters -> {
-                Func1<Point, Boolean> filter = point -> {
-                    return true;
-                };
+                Func1<Point, Boolean> filter = point -> true;
                 if (parameters != null && parameters.containsKey("filter")) {
                     String filterBy = parameters.get("filter").get(0);
                     // create filter function based on parameter value
                     filter = point -> {
                         // filter by evens or odds for x values
                         if ("even".equalsIgnoreCase(filterBy)) {
-                            return (point.getX() % 2 == 0);
+                            return point.getX() % 2 == 0;
                         } else if ("odd".equalsIgnoreCase(filterBy)) {
-                            return (point.getX() % 2 != 0);
+                            return point.getX() % 2 != 0;
                         }
                         return true; // if not even/odd
                     };
@@ -157,9 +155,8 @@ public class SineFunctionJobProvider extends MantisJobProvider<Point> {
             totalNumWorkersSubscription =
                 index
                     .getTotalNumWorkersObservable()
-                    .subscribeOn(Schedulers.io()).subscribe((workerCount) -> {
-                        System.out.println("Total worker count changed to -> " + workerCount);
-                    });
+                    .subscribeOn(Schedulers.io()).subscribe(workerCount ->
+                        System.out.println("Total worker count changed to -> " + workerCount));
             final int period = (int)
                 context.getParameters().get(INTERVAL_MSEC);
             final int max = (int)
@@ -185,7 +182,7 @@ public class SineFunctionJobProvider extends MantisJobProvider<Point> {
                     })
                     .filter(x -> {
                         double value = randomRateVariable.nextDouble();
-                        return (value <= randomRate);
+                        return value <= randomRate;
                     })
             );
         }

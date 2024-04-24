@@ -56,7 +56,7 @@ public class BufferOnBackPressureOperator<T> implements Operator<T, T> {
 
     public BufferOnBackPressureOperator(final Metrics m, int size) {
         this.size = size;
-        this.queue = new ArrayBlockingQueue<Object>(size);
+        this.queue = new ArrayBlockingQueue<>(size);
         next = m.getCounter("" + Counters.onNext);
         error = m.getCounter("" + Counters.onError);
         complete = m.getCounter("" + Counters.onComplete);
@@ -71,7 +71,7 @@ public class BufferOnBackPressureOperator<T> implements Operator<T, T> {
     public BufferOnBackPressureOperator(String name, int size) {
         this.size = size;
         this.name = METRICS_NAME_PREFIX + name;
-        this.queue = new ArrayBlockingQueue<Object>(size);
+        this.queue = new ArrayBlockingQueue<>(size);
 
         Metrics m = new Metrics.Builder()
                 .name(this.name)

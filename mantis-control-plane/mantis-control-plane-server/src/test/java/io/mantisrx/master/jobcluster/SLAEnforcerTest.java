@@ -202,9 +202,9 @@ public class SLAEnforcerTest {
 		boolean job2Found = false;
 
 		for(JobId jId : jobsToDelete) {
-		    if(jId.getId().equals("cname-1")) {
+		    if("cname-1".equals(jId.getId())) {
 		        job1Found = true;
-            } else if(jId.getId().equals("cname-2")) {
+            } else if("cname-2".equals(jId.getId())) {
 		        job2Found = true;
             }
         }

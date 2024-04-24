@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import mantis.io.reactivex.netty.RxNetty;
+import mantis.io.reactivex.netty.protocol.http.AbstractHttpContentHolder;
 import mantis.io.reactivex.netty.protocol.http.client.HttpClient;
 import mantis.io.reactivex.netty.protocol.http.client.HttpClientRequest;
 import mantis.io.reactivex.netty.protocol.http.client.HttpClientResponse;
@@ -86,10 +87,10 @@ public class MesosMetricsCollector implements MetricsCollector {
         return RxNetty
             .createHttpRequest(HttpClientRequest.createGet(url), new HttpClient.HttpClientConfig.Builder()
                 .setFollowRedirect(true).followRedirect(MAX_REDIRECTS).build())
-            .lift(new OperatorOnErrorResumeNextViaFunction<>(t -> Observable.error(t)))
+            .lift(new OperatorOnErrorResumeNextViaFunction<>(Observable::error))
             .timeout(GET_TIMEOUT_SECS, TimeUnit.SECONDS)
             .retryWhen(retryLogic)
-            .flatMap((Func1<HttpClientResponse<ByteBuf>, Observable<ByteBuf>>) r -> r.getContent())
+            .flatMap((Func1<HttpClientResponse<ByteBuf>, Observable<ByteBuf>>) AbstractHttpContentHolder::getContent)
             .map(o -> o.toString(Charset.defaultCharset()))
             .doOnError(throwable -> logger.warn("Can't get resource usage from mesos slave endpoint (" + url + ") - " + throwable.getMessage(), throwable))
             .toBlocking()
@@ -108,8 +109,9 @@ public class MesosMetricsCollector implements MetricsCollector {
         }
 
         JSONArray array = new JSONArray(usageJson);
-        if (array.length() == 0)
+        if (array.length() == 0) {
             return null;
+        }
         JSONObject obj = null;
         for (int i = 0; i < array.length(); i++) {
             JSONObject executor = array.getJSONObject(i);
@@ -121,42 +123,46 @@ public class MesosMetricsCollector implements MetricsCollector {
                 }
             }
         }
-        if (obj == null)
+        if (obj == null) {
             return null;
-        double cpus_limit = obj.optDouble("cpus_limit");
-        if (Double.isNaN(cpus_limit)) {
-            cpus_limit = 0.0;
         }
-        double cpus_system_time_secs = obj.optDouble("cpus_system_time_secs");
-        if (Double.isNaN(cpus_system_time_secs)) {
+        double cpusLimit = obj.optDouble("cpus_limit");
+        if (Double.isNaN(cpusLimit)) {
+            cpusLimit = 0.0;
+        }
+        double cpusSystemTimeSecs = obj.optDouble("cpus_system_time_secs");
+        if (Double.isNaN(cpusSystemTimeSecs)) {
             logger.warn("Didn't get cpus_system_time_secs from mesos stats");
-            cpus_system_time_secs = 0.0;
+            cpusSystemTimeSecs = 0.0;
         }
-        double cpus_user_time_secs = obj.optDouble("cpus_user_time_secs");
-        if (Double.isNaN(cpus_user_time_secs)) {
+        double cpusUserTimeSecs = obj.optDouble("cpus_user_time_secs");
+        if (Double.isNaN(cpusUserTimeSecs)) {
             logger.warn("Didn't get cpus_user_time_secs from mesos stats");
-            cpus_user_time_secs = 0.0;
+            cpusUserTimeSecs = 0.0;
         }
         // Also, cpus_throttled_time_secs may be useful to notice when job is throttled, will look into it later
-        double mem_rss_bytes = obj.optDouble("mem_rss_bytes");
-        if (Double.isNaN(mem_rss_bytes)) {
+        double memRssBytes = obj.optDouble("mem_rss_bytes");
+        if (Double.isNaN(memRssBytes)) {
             logger.warn("Couldn't get mem_rss_bytes from mesos stats");
-            mem_rss_bytes = 0.0;
+            memRssBytes = 0.0;
         }
-        double mem_anon_bytes = obj.optDouble("mem_anon_bytes");
-        if (Double.isNaN(mem_anon_bytes)) {
-            mem_anon_bytes = mem_rss_bytes;
+        double memAnonBytes = obj.optDouble("mem_anon_bytes");
+        if (Double.isNaN(memAnonBytes)) {
+            memAnonBytes = memRssBytes;
         }
-        double mem_limit = obj.optDouble("mem_limit_bytes");
-        if (Double.isNaN(mem_limit))
-            mem_limit = 0.0;
-        double network_read_bytes = obj.optDouble("net_rx_bytes");
-        if (Double.isNaN(network_read_bytes))
-            network_read_bytes = 0.0;
-        double network_write_bytes = obj.optDouble("net_tx_bytes");
-        if (Double.isNaN(network_write_bytes))
-            network_write_bytes = 0.0;
-        return new Usage(cpus_limit, cpus_system_time_secs, cpus_user_time_secs, mem_limit, mem_rss_bytes, mem_anon_bytes,
-            network_read_bytes, network_write_bytes);
+        double memLimit = obj.optDouble("mem_limit_bytes");
+        if (Double.isNaN(memLimit)) {
+            memLimit = 0.0;
+        }
+        double networkReadBytes = obj.optDouble("net_rx_bytes");
+        if (Double.isNaN(networkReadBytes)) {
+            networkReadBytes = 0.0;
+        }
+        double networkWriteBytes = obj.optDouble("net_tx_bytes");
+        if (Double.isNaN(networkWriteBytes)) {
+            networkWriteBytes = 0.0;
+        }
+        return new Usage(cpusLimit, cpusSystemTimeSecs, cpusUserTimeSecs, memLimit, memRssBytes, memAnonBytes,
+            networkReadBytes, networkWriteBytes);
     }
 }

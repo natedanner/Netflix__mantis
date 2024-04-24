@@ -34,7 +34,7 @@ public class DataGenerator implements IDataGenerator {
     public Observable<RequestEvent> generateEvents() {
         return Observable
                 .interval(rateMs, TimeUnit.MILLISECONDS)
-                .map((tick) -> generateEvent());
+                .map(tick -> generateEvent());
     }
 
     private  RequestEvent generateEvent() {

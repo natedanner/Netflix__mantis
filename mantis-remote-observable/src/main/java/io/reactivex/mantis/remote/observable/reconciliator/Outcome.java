@@ -18,10 +18,10 @@ package io.reactivex.mantis.remote.observable.reconciliator;
 
 public class Outcome {
 
-    private int numChecks;
-    private int numFailedChecks;
-    private double failurePercentage;
-    private boolean exceedsFailureThreshold;
+    private final int numChecks;
+    private final int numFailedChecks;
+    private final double failurePercentage;
+    private final boolean exceedsFailureThreshold;
 
     public Outcome(int numChecks, int numFailedChecks,
                    double failurePercentage, boolean exceedsFailureThreshold) {

@@ -28,7 +28,7 @@ import rx.functions.Action1;
 
 public class InetAddressWhiteListIngressPolicy implements IngressPolicy {
 
-    private AtomicReference<Set<String>> whiteList = new AtomicReference<Set<String>>();
+    private final AtomicReference<Set<String>> whiteList = new AtomicReference<>();
 
     InetAddressWhiteListIngressPolicy(Observable<Set<String>> allowedIpAddressesObservable) {
         allowedIpAddressesObservable.subscribe(new Action1<Set<String>>() {

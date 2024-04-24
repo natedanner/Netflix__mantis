@@ -45,9 +45,9 @@ import rx.subjects.PublishSubject;
 public class DynamicConnectionSet<T> implements ConnectionSet<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(DynamicConnectionSet.class);
-    private static final SpscArrayQueue<MantisGroup<?, ?>> inputQueue = new SpscArrayQueue<MantisGroup<?, ?>>(1000);
-    private static int MIN_TIME_SEC_DEFAULT = 1;
-    private static int MAX_TIME_SEC_DEFAULT = 10;
+    private static final SpscArrayQueue<MantisGroup<?, ?>> inputQueue = new SpscArrayQueue<>(1000);
+    private static int minTimeSecDefault = 1;
+    private static int maxTimeSecDefault = 10;
     private EndpointInjector endpointInjector;
     private PublishSubject<EndpointChange> reconciliatorConnector = PublishSubject.create();
     private Func3<Endpoint, Action0, PublishSubject<Integer>, RemoteRxConnection<T>> toObservableFunc;
@@ -82,7 +82,7 @@ public class DynamicConnectionSet<T> implements ConnectionSet<T> {
 
     public DynamicConnectionSet(Func3<Endpoint, Action0, PublishSubject<Integer>, RemoteRxConnection<T>>
                                         toObservableFunc) {
-        this(toObservableFunc, MIN_TIME_SEC_DEFAULT, MAX_TIME_SEC_DEFAULT);
+        this(toObservableFunc, minTimeSecDefault, maxTimeSecDefault);
     }
 
     public static <K, V> DynamicConnectionSet<GroupedObservable<K, V>> create(
@@ -93,7 +93,7 @@ public class DynamicConnectionSet<T> implements ConnectionSet<T> {
                     public RemoteRxConnection<GroupedObservable<K, V>> call(Endpoint endpoint, Action0 disconnectCallback,
                                                                             PublishSubject<Integer> closeConnectionTrigger) {
                         // copy config, change host, port and id
-                        ConnectToGroupedObservable.Builder<K, V> configCopy = new ConnectToGroupedObservable.Builder<K, V>(config);
+                        ConnectToGroupedObservable.Builder<K, V> configCopy = new ConnectToGroupedObservable.Builder<>(config);
                         configCopy
                                 .host(endpoint.getHost())
                                 .port(endpoint.getPort())
@@ -103,7 +103,7 @@ public class DynamicConnectionSet<T> implements ConnectionSet<T> {
                         return RemoteObservable.connect(configCopy.build());
                     }
                 };
-        return new DynamicConnectionSet<GroupedObservable<K, V>>(toObservableFunc, MIN_TIME_SEC_DEFAULT, maxTimeBeforeDisconnectSec);
+        return new DynamicConnectionSet<>(toObservableFunc, minTimeSecDefault, maxTimeBeforeDisconnectSec);
     }
 
     // NJ
@@ -115,7 +115,7 @@ public class DynamicConnectionSet<T> implements ConnectionSet<T> {
             public RemoteRxConnection<MantisGroup<K, V>> call(Endpoint endpoint, Action0 disconnectCallback,
                                                               PublishSubject<Integer> closeConnectionTrigger) {
                 // copy config, change host, port and id
-                ConnectToGroupedObservable.Builder<K, V> configCopy = new ConnectToGroupedObservable.Builder<K, V>(config);
+                ConnectToGroupedObservable.Builder<K, V> configCopy = new ConnectToGroupedObservable.Builder<>(config);
                 configCopy
                         .host(endpoint.getHost())
                         .port(endpoint.getPort())
@@ -125,18 +125,18 @@ public class DynamicConnectionSet<T> implements ConnectionSet<T> {
                 return RemoteObservable.connectToMGO(configCopy.build(), inputQueue);
             }
         };
-        return new DynamicConnectionSet<MantisGroup<K, V>>(toObservableFunc, MIN_TIME_SEC_DEFAULT, maxTimeBeforeDisconnectSec);
+        return new DynamicConnectionSet<>(toObservableFunc, minTimeSecDefault, maxTimeBeforeDisconnectSec);
     }
 
     public static <K, V> DynamicConnectionSet<GroupedObservable<K, V>> create(
             final ConnectToGroupedObservable.Builder<K, V> config) {
-        return create(config, MAX_TIME_SEC_DEFAULT);
+        return create(config, maxTimeSecDefault);
     }
 
     // NJ
     public static <K, V> DynamicConnectionSet<MantisGroup<K, V>> createMGO(
             final ConnectToGroupedObservable.Builder<K, V> config) {
-        return createMGO(config, MAX_TIME_SEC_DEFAULT, inputQueue);
+        return createMGO(config, maxTimeSecDefault, inputQueue);
     }
 
     public static <T> DynamicConnectionSet<T> create(
@@ -147,7 +147,7 @@ public class DynamicConnectionSet<T> implements ConnectionSet<T> {
                     public RemoteRxConnection<T> call(Endpoint endpoint, Action0 disconnectCallback,
                                                       PublishSubject<Integer> closeConnectionTrigger) {
                         // copy config, change host, port and id
-                        ConnectToObservable.Builder<T> configCopy = new ConnectToObservable.Builder<T>(config);
+                        ConnectToObservable.Builder<T> configCopy = new ConnectToObservable.Builder<>(config);
                         configCopy
                                 .host(endpoint.getHost())
                                 .port(endpoint.getPort())
@@ -157,12 +157,12 @@ public class DynamicConnectionSet<T> implements ConnectionSet<T> {
                         return RemoteObservable.connect(configCopy.build());
                     }
                 };
-        return new DynamicConnectionSet<T>(toObservableFunc, MIN_TIME_SEC_DEFAULT, maxTimeBeforeDisconnectSec);
+        return new DynamicConnectionSet<>(toObservableFunc, minTimeSecDefault, maxTimeBeforeDisconnectSec);
     }
 
     public static <T> DynamicConnectionSet<T> create(
             final ConnectToObservable.Builder<T> config) {
-        return create(config, MAX_TIME_SEC_DEFAULT);
+        return create(config, maxTimeSecDefault);
     }
 
     public void setEndpointInjector(EndpointInjector endpointInjector) {

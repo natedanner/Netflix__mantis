@@ -27,11 +27,13 @@ public abstract class MapDeserializerBase implements Parser, Deserializer<Map<St
 
     @Override
     public Map<String, Object> deserialize(String topic, byte[] data) {
-        if (data == null)
+        if (data == null) {
             return null;
-        else if (canParse(data))
+        } else if (canParse(data)) {
             return parseMessage(data);
-        else throw new UnsupportedOperationException("Message cannot be deserialized with parser");
+        } else {
+            throw new UnsupportedOperationException("Message cannot be deserialized with parser");
+        }
     }
 
     @Override

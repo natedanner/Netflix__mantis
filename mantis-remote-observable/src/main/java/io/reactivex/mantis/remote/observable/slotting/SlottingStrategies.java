@@ -17,7 +17,7 @@
 package io.reactivex.mantis.remote.observable.slotting;
 
 
-public class SlottingStrategies {
+public final class SlottingStrategies {
 
     private SlottingStrategies() {}
 

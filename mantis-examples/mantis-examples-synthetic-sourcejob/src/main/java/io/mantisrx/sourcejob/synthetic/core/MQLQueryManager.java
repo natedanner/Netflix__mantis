@@ -21,14 +21,14 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class MQLQueryManager {
+public final class MQLQueryManager {
 
     static class LazyHolder {
 
         private static final MQLQueryManager INSTANCE = new MQLQueryManager();
     }
 
-    private ConcurrentHashMap<String, Query> queries = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Query> queries = new ConcurrentHashMap<>();
 
     public static MQLQueryManager getInstance() {
         return LazyHolder.INSTANCE;

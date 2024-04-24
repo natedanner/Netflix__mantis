@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * This particular class has been copy-pasted from flink
  * {@see <a href="https://github.com/apache/flink/blob/master/flink-runtime/src/main/java/org/apache/flink/runtime/util/Hardware.java">flink hardware</a>}
  */
-public class Hardware {
+public final class Hardware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Hardware.class);
 

@@ -90,7 +90,7 @@ public class MantisKafkaProducerConfig extends ProducerConfig {
     public Map<String, Object> getProducerProperties() {
         return values().entrySet().stream()
             .filter(x -> x.getKey() != null && x.getValue() != null)
-            .collect(Collectors.toMap(x -> x.getKey(),
+            .collect(Collectors.toMap(Map.Entry::getKey,
                                       x -> (Object) x.getValue()));
     }
 

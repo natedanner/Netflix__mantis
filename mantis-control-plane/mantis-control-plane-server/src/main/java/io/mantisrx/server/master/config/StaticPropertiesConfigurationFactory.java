@@ -31,8 +31,7 @@ public class StaticPropertiesConfigurationFactory implements ConfigurationFactor
         this.properties = props;
         delegate = new ConfigurationObjectFactory(props);
         delegate.addCoercible(new MetricsCoercer(props));
-        delegate.addCoercible(clazz -> {
-            return className -> {
+        delegate.addCoercible(clazz -> className -> {
                 try {
                     if (clazz.isAssignableFrom(Class.forName(className))) {
                         try {
@@ -50,8 +49,7 @@ public class StaticPropertiesConfigurationFactory implements ConfigurationFactor
                 } catch (ClassNotFoundException e) {
                     return null;
                 }
-            };
-        });
+            });
 
         config = delegate.build(MasterConfiguration.class);
 

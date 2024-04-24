@@ -28,7 +28,7 @@ import rx.functions.Func2;
 
 public class QueryRequestPostProcessor implements Func2<Map<String, List<String>>, Context, Void> {
 
-    private static Logger logger = Logger.getLogger(QueryRequestPostProcessor.class);
+    private static final Logger logger = Logger.getLogger(QueryRequestPostProcessor.class);
 
     public QueryRequestPostProcessor() { }
 

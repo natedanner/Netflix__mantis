@@ -124,7 +124,7 @@ public class DataFormatAdapter {
     public static List<NamedJob.Jar> convertJobClusterConfigsToJars(List<JobClusterConfig> jobClusterConfigs) {
         Preconditions.checkNotNull(jobClusterConfigs);
         List<NamedJob.Jar> jarList = new ArrayList<>(jobClusterConfigs.size());
-        jobClusterConfigs.stream().forEach((jConfig) -> {
+        jobClusterConfigs.stream().forEach(jConfig -> {
             try {
                 jarList.add(convertJobClusterConfigToJar(jConfig));
             } catch (MalformedURLException e) {
@@ -138,7 +138,7 @@ public class DataFormatAdapter {
     public static List<JobClusterConfig> convertJarsToJobClusterConfigs(List<NamedJob.Jar> jars) {
         Preconditions.checkNotNull(jars);
         List<JobClusterConfig> configs = new ArrayList<>(jars.size());
-        jars.stream().forEach((jar) -> {
+        jars.stream().forEach(jar -> {
             try {
                 configs.add(convertJarToJobClusterConfig(jar));
             } catch(Exception e) {
@@ -338,7 +338,7 @@ public class DataFormatAdapter {
         ports.add(writeable.getDebugPort());
         ports.add(writeable.getConsolePort());
         ports.add(writeable.getCustomPort());
-        if(writeable.getPorts().size() > 0) {
+        if(!writeable.getPorts().isEmpty()) {
             ports.add(writeable.getPorts().get(0));
         }
 
@@ -502,8 +502,7 @@ public class DataFormatAdapter {
 
         }
 
-        SchedulingInfo schedulingInfo = new SchedulingInfo(stageSchedulingInfoMap);
-        return schedulingInfo;
+        return new SchedulingInfo(stageSchedulingInfoMap);
     }
 
     public static IMantisStageMetadata convertMantisStageMetadataWriteableToMantisStageMetadata(
@@ -537,9 +536,8 @@ public class DataFormatAdapter {
         if(!skipAddingWorkerMetaData) {
             if(logger.isDebugEnabled()) {logger.debug("Skip adding workers to stage meta");}
             stageMeta.getAllWorkers()
-                    .forEach((mantisWorkerMetadata) -> {
-                        ((MantisStageMetadataImpl) newStageMeta).addWorkerIndex(convertMantisWorkerMetadataWriteableToMantisWorkerMetadata(mantisWorkerMetadata, eventPublisher));
-                    });
+                    .forEach(mantisWorkerMetadata ->
+                        ((MantisStageMetadataImpl) newStageMeta).addWorkerIndex(convertMantisWorkerMetadataWriteableToMantisWorkerMetadata(mantisWorkerMetadata, eventPublisher)));
         }
         if(logger.isDebugEnabled()) { logger.debug("DataFormatAdapter:converted stage {}", newStageMeta); }
         return newStageMeta;
@@ -718,7 +716,7 @@ public class DataFormatAdapter {
 
     public static List<JobClusterInfo.JarInfo> convertNamedJobJarListToJarInfoList(List<NamedJob.Jar> jars) {
 
-        return jars.stream().map((jar) -> new JobClusterInfo.JarInfo(jar.getVersion(),jar.getUploadedAt(),jar.getUrl().toString())).collect(Collectors.toList());
+        return jars.stream().map(jar -> new JobClusterInfo.JarInfo(jar.getVersion(),jar.getUploadedAt(),jar.getUrl().toString())).collect(Collectors.toList());
 
     }
 }

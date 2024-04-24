@@ -26,9 +26,9 @@ import rx.subjects.PublishSubject;
 
 public class ConnectToGroupedObservable<K, V> extends ConnectToConfig {
 
-    private Decoder<K> keyDecoder;
-    private Decoder<V> valueDecoder;
-    private Action3<K, V, Throwable> deocdingErrorHandler;
+    private final Decoder<K> keyDecoder;
+    private final Decoder<V> valueDecoder;
+    private final Action3<K, V, Throwable> deocdingErrorHandler;
 
     ConnectToGroupedObservable(Builder<K, V> builder) {
         super(builder.host, builder.port,
@@ -70,7 +70,7 @@ public class ConnectToGroupedObservable<K, V> extends ConnectToConfig {
                 t2.printStackTrace();
             }
         };
-        private boolean suppressDecodingErrors = false;
+        private boolean suppressDecodingErrors;
         private Action0 connectionDisconnectCallback = new Action0() {
             @Override
             public void call() {}
@@ -149,7 +149,7 @@ public class ConnectToGroupedObservable<K, V> extends ConnectToConfig {
         }
 
         public ConnectToGroupedObservable<K, V> build() {
-            return new ConnectToGroupedObservable<K, V>(this);
+            return new ConnectToGroupedObservable<>(this);
         }
     }
 }

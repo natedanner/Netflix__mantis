@@ -48,9 +48,9 @@ public class RemoteObservableConnectionHandler implements
 
     @SuppressWarnings("rawtypes")
     private Map<String, ServeConfig> observables;
-    private RxMetrics serverMetrics;
-    private IngressPolicy ingressPolicy;
-    private int writeBufferTimeMSec;
+    private final RxMetrics serverMetrics;
+    private final IngressPolicy ingressPolicy;
+    private final int writeBufferTimeMSec;
 
     @SuppressWarnings("rawtypes")
     public RemoteObservableConnectionHandler(
@@ -392,11 +392,11 @@ public class RemoteObservableConnectionHandler implements
 
         // state associated with connection
         // used to initiate 'unsubscribe' callback to subscriber
-        final MutableReference<Subscription> unsubscribeCallbackReference = new MutableReference<Subscription>();
+        final MutableReference<Subscription> unsubscribeCallbackReference = new MutableReference<>();
         // used to release slot when connection completes
-        final MutableReference<SlottingStrategy> slottingStrategyReference = new MutableReference<SlottingStrategy>();
+        final MutableReference<SlottingStrategy> slottingStrategyReference = new MutableReference<>();
         // used to get slotId for connection
-        final MutableReference<WritableEndpoint> slottingIdReference = new MutableReference<WritableEndpoint>();
+        final MutableReference<WritableEndpoint> slottingIdReference = new MutableReference<>();
 
         return connection.getInput()
                 // filter out unsupported operations

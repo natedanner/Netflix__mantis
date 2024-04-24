@@ -53,29 +53,38 @@ public class ClutchPIDConfig {
     }
 
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof ClutchPIDConfig)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof ClutchPIDConfig)) {
+            return false;
+        }
         final ClutchPIDConfig other = (ClutchPIDConfig) o;
-        if (Double.compare(this.getSetPoint(), other.getSetPoint()) != 0) return false;
+        if (Double.compare(this.getSetPoint(), other.getSetPoint()) != 0) {
+            return false;
+        }
         final Object this$rope = this.getRope();
         final Object other$rope = other.getRope();
-        if (this$rope == null ? other$rope != null : !this$rope.equals(other$rope)) return false;
-        if (Double.compare(this.getKp(), other.getKp()) != 0) return false;
-        if (Double.compare(this.getKd(), other.getKd()) != 0) return false;
-        return true;
+        if (this$rope == null ? other$rope != null : !this$rope.equals(other$rope)) {
+            return false;
+        }
+        if (Double.compare(this.getKp(), other.getKp()) != 0) {
+            return false;
+        }
+        return !(Double.compare(this.getKd(), other.getKd()) != 0);
     }
 
     public int hashCode() {
-        final int PRIME = 59;
+        final int prime = 59;
         int result = 1;
         final long $setPoint = Double.doubleToLongBits(this.getSetPoint());
-        result = result * PRIME + (int) ($setPoint >>> 32 ^ $setPoint);
+        result = result * prime + (int) ($setPoint >>> 32 ^ $setPoint);
         final Object $rope = this.getRope();
-        result = result * PRIME + ($rope == null ? 43 : $rope.hashCode());
+        result = result * prime + ($rope == null ? 43 : $rope.hashCode());
         final long $kp = Double.doubleToLongBits(this.getKp());
-        result = result * PRIME + (int) ($kp >>> 32 ^ $kp);
+        result = result * prime + (int) ($kp >>> 32 ^ $kp);
         final long $kd = Double.doubleToLongBits(this.getKd());
-        result = result * PRIME + (int) ($kd >>> 32 ^ $kd);
+        result = result * prime + (int) ($kd >>> 32 ^ $kd);
         return result;
     }
 

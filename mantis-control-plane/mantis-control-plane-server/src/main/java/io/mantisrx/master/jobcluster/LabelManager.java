@@ -63,7 +63,7 @@ public class LabelManager {
 
         // remove old artifact & version label if present.
         List<Label> updatedLabels = labels.stream()
-                .filter(label -> !(label.getName().equals(SystemLabels.MANTIS_ARTIFACT_LABEL.label)))
+                .filter(label -> !label.getName().equals(SystemLabels.MANTIS_ARTIFACT_LABEL.label))
                 .filter(label -> !label.getName().equals(SystemLabels.MANTIS_VERSION_LABEL.label))
                 .collect(Collectors.toList());
 

@@ -28,7 +28,7 @@ import rx.observables.GroupedObservable;
 import rx.subjects.PublishSubject;
 
 
-public class PushServers {
+public final class PushServers {
 
     private PushServers() {}
 

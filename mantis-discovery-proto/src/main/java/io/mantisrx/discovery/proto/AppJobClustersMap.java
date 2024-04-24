@@ -110,8 +110,12 @@ public class AppJobClustersMap {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         AppJobClustersMap that = (AppJobClustersMap) o;
         return timestamp == that.timestamp &&
                 version.equals(that.version) &&

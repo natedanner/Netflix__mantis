@@ -23,7 +23,7 @@ import io.mantisrx.common.network.WritableEndpoint;
 
 public class RoundRobin<T> extends SlottingStrategy<T> {
 
-    private RoundRobinRouter<T> router = new RoundRobinRouter<>();
+    private final RoundRobinRouter<T> router = new RoundRobinRouter<>();
 
     public Metrics getMetrics() {
         return router.getMetrics();

@@ -35,19 +35,19 @@ public class ToDeltaEndpointInjectorTest {
         ToDeltaEndpointInjector service = new ToDeltaEndpointInjector(subject);
 
         // 1 add endpoints
-        List<Endpoint> endpoints = new LinkedList<Endpoint>();
+        List<Endpoint> endpoints = new LinkedList<>();
         endpoints.add(new Endpoint("localhost", 1234));
         endpoints.add(new Endpoint("localhost", 2468));
         subject.onNext(endpoints);
         // 2 remove endpoint by leaving out second endpoint
-        endpoints = new LinkedList<Endpoint>();
+        endpoints = new LinkedList<>();
         endpoints.add(new Endpoint("localhost", 1234));
         subject.onNext(endpoints);
         // 3 remove other
-        endpoints = new LinkedList<Endpoint>();
+        endpoints = new LinkedList<>();
         subject.onNext(endpoints);
         // 4 add back
-        endpoints = new LinkedList<Endpoint>();
+        endpoints = new LinkedList<>();
         endpoints.add(new Endpoint("localhost", 1234));
         endpoints.add(new Endpoint("localhost", 2468));
         subject.onNext(endpoints);
@@ -91,24 +91,24 @@ public class ToDeltaEndpointInjectorTest {
         ToDeltaEndpointInjector service = new ToDeltaEndpointInjector(subject);
 
         // 1. add endpoints
-        List<Endpoint> endpoints = new LinkedList<Endpoint>();
+        List<Endpoint> endpoints = new LinkedList<>();
         endpoints.add(new Endpoint("localhost", 1234, "abc"));
         endpoints.add(new Endpoint("localhost", 2468, "xyz"));
         subject.onNext(endpoints);
         // 2. nothing changes
-        endpoints = new LinkedList<Endpoint>();
+        endpoints = new LinkedList<>();
         endpoints.add(new Endpoint("localhost", 1234, "abc"));
         endpoints.add(new Endpoint("localhost", 2468, "xyz"));
         subject.onNext(endpoints);
         // 3. remove endpoint by leaving out second endpoint
-        endpoints = new LinkedList<Endpoint>();
+        endpoints = new LinkedList<>();
         endpoints.add(new Endpoint("localhost", 1234, "abc"));
         subject.onNext(endpoints);
         // 4. remove all
-        endpoints = new LinkedList<Endpoint>();
+        endpoints = new LinkedList<>();
         subject.onNext(endpoints);
         // 5. add back
-        endpoints = new LinkedList<Endpoint>();
+        endpoints = new LinkedList<>();
         endpoints.add(new Endpoint("localhost", 1234, "abc"));
         endpoints.add(new Endpoint("localhost", 2468, "xyz"));
         subject.onNext(endpoints);

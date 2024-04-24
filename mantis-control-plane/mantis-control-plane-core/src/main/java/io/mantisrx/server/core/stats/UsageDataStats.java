@@ -27,8 +27,8 @@ public class UsageDataStats {
     private final double highThreshold;
     private final double lowThreshold;
     private double sum = 0.0;
-    private int countAboveHighThreshold = 0;
-    private int countBelowLowThreshold = 0;
+    private int countAboveHighThreshold;
+    private int countBelowLowThreshold;
     private StageScalingPolicy.RollingCount rollingCount = new StageScalingPolicy.RollingCount(1, 1);
 
     public UsageDataStats(double highThreshold, double lowThreshold, StageScalingPolicy.RollingCount rollingCount) {
@@ -43,8 +43,9 @@ public class UsageDataStats {
         if (data.size() >= capacity) {
             final Double removed = data.removeFirst();
             sum -= removed;
-            if (removed > highThreshold)
+            if (removed > highThreshold) {
                 countAboveHighThreshold--;
+            }
             if (removed < lowThreshold && lowThreshold > 0.0) {
                 // disable scaleDown for lowThreshold <= 0
                 countBelowLowThreshold--;
@@ -52,8 +53,9 @@ public class UsageDataStats {
         }
         data.addLast(d);
         sum += d;
-        if (d > highThreshold)
+        if (d > highThreshold) {
             countAboveHighThreshold++;
+        }
         if (d < lowThreshold && lowThreshold > 0.0) {
             // disable scaleDown for lowThreshold <= 0
             countBelowLowThreshold++;

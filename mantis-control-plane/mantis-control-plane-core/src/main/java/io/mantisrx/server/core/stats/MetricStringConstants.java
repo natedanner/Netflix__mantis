@@ -16,7 +16,7 @@
 
 package io.mantisrx.server.core.stats;
 
-public class MetricStringConstants {
+public final class MetricStringConstants {
 
     public static final String METRIC_NAME_STR = "name";
     public static final String MANTIS_JOB_NAME = "mantisJobName";

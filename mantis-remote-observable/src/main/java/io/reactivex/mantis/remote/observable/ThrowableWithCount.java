@@ -18,8 +18,8 @@ package io.reactivex.mantis.remote.observable;
 
 public class ThrowableWithCount {
 
-    private Throwable throwable;
-    private Integer count;
+    private final Throwable throwable;
+    private final Integer count;
 
     public ThrowableWithCount(Throwable throwable, Integer count) {
         this.throwable = throwable;

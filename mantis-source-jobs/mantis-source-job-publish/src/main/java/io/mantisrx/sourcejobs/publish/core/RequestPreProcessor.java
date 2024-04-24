@@ -33,7 +33,7 @@ public class RequestPreProcessor implements Func2<Map<String, List<String>>, Con
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestPreProcessor.class);
 
     private final QueryRegistry queryRegistry;
-    private final Map<String, String> emptyMap = new HashMap<String, String>();
+    private final Map<String, String> emptyMap = new HashMap<>();
 
     public RequestPreProcessor(QueryRegistry queryRegistry) {
         this.queryRegistry = queryRegistry;

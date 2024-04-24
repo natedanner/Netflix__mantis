@@ -25,13 +25,13 @@ import rx.subjects.PublishSubject;
 
 public abstract class ConnectToConfig {
 
-    private Endpoint endpoint;
-    private String name;
-    private Map<String, String> subscribeParameters = new HashMap<String, String>();
-    private int subscribeAttempts;
-    private boolean suppressDecodingErrors = false;
-    private Action0 connectionDisconnectCallback;
-    private PublishSubject<Integer> closeTrigger;
+    private final Endpoint endpoint;
+    private final String name;
+    private final Map<String, String> subscribeParameters = new HashMap<>();
+    private final int subscribeAttempts;
+    private final boolean suppressDecodingErrors;
+    private final Action0 connectionDisconnectCallback;
+    private final PublishSubject<Integer> closeTrigger;
 
     public ConnectToConfig(String host, int port, String name,
                            Map<String, String> subscribeParameters,

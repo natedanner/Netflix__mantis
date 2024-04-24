@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Map;
 
 
-public class JsonUtility {
+public final class JsonUtility {
 
     private static final JsonUtility INSTANCE = new JsonUtility();
 

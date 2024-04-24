@@ -60,8 +60,12 @@ public class StageWorkers {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         final StageWorkers that = (StageWorkers) o;
         return stageNum == that.stageNum &&
                 Objects.equals(jobId, that.jobId) &&

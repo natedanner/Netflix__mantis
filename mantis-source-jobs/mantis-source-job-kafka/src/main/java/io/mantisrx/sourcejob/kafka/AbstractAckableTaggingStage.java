@@ -49,7 +49,7 @@ public abstract class AbstractAckableTaggingStage implements ScalarComputation<K
     private static final Logger logger = LoggerFactory.getLogger(AbstractAckableTaggingStage.class);
     private static final String MANTIS_META = "mantis.meta";
     protected AtomicBoolean trackIsComplete = new AtomicBoolean(false);
-    private AtomicBoolean errorLogged = new AtomicBoolean(false);
+    private final AtomicBoolean errorLogged = new AtomicBoolean(false);
 
     public Observable<TaggedData> call(Context context, Observable<KafkaAckable> data) {
         context.getMetricsRegistry().registerAndGet(new Metrics.Builder()
@@ -65,9 +65,9 @@ public abstract class AbstractAckableTaggingStage implements ScalarComputation<K
                 Map<String, Object> rawData = processAndAck(context, ackable);
                 return preProcess(rawData);
             })
-            .filter((d) -> !d.isEmpty())
+            .filter(d -> !d.isEmpty())
             .map(mapData -> applyPreMapping(context, mapData))
-            .filter((d) -> !d.isEmpty())
+            .filter(d -> !d.isEmpty())
             .flatMapIterable(d -> tagData(d, context));
     }
 

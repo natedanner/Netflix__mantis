@@ -39,7 +39,7 @@ public class Status {
     private int stageNum;
     private int workerIndex;
     private final int workerNumber;
-    private String hostname = null;
+    private String hostname;
     private final TYPE type;
     private final String message;
     private final long timestamp;

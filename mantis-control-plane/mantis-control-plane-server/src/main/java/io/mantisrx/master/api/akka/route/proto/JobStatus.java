@@ -37,8 +37,12 @@ public class JobStatus {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         final JobStatus jobStatus = (JobStatus) o;
         return Objects.equals(status, jobStatus.status);
     }

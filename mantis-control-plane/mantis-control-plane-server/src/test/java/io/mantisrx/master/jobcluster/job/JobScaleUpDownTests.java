@@ -76,6 +76,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -238,11 +239,9 @@ public class JobScaleUpDownTests {
         assertTrue(resp.getJobSchedInfoSubject().isPresent());
         ObjectMapper mapper = new ObjectMapper();
         BehaviorSubject<JobSchedulingInfo> jobSchedulingInfoBehaviorSubject = resp.getJobSchedInfoSubject().get();
-        jobSchedulingInfoBehaviorSubject.doOnNext((js) -> {
-                                            System.out.println("Got --> " + js.toString());
-
-                                        })
-                                        .map((e) -> {
+        jobSchedulingInfoBehaviorSubject.doOnNext(js ->
+                                            System.out.println("Got --> " + js.toString()))
+                                        .map(e -> {
                                             try {
                                                 return mapper.writeValueAsString(e);
                                             } catch (JsonProcessingException e1) {
@@ -250,7 +249,7 @@ public class JobScaleUpDownTests {
                                                 return "{\"error\":" + e1.getMessage() + "}";
                                             }
                                         })
-                                        .map((js) -> {
+                                        .map(js -> {
                                             try {
                                                 return mapper.readValue(js,JobSchedulingInfo.class);
                                             } catch (IOException e) {
@@ -258,8 +257,8 @@ public class JobScaleUpDownTests {
                                                 return null;
                                             }
                                         })
-                                        .filter((j) -> j!=null)
-                                        .doOnNext((js) -> {
+                                        .filter(Objects::nonNull)
+                                        .doOnNext(js -> {
 //                                            Map<Integer, WorkerAssignments> workerAssignments = js.getWorkerAssignments();
 //                                            WorkerAssignments workerAssignments1 = workerAssignments.get(1);
 //                                            assertEquals(1, workerAssignments1.getNumWorkers());
@@ -273,7 +272,7 @@ public class JobScaleUpDownTests {
 
                                         })
                                         .observeOn(Schedulers.io())
-                                        .subscribe((js) -> {
+                                        .subscribe(js -> {
 											latch.countDown();
                                             schedulingChangesList.add(js);
                                         });

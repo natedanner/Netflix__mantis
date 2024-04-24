@@ -88,7 +88,7 @@ public class WorkerHost {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((host == null) ? 0 : host.hashCode());
+        result = prime * result + (host == null ? 0 : host.hashCode());
         for (int p : port)
             result = prime * result + p;
         return result;
@@ -96,29 +96,39 @@ public class WorkerHost {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         WorkerHost other = (WorkerHost) obj;
         if (host == null) {
-            if (other.host != null)
+            if (other.host != null) {
                 return false;
-        } else if (!host.equals(other.host))
+            }
+        } else if (!host.equals(other.host)) {
             return false;
+        }
         if (port == null) {
-            if (other.port != null)
+            if (other.port != null) {
                 return false;
+            }
         } else {
-            if (other.port == null)
+            if (other.port == null) {
                 return false;
-            if (port.size() != other.port.size())
+            }
+            if (port.size() != other.port.size()) {
                 return false;
-            for (int p = 0; p < port.size(); p++)
-                if (port.get(p) != other.port.get(p))
+            }
+            for (int p = 0; p < port.size(); p++) {
+                if (port.get(p) != other.port.get(p)) {
                     return false;
+                }
+            }
         }
         return true;
     }

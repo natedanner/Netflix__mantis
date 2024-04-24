@@ -74,10 +74,10 @@ public class JobDefinitionResolver {
         logger.info("Given JobDefn {}", resolvedJobDefn);
 
         // inherit params from cluster if not specified
-        List<Parameter> parameters = (resolvedJobDefn.getParameters() != null && !resolvedJobDefn.getParameters().isEmpty()) ? resolvedJobDefn.getParameters() : jobClusterMetadata.getJobClusterDefinition().getParameters();
+        List<Parameter> parameters = resolvedJobDefn.getParameters() != null && !resolvedJobDefn.getParameters().isEmpty() ? resolvedJobDefn.getParameters() : jobClusterMetadata.getJobClusterDefinition().getParameters();
 
         // inherit labels from cluster if not specified
-        List<Label> labels = (resolvedJobDefn.getLabels() != null && !resolvedJobDefn.getLabels().isEmpty()) ? resolvedJobDefn.getLabels() : jobClusterMetadata.getJobClusterDefinition().getLabels();
+        List<Label> labels = resolvedJobDefn.getLabels() != null && !resolvedJobDefn.getLabels().isEmpty() ? resolvedJobDefn.getLabels() : jobClusterMetadata.getJobClusterDefinition().getLabels();
 
         String artifactName = resolvedJobDefn.getArtifactName();
         SchedulingInfo schedulingInfo = resolvedJobDefn.getSchedulingInfo();
@@ -192,15 +192,12 @@ public class JobDefinitionResolver {
     }
 
     private static boolean schedulingInfoNotValid(SchedulingInfo schedulingInfo) {
-        if(schedulingInfo == null || schedulingInfo.getStages().isEmpty()) {
-            return true;
-        }
-        return false;
+        return schedulingInfo == null || schedulingInfo.getStages().isEmpty();
     }
 
     private static boolean isNull(String key) {
 
-        return (key == null || key.equals("null") || key.isEmpty()) ? true : false;
+        return key == null || "null".equals(key) || key.isEmpty() ? true : false;
 
     }
 
@@ -217,7 +214,7 @@ public class JobDefinitionResolver {
         List<JobClusterConfig> configList = jobClusterMetadata.getJobClusterDefinition()
                 .getJobClusterConfigs()
                 .stream()
-                .filter((cfg) -> cfg.getVersion().equals(versionToFind))
+                .filter(cfg -> cfg.getVersion().equals(versionToFind))
                 .collect(Collectors.toList());
         if(!configList.isEmpty()) {
             return of(configList.get(0));
@@ -245,15 +242,17 @@ public class JobDefinitionResolver {
         int existingNumStages = configuredSchedulingInfo.getStages().size();
         // isReadyForJobMaster is not reliable, just check if stage 0 is defined and decrement overall count
         //if (jobClusterMetadata.getJobClusterDefinition().getIsReadyForJobMaster()) {
-            if (givenSchedulingInfo.forStage(0) != null)
-                givenNumStages--; // decrement to get net numStages without job master
-            if (configuredSchedulingInfo.forStage(0) != null)
-                existingNumStages--;
+            if (givenSchedulingInfo.forStage(0) != null) {
+            givenNumStages--; // decrement to get net numStages without job master
+        }
+        if (configuredSchedulingInfo.forStage(0) != null) {
+            existingNumStages--;
+        }
         //}
-        if(givenNumStages != existingNumStages) {
+        if (givenNumStages != existingNumStages) {
             logger.warn("Mismatched scheduling info: expecting #stages=" +
-                    existingNumStages + " for given jar version [" + " " +
-                    "], where as, given scheduling info has #stages=" + givenNumStages);
+                existingNumStages + " for given jar version [" + " " +
+                "], where as, given scheduling info has #stages=" + givenNumStages);
             return false;
         }
         return true;

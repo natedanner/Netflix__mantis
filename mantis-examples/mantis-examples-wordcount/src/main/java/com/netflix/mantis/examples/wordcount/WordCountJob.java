@@ -54,14 +54,14 @@ public class WordCountJob extends MantisJobProvider<String> {
                 // Simply echoes the tweet
                 .stage((context, dataO) -> dataO
                         // Tokenize
-                        .flatMap((text) -> Observable.from(tokenize(text)))
+                        .flatMap(text -> Observable.from(tokenize(text)))
                         // On a hopping window of 10 seconds
                         .window(10, TimeUnit.SECONDS)
-                        .flatMap((wordCountPairObservable) -> wordCountPairObservable
+                        .flatMap(wordCountPairObservable -> wordCountPairObservable
                                 // count how many times a word appears
                                 .groupBy(WordCountPair::getWord)
-                                .flatMap((groupO) -> groupO.reduce(0, (cnt, wordCntPair) -> cnt + 1)
-                                        .map((cnt) -> new WordCountPair(groupO.getKey(), cnt))))
+                                .flatMap(groupO -> groupO.reduce(0, (cnt, wordCntPair) -> cnt + 1)
+                                        .map(cnt -> new WordCountPair(groupO.getKey(), cnt))))
                                 .map(WordCountPair::toString)
                         , StageConfigs.scalarToScalarConfig())
                 // Reuse built in sink that eagerly subscribes and delivers data over SSE

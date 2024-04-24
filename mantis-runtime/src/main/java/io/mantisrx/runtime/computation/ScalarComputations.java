@@ -20,7 +20,7 @@ import io.mantisrx.runtime.Context;
 import rx.Observable;
 
 
-public class ScalarComputations {
+public final class ScalarComputations {
 
     private ScalarComputations() {}
 

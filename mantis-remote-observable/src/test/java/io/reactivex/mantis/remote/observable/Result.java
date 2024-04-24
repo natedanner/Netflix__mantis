@@ -18,8 +18,8 @@ package io.reactivex.mantis.remote.observable;
 
 public class Result {
 
-    private String key;
-    private Integer results;
+    private final String key;
+    private final Integer results;
 
     public Result(String key, Integer results) {
         this.key = key;

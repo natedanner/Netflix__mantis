@@ -776,7 +776,7 @@ public class KeyValueBasedPersistenceProvider implements IMantisPersistenceProvi
         ResourceClusterSpecWritable clusterSpecW) throws IOException {
         RegisteredResourceClustersWritable oldValue = getRegisteredResourceClustersWritable();
         RegisteredResourceClustersWritable.RegisteredResourceClustersWritableBuilder rcBuilder =
-            (oldValue == null) ? RegisteredResourceClustersWritable.builder()
+            oldValue == null ? RegisteredResourceClustersWritable.builder()
                 : oldValue.toBuilder();
         RegisteredResourceClustersWritable newValue = rcBuilder
             .cluster(

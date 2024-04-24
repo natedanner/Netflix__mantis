@@ -164,7 +164,7 @@ import rx.subjects.PublishSubject;
                 List<WorkerHost> candidates = workerHostsByStage.get(stage);
                 if (candidates != null) {
                     candidates.stream().filter(h -> h.getWorkerIndex() == workerIndex).map(WorkerHost::getHost).findFirst().ifPresent(host ->
-                        lookupWorkersByHost(host).stream().forEach(i -> workerResubmitFunc.call(i)));
+                        lookupWorkersByHost(host).stream().forEach(workerResubmitFunc::call));
                 }
             });
         }
@@ -174,11 +174,9 @@ import rx.subjects.PublishSubject;
                     "mantis.worker.jobmaster.outlier.worker.resubmit";
             final String enableOutlierWorkerResubmit = "true";
 
-            final boolean resubmitOutlierWorker =
-                    Boolean.valueOf(
+            return Boolean.valueOf(
                             ServiceRegistry.INSTANCE.getPropertiesService()
                                     .getStringValue(resubmitOutlierWorkerProp, enableOutlierWorkerResubmit));
-            return resubmitOutlierWorker;
         }
 
         private List<Integer> lookupWorkersByHost(String host) {
@@ -410,7 +408,7 @@ import rx.subjects.PublishSubject;
 
         logger.info("Starting worker metric handler with autoscale config {}", autoScaleMetricsConfig);
         metricDataSubject
-                .groupBy(metricData -> metricData.getStage())
+                .groupBy(MetricData::getStage)
                 .lift(new DropOperator<>(WorkerMetricHandler.class.getName()))
                 .doOnNext(go -> {
                     final Integer stage = go.getKey();

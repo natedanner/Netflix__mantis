@@ -64,7 +64,7 @@ public class AgentsErrorMonitorActor extends AbstractActorWithTimers implements 
     private static final long DISABLE_DURATION_MILLIS = 60*1000; // 1mins
     private  Action1<String> slaveEnabler = s -> logger.warn("SlaveEnabler not initialized yet!");
     private  Action1<String> slaveDisabler = s -> logger.warn("SlaveDisabler not initialized yet!");
-    private long too_old_mills;
+    private long tooOldMills;
     private int error_check_window_count;
     private long error_check_window_millis;
     private long disableDurationMillis;
@@ -88,13 +88,13 @@ public class AgentsErrorMonitorActor extends AbstractActorWithTimers implements 
 
     public AgentsErrorMonitorActor(long too_old_millis, int error_check_window_count,  long error_check_window_millis, long disableDurationMillis) {
 
-        this.too_old_mills = (too_old_millis>0)? too_old_millis : TOO_OLD_MILLIS;
-        this.error_check_window_count = (error_check_window_count>0)? error_check_window_count : ERROR_CHECK_WINDOW_COUNT;
-        this.error_check_window_millis = (error_check_window_millis>1000)? error_check_window_millis : ERROR_CHECK_WINDOW_MILLIS;
-        this.disableDurationMillis = (disableDurationMillis>-1) ? disableDurationMillis : DISABLE_DURATION_MILLIS;
+        this.tooOldMills = too_old_millis>0? too_old_millis : TOO_OLD_MILLIS;
+        this.error_check_window_count = error_check_window_count>0? error_check_window_count : ERROR_CHECK_WINDOW_COUNT;
+        this.error_check_window_millis = error_check_window_millis>1000? error_check_window_millis : ERROR_CHECK_WINDOW_MILLIS;
+        this.disableDurationMillis = disableDurationMillis>-1 ? disableDurationMillis : DISABLE_DURATION_MILLIS;
 
         this.initializedBehavior = receiveBuilder()
-                .match(LifecycleEventsProto.WorkerStatusEvent.class, js -> onWorkerEvent(js))
+                .match(LifecycleEventsProto.WorkerStatusEvent.class, this::onWorkerEvent)
                 .match(CheckHostHealthMessage.class, js -> onCheckHostHealth())
                 .match(HostErrorMapRequest.class, js -> onHostErrorMapRequest())
                 .matchAny(x -> logger.warn("unexpected message '{}' received by AgentsErrorMonitorActor actor ", x))
@@ -105,7 +105,7 @@ public class AgentsErrorMonitorActor extends AbstractActorWithTimers implements 
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(InitializeAgentsErrorMonitor.class, js -> onInitialize(js))
+                .match(InitializeAgentsErrorMonitor.class, this::onInitialize)
                 .matchAny(x -> logger.warn("unexpected message '{}' received by AgentsErrorMonitorActor actor ", x))
                 .build();
     }
@@ -127,7 +127,7 @@ public class AgentsErrorMonitorActor extends AbstractActorWithTimers implements 
             HostErrors hErrors = it.next();
             long lastActivityAt = hErrors.getLastActivityAt();
             long timeSinceLastEvent = currentTime.toEpochMilli() - lastActivityAt;
-            if(timeSinceLastEvent > this.too_old_mills) {
+            if(timeSinceLastEvent > this.tooOldMills) {
                 logger.debug("No Events from host since {} evicting", timeSinceLastEvent);
                 it.remove();
             }
@@ -143,7 +143,7 @@ public class AgentsErrorMonitorActor extends AbstractActorWithTimers implements 
             String hostName = workerEvent.getHostName().get();
             logger.info("Registering worker error on host {}", hostName);
 
-            HostErrors hostErrors = hostErrorMap.computeIfAbsent(hostName, (hName) -> new HostErrors(hName,slaveEnabler,this.error_check_window_millis,this.error_check_window_count));
+            HostErrors hostErrors = hostErrorMap.computeIfAbsent(hostName, hName -> new HostErrors(hName,slaveEnabler,this.error_check_window_millis,this.error_check_window_count));
             if(hostErrors.addAndGetIsTooManyErrors(workerEvent)) {
                 logger.warn("Host {} has too many errors in a short duration, disabling..", hostName);
                 this.slaveDisabler.call(hostName);
@@ -249,8 +249,9 @@ public class AgentsErrorMonitorActor extends AbstractActorWithTimers implements 
             while(iterator.hasNext()) {
                 final long next = iterator.next();
                 // purge old events (rolling window)
-                if((lastActivityAt - next) >  error_check_window_millis)
+                if ((lastActivityAt - next) > error_check_window_millis) {
                     iterator.remove();
+                }
             }
             logger.info("No of errors in window is {} ", errors.size());
             return errors.size() > windowCount;

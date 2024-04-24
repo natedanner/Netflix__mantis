@@ -22,15 +22,15 @@ import io.mantisrx.common.metrics.Metrics;
 
 public class RxMetrics {
 
-    private Metrics metrics;
-    private Counter next;
-    private Counter nextFailure;
-    private Counter error;
-    private Counter errorFailure;
-    private Counter complete;
-    private Counter completeFailure;
-    private Counter subscribe;
-    private Counter unsubscribe;
+    private final Metrics metrics;
+    private final Counter next;
+    private final Counter nextFailure;
+    private final Counter error;
+    private final Counter errorFailure;
+    private final Counter complete;
+    private final Counter completeFailure;
+    private final Counter subscribe;
+    private final Counter unsubscribe;
 
     public RxMetrics() {
         metrics = new Metrics.Builder()

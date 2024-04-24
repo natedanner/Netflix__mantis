@@ -42,7 +42,7 @@ public class JobClusterConfig {
     ) {
         this.artifactName = artifactName;
         this.uploadedAt = uploadedAt;
-        this.version = (version == null || version.isEmpty()) ?
+        this.version = version == null || version.isEmpty() ?
                 "" + System.currentTimeMillis() :
                 version;
         this.schedulingInfo = schedulingInfo;
@@ -74,8 +74,12 @@ public class JobClusterConfig {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         JobClusterConfig that = (JobClusterConfig) o;
         return uploadedAt == that.uploadedAt &&
                 Objects.equals(artifactName, that.artifactName) &&
@@ -137,8 +141,8 @@ public class JobClusterConfig {
         public JobClusterConfig build() {
             Preconditions.checkNotNull(artifactName);
             Preconditions.checkNotNull(schedulingInfo);
-            this.uploadedAt = (uploadedAt == -1) ? System.currentTimeMillis() : uploadedAt;
-            this.version = (version == null || version.isEmpty()) ? "" + System.currentTimeMillis() : version;
+            this.uploadedAt = uploadedAt == -1 ? System.currentTimeMillis() : uploadedAt;
+            this.version = version == null || version.isEmpty() ? "" + System.currentTimeMillis() : version;
             return new JobClusterConfig(artifactName, uploadedAt, version, schedulingInfo);
         }
     }

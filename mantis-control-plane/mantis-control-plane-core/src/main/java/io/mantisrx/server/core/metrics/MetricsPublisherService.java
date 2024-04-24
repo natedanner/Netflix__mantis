@@ -36,7 +36,7 @@ public class MetricsPublisherService implements Service {
     }
 
     public MetricsPublisherService(MetricsPublisher publisher, int publishFrequency) {
-        this(publisher, publishFrequency, new HashMap<String, String>());
+        this(publisher, publishFrequency, new HashMap<>());
     }
 
     @Override

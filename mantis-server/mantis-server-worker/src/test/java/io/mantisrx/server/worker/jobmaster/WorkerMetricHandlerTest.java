@@ -230,7 +230,7 @@ public class WorkerMetricHandlerTest {
                 final int resubmittedWorkerNum = (Integer) arguments[2];
                 //                final String reason = (String)arguments[3];
 
-                final Observable<Boolean> result = Observable.just(1).map(new Func1<Integer, Boolean>() {
+                return Observable.just(1).map(new Func1<Integer, Boolean>() {
                     @Override
                     public Boolean call(Integer integer) {
                         logger.info("resubmitting worker {} of jobId {}", resubmittedWorkerNum, jobId);
@@ -242,7 +242,6 @@ public class WorkerMetricHandlerTest {
                         return true;
                     }
                 });
-                return result;
             }
         });
 

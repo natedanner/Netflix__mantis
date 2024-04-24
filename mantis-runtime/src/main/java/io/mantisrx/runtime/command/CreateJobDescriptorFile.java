@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 
 public class CreateJobDescriptorFile implements Command {
 
-    private final static ObjectMapper mapper;
+    private static final ObjectMapper mapper;
 
     static {
         mapper = new ObjectMapper();

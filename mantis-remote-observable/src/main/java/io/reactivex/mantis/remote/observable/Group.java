@@ -21,9 +21,9 @@ import rx.Notification;
 
 public class Group<K, V> {
 
-    private K keyValue;
-    private byte[] keyBytes;
-    private Notification<V> notification;
+    private final K keyValue;
+    private final byte[] keyBytes;
+    private final Notification<V> notification;
 
     public Group(K keyValue, byte[] keyBytes, Notification<V> notification) {
         this.keyValue = keyValue;

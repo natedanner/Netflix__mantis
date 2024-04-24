@@ -41,8 +41,8 @@ public class LeadershipManagerZkImpl implements ILeadershipManager {
     private final AtomicBoolean firstTimeLeaderMode = new AtomicBoolean(false);
     private final MasterConfiguration config;
     private final ServiceLifecycle serviceLifecycle;
-    private volatile boolean isLeader = false;
-    private volatile boolean isReady = false;
+    private volatile boolean isLeader;
+    private volatile boolean isReady;
     private volatile Instant becameLeaderAt;
 
     public LeadershipManagerZkImpl(final MasterConfiguration config,

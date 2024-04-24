@@ -42,13 +42,13 @@ public class MantisStageMetadataWritable implements MantisStageMetadata {
     private final ConcurrentMap<Integer, MantisWorkerMetadata> workerByIndexMetadataSet;
     @JsonIgnore
     private final ConcurrentMap<Integer, MantisWorkerMetadata> workerByNumberMetadataSet;
-    private String jobId;
-    private int stageNum;
-    private int numStages;
-    private MachineDefinition machineDefinition;
+    private final String jobId;
+    private final int stageNum;
+    private final int numStages;
+    private final MachineDefinition machineDefinition;
     private int numWorkers;
-    private List<JobConstraints> hardConstraints;
-    private List<JobConstraints> softConstraints;
+    private final List<JobConstraints> hardConstraints;
+    private final List<JobConstraints> softConstraints;
     private StageScalingPolicy scalingPolicy;
     private boolean scalable;
 
@@ -101,8 +101,9 @@ public class MantisStageMetadataWritable implements MantisStageMetadata {
         // we traverse the current worker for each index
         int active = 0;
         for (MantisWorkerMetadata w : workerByIndexMetadataSet.values()) {
-            if (!MantisJobState.isTerminalState(w.getState()))
+            if (!MantisJobState.isTerminalState(w.getState())) {
                 active++;
+            }
         }
         return active;
     }
@@ -171,8 +172,9 @@ public class MantisStageMetadataWritable implements MantisStageMetadata {
     @Override
     public MantisWorkerMetadata getWorkerByIndex(int workerId) throws InvalidJobException {
         MantisWorkerMetadata mwmd = workerByIndexMetadataSet.get(workerId);
-        if (mwmd == null)
+        if (mwmd == null) {
             throw new InvalidJobException(jobId, -1, workerId);
+        }
         return mwmd;
     }
 
@@ -180,8 +182,9 @@ public class MantisStageMetadataWritable implements MantisStageMetadata {
     @Override
     public MantisWorkerMetadata getWorkerByWorkerNumber(int workerNumber) throws InvalidJobException {
         MantisWorkerMetadata mwmd = workerByNumberMetadataSet.get(workerNumber);
-        if (mwmd == null)
+        if (mwmd == null) {
             throw new InvalidJobException(jobId, -1, workerNumber);
+        }
         return mwmd;
     }
 
@@ -233,10 +236,12 @@ public class MantisStageMetadataWritable implements MantisStageMetadata {
                 //                        logger.info("Replaced worker " + oldWorker.getWorkerNumber() + " with " + newWorker.getWorkerNumber() +
                 //                                " for index " + newWorker.getWorkerIndex() + " of job " + jobId);
             }
-        } else if (oldWorker != null)
+        } else if (oldWorker != null) {
             result = false;
-        if (result)
+        }
+        if (result) {
             workerByNumberMetadataSet.put(newWorker.getWorkerNumber(), newWorker);
+        }
         return result;
     }
 }

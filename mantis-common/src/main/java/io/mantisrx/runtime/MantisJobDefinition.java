@@ -35,21 +35,21 @@ public class MantisJobDefinition {
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
-    private String user;
-    private URL jobJarFileLocation;
-    private String version;
+    private final String name;
+    private final String user;
+    private final URL jobJarFileLocation;
+    private final String version;
     private List<Parameter> parameters;
-    private JobSla jobSla;
-    private long subscriptionTimeoutSecs = 0L;
+    private final JobSla jobSla;
+    private long subscriptionTimeoutSecs;
     private SchedulingInfo schedulingInfo;
-    private DeploymentStrategy deploymentStrategy;
-    private int slaMin = 0;
-    private int slaMax = 0;
+    private final DeploymentStrategy deploymentStrategy;
+    private final int slaMin;
+    private final int slaMax;
     private String cronSpec = "";
-    private NamedJobDefinition.CronPolicy cronPolicy = null;
-    private boolean isReadyForJobMaster = false;
-    private WorkerMigrationConfig migrationConfig;
+    private final NamedJobDefinition.CronPolicy cronPolicy;
+    private final boolean isReadyForJobMaster;
+    private final WorkerMigrationConfig migrationConfig;
     private List<Label> labels;
 
     @JsonCreator
@@ -87,8 +87,9 @@ public class MantisJobDefinition {
             this.labels = new LinkedList<>();
         }
         this.jobSla = jobSla;
-        if (subscriptionTimeoutSecs > 0)
+        if (subscriptionTimeoutSecs > 0) {
             this.subscriptionTimeoutSecs = subscriptionTimeoutSecs;
+        }
         this.schedulingInfo = schedulingInfo;
         this.deploymentStrategy = deploymentStrategy;
         this.slaMin = slaMin;
@@ -105,10 +106,12 @@ public class MantisJobDefinition {
     }
 
     private void validateSla() throws InvalidJobException {
-        if (jobSla == null)
+        if (jobSla == null) {
             throw new InvalidJobException("No Job SLA provided (likely incorrect job submit request)");
-        if (jobSla.getDurationType() == null)
+        }
+        if (jobSla.getDurationType() == null) {
             throw new InvalidJobException("Invalid null duration type in job sla (likely incorrect job submit request");
+        }
     }
 
     public void validateSchedulingInfo() throws InvalidJobException {
@@ -116,12 +119,15 @@ public class MantisJobDefinition {
     }
 
     private void validateSchedulingInfo(boolean schedulingInfoOptional) throws InvalidJobException {
-        if (schedulingInfoOptional && schedulingInfo == null)
+        if (schedulingInfoOptional && schedulingInfo == null) {
             return;
-        if (schedulingInfo == null)
+        }
+        if (schedulingInfo == null) {
             throw new InvalidJobException("No scheduling info provided");
-        if (schedulingInfo.getStages() == null)
+        }
+        if (schedulingInfo.getStages() == null) {
             throw new InvalidJobException("No stages defined in scheduling info");
+        }
         int numStages = schedulingInfo.getStages().size();
         int startingIdx = 1;
         if (schedulingInfo.forStage(0) != null) {
@@ -131,19 +137,25 @@ public class MantisJobDefinition {
         }
         for (int i = startingIdx; i <= numStages; i++) {
             StageSchedulingInfo stage = schedulingInfo.getStages().get(i);
-            if (stage == null)
+            if (stage == null) {
                 throw new InvalidJobException("No definition for stage " + i + " in scheduling info for " + numStages + " stage job");
-            if (stage.getNumberOfInstances() < 1)
+            }
+            if (stage.getNumberOfInstances() < 1) {
                 throw new InvalidJobException("Number of instance for stage " + i + " must be >0, not " + stage.getNumberOfInstances());
+            }
             MachineDefinition machineDefinition = stage.getMachineDefinition();
-            if (machineDefinition.getCpuCores() <= 0)
+            if (machineDefinition.getCpuCores() <= 0) {
                 throw new InvalidJobException("cpuCores must be >0.0, not " + machineDefinition.getCpuCores());
-            if (machineDefinition.getMemoryMB() <= 0)
+            }
+            if (machineDefinition.getMemoryMB() <= 0) {
                 throw new InvalidJobException("memory must be <0.0, not " + machineDefinition.getMemoryMB());
-            if (machineDefinition.getDiskMB() < 0)
+            }
+            if (machineDefinition.getDiskMB() < 0) {
                 throw new InvalidJobException("disk must be >=0, not " + machineDefinition.getDiskMB());
-            if (machineDefinition.getNumPorts() < 0)
+            }
+            if (machineDefinition.getNumPorts() < 0) {
                 throw new InvalidJobException("numPorts must be >=0, not " + machineDefinition.getNumPorts());
+            }
         }
     }
 

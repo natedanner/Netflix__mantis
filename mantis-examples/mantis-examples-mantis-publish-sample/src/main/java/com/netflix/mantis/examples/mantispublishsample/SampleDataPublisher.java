@@ -47,13 +47,12 @@ public class SampleDataPublisher implements IDataPublisher{
     public void generateAndSendEventsToMantis() {
         dataGenerator
                 .generateEvents()
-                .map((requestEvent) -> new Event(requestEvent.toMap()))
-                .flatMap((event) -> Observable.from(publisher.publish(event)
+                .map(requestEvent -> new Event(requestEvent.toMap()))
+                .flatMap(event -> Observable.from(publisher.publish(event)
                         .toCompletableFuture()))
                 .toBlocking()
-                .subscribe((status) -> {
-                    log.info("Mantis publish JavaApp send event status => {}", status);
-                });
+                .subscribe(status ->
+                    log.info("Mantis publish JavaApp send event status => {}", status));
     }
 
 }

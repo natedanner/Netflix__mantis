@@ -26,10 +26,10 @@ import java.util.Map;
 public class Measurements {
 
     private final Map<String, String> tags;
-    private String name;
-    private long timestamp;
-    private Collection<CounterMeasurement> counters;
-    private Collection<GaugeMeasurement> gauges;
+    private final String name;
+    private final long timestamp;
+    private final Collection<CounterMeasurement> counters;
+    private final Collection<GaugeMeasurement> gauges;
 
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -24,9 +24,9 @@ import rx.functions.Func1;
 public abstract class ServeConfig<T, O> {
 
     SlottingStrategy<O> slottingStrategy;
-    private String name;
-    private Func1<Map<String, String>, Func1<T, Boolean>> filterFunction;
-    private int maxWriteAttempts;
+    private final String name;
+    private final Func1<Map<String, String>, Func1<T, Boolean>> filterFunction;
+    private final int maxWriteAttempts;
 
     public ServeConfig(String name,
                        SlottingStrategy<O> slottingStrategy, Func1<Map<String, String>,

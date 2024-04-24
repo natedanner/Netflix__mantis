@@ -36,7 +36,7 @@ public class RandomRequestSource implements Source<RequestEvent> {
 
     @Override
     public Observable<Observable<RequestEvent>> call(Context context, Index index) {
-        return Observable.just(Observable.interval(250, TimeUnit.MILLISECONDS).map((tick) -> {
+        return Observable.just(Observable.interval(250, TimeUnit.MILLISECONDS).map(tick -> {
             String ip = mockDataGenerator.ipv4s().get();
             String path = mockDataGenerator.probabilites(String.class)
                     .add(0.1, "/login")
@@ -45,9 +45,8 @@ public class RandomRequestSource implements Source<RequestEvent> {
                     .add(0.2, "/mylist")
                     .get();
             return RequestEvent.builder().ipAddress(ip).requestPath(path).latency(1).build();
-        }).doOnNext((event) -> {
-            log.debug("Generated Event {}", event);
-        }));
+        }).doOnNext(event ->
+            log.debug("Generated Event {}", event)));
 
     }
 

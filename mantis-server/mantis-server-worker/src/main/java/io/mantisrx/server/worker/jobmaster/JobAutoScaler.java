@@ -99,7 +99,7 @@ public class JobAutoScaler {
 
     public static void main(String[] args) {
         Observable.interval(1, TimeUnit.DAYS)
-                .doOnNext(x -> System.out.println(x))
+                .doOnNext(System.out::println)
                 .take(1)
                 .toBlocking()
                 .last();
@@ -116,19 +116,17 @@ public class JobAutoScaler {
 
     void start() {
         subject
-                .onBackpressureBuffer(100, () -> {
-                    logger.info("onOverflow triggered, dropping old events");
-                }, BackpressureOverflow.ON_OVERFLOW_DROP_OLDEST)
+                .onBackpressureBuffer(100, () ->
+                    logger.info("onOverflow triggered, dropping old events"), BackpressureOverflow.ON_OVERFLOW_DROP_OLDEST)
                 .doOnRequest(x -> logger.info("Scaler requested {} metrics.", x))
-                .groupBy(event -> event.getStage())
+                .groupBy(JobAutoScaler.Event::getStage)
                 .flatMap(go -> {
                     Integer stage = Optional.ofNullable(go.getKey()).orElse(-1);
 
                     final StageSchedulingInfo stageSchedulingInfo = schedulingInfo.forStage(stage);
                     logger.info("System Environment:");
-                    System.getenv().forEach((key, value) -> {
-                        logger.info("{} = {}", key, value);
-                    });
+                    System.getenv().forEach((key, value) ->
+                        logger.info("{} = {}", key, value));
 
                     Optional<String> clutchCustomConfiguration =
                             Optional.ofNullable(
@@ -253,9 +251,8 @@ public class JobAutoScaler {
                 .doOnCompleted(() -> logger.info("onComplete on JobAutoScaler subject"))
                   .doOnError(t -> logger.error("got onError in JobAutoScaler", t))
                   .doOnSubscribe(() -> logger.info("onSubscribe JobAutoScaler"))
-                  .doOnUnsubscribe(() -> {
-                    logger.info("Unsubscribing for JobAutoScaler of job " + jobId);
-                  })
+                  .doOnUnsubscribe(() ->
+                    logger.info("Unsubscribing for JobAutoScaler of job " + jobId))
                 .retry()
                   .subscribe();
     }
@@ -317,15 +314,27 @@ public class JobAutoScaler {
 
       @Override
       public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+          if (this == o) {
+              return true;
+          }
+          if (o == null || getClass() != o.getClass()) {
+              return false;
+          }
 
         Event event = (Event) o;
 
-        if (stage != event.stage) return false;
-        if (Double.compare(event.value, value) != 0) return false;
-        if (numWorkers != event.numWorkers) return false;
-        if (type != event.type) return false;
+          if (stage != event.stage) {
+              return false;
+          }
+          if (Double.compare(event.value, value) != 0) {
+              return false;
+          }
+          if (numWorkers != event.numWorkers) {
+              return false;
+          }
+          if (type != event.type) {
+              return false;
+          }
         return message != null ? message.equals(event.message) : event.message == null;
 
       }
@@ -449,12 +458,12 @@ public class JobAutoScaler {
       }
     }
 
-    private class StageScaleOperator<T, R> implements Observable.Operator<Object, Event> {
+    private final class StageScaleOperator<T, R> implements Observable.Operator<Object, Event> {
 
       private final int stage;
       private final StageSchedulingInfo stageSchedulingInfo;
       private final StageScaler scaler;
-      private volatile long lastScaledAt = 0L;
+      private volatile long lastScaledAt;
 
       private StageScaleOperator(int stage,
           StageSchedulingInfo stageSchedulingInfo) {

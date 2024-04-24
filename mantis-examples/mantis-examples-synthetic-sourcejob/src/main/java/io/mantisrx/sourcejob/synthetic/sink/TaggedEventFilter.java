@@ -42,7 +42,7 @@ public class TaggedEventFilter implements Func1<Map<String, List<String>>, Func1
             if (parameters.containsKey(SUBSCRIPTION_ID_PARAM_NAME)) {
                 String subId = parameters.get(SUBSCRIPTION_ID_PARAM_NAME).get(0);
                 String clientId = parameters.get(CLIENT_ID_PARAMETER_NAME).get(0);
-                List<String> terms = new ArrayList<String>();
+                List<String> terms = new ArrayList<>();
                 if (clientId != null && !clientId.isEmpty()) {
                     terms.add(clientId + "_" + subId);
                 } else {

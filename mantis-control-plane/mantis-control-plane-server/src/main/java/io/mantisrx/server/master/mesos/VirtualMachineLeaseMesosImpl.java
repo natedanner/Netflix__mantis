@@ -30,17 +30,17 @@ import org.apache.mesos.Protos.Value;
 
 public class VirtualMachineLeaseMesosImpl implements VirtualMachineLease {
 
-    private Offer offer;
+    private final Offer offer;
     private double cpuCores;
     private double memoryMB;
     private double networkMbps = 0.0;
     private double diskMB;
-    private String hostname;
-    private String vmID;
+    private final String hostname;
+    private final String vmID;
     private List<Range> portRanges;
-    private Map<String, Protos.Attribute> attributeMap;
+    private final Map<String, Protos.Attribute> attributeMap;
 
-    private long offeredTime;
+    private final long offeredTime;
 
     public VirtualMachineLeaseMesosImpl(Offer offer) {
         this.offer = offer;

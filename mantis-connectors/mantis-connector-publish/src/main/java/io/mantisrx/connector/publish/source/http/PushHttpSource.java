@@ -50,7 +50,7 @@ public class PushHttpSource implements Source<String> {
     private final QueryRegistry queryRegistry;
     private final int serverPort;
 
-    private AtomicReference<WorkerMap> workerMapAtomicReference = new AtomicReference<>(new WorkerMap(new HashMap<>()));
+    private final AtomicReference<WorkerMap> workerMapAtomicReference = new AtomicReference<>(new WorkerMap(new HashMap<>()));
 
     private static final String NETTY_THREAD_COUNT_PARAM_NAME = "nettyThreadCount";
 
@@ -65,7 +65,7 @@ public class PushHttpSource implements Source<String> {
     public Observable<Observable<String>> call(Context context, Index index) {
         return Observable.just(eventSubject
                 .lift(new DropOperator<>("incoming_" + PushHttpSource.class.getCanonicalName() + "_batch"))
-                .onErrorResumeNext((e) -> Observable.empty()));
+                .onErrorResumeNext(e -> Observable.empty()));
     }
 
     @Override
@@ -83,7 +83,7 @@ public class PushHttpSource implements Source<String> {
         }
         server.startServer();
 
-        context.getWorkerMapObservable().subscribeOn(Schedulers.io()).subscribe((workerMap) -> {
+        context.getWorkerMapObservable().subscribeOn(Schedulers.io()).subscribe(workerMap -> {
             LOGGER.info("Got WorkerUpdate" + workerMap);
             workerMapAtomicReference.set(workerMap);
         });

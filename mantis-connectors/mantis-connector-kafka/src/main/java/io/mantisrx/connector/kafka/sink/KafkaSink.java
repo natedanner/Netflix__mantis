@@ -64,7 +64,7 @@ public class KafkaSink<T> implements SelfDocumentingSink<T> {
         String topic = (String)parameters.get(KafkaSinkJobParameters.TOPIC);
 
         subscription = dataO.map(encoder::call)
-            .flatMap((dataBytes) ->
+            .flatMap(dataBytes ->
                          Observable.from(kafkaProducer.send(new ProducerRecord<>(topic, dataBytes)))
                              .subscribeOn(Schedulers.io()))
             .subscribe();

@@ -26,8 +26,8 @@ import rx.subjects.PublishSubject;
 
 public class ConnectToObservable<T> extends ConnectToConfig {
 
-    private Decoder<T> decoder;
-    private Action2<T, Throwable> deocdingErrorHandler;
+    private final Decoder<T> decoder;
+    private final Action2<T, Throwable> deocdingErrorHandler;
 
     ConnectToObservable(Builder<T> builder) {
         super(builder.host, builder.port,
@@ -63,7 +63,7 @@ public class ConnectToObservable<T> extends ConnectToConfig {
                 t2.printStackTrace();
             }
         };
-        private boolean suppressDecodingErrors = false;
+        private boolean suppressDecodingErrors;
         private Action0 connectionDisconnectCallback = new Action0() {
             @Override
             public void call() {}
@@ -136,7 +136,7 @@ public class ConnectToObservable<T> extends ConnectToConfig {
         }
 
         public ConnectToObservable<T> build() {
-            return new ConnectToObservable<T>(this);
+            return new ConnectToObservable<>(this);
         }
     }
 

@@ -51,14 +51,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JobClusterProtoAdapter {
+public final class JobClusterProtoAdapter {
     // explicit private constructor to prohibit instantiation
     private JobClusterProtoAdapter() {}
 
-    public static final CreateJobClusterRequest toCreateJobClusterRequest(final NamedJobDefinition njd) {
+    public static CreateJobClusterRequest toCreateJobClusterRequest(final NamedJobDefinition njd) {
         MantisJobDefinition jd = njd.getJobDefinition();
 
-        final CreateJobClusterRequest request = new CreateJobClusterRequest(new JobClusterDefinitionImpl(
+        return new CreateJobClusterRequest(new JobClusterDefinitionImpl(
                 jd.getName(),
                 Arrays.asList(new JobClusterConfig(jd.getJobJarFileLocation().toString(),
                         System.currentTimeMillis(),
@@ -82,8 +82,6 @@ public class JobClusterProtoAdapter {
 
         , "user"
                 );
-
-        return request;
     }
 
 //    public static final JobSla toJobSla(final io.mantisrx.master.core.proto.JobSla protoSla) {
@@ -175,10 +173,10 @@ public class JobClusterProtoAdapter {
 //        );
 //    }
 
-    public static final UpdateJobClusterRequest toUpdateJobClusterRequest(final NamedJobDefinition njd) {
+    public static UpdateJobClusterRequest toUpdateJobClusterRequest(final NamedJobDefinition njd) {
         MantisJobDefinition jd = njd.getJobDefinition();
 
-        final UpdateJobClusterRequest request = new UpdateJobClusterRequest(new JobClusterDefinitionImpl(
+        return new UpdateJobClusterRequest(new JobClusterDefinitionImpl(
                 jd.getName(),
                 Arrays.asList(new JobClusterConfig(jd.getJobJarFileLocation().toString(),
                         System.currentTimeMillis(),
@@ -200,8 +198,6 @@ public class JobClusterProtoAdapter {
         ),
 
         "user");
-
-        return request;
     }
 
 //    public static final JobClusterManagerProto.SubmitJobRequest toSubmitJobClusterRequest(final SubmitJobRequest jd)
@@ -227,10 +223,10 @@ public class JobClusterProtoAdapter {
 //        return request;
 //    }
 
-    public static final JobClusterManagerProto.SubmitJobRequest toSubmitJobClusterRequest(final MantisJobDefinition jd)
+    public static JobClusterManagerProto.SubmitJobRequest toSubmitJobClusterRequest(final MantisJobDefinition jd)
         throws InvalidJobException {
 
-        final JobClusterManagerProto.SubmitJobRequest request = new JobClusterManagerProto.SubmitJobRequest(
+        return new JobClusterManagerProto.SubmitJobRequest(
             jd.getName(),
             jd.getUser(),
             new JobDefinition(
@@ -245,13 +241,11 @@ public class JobClusterProtoAdapter {
                 jd.getSchedulingInfo() == null ? -1 : jd.getSchedulingInfo().getStages().size(),
                 processLabels(jd),
                 jd.getDeploymentStrategy()));
-
-        return request;
     }
 
     public static JobClusterInfo toJobClusterInfo(MantisJobClusterMetadataView jobClusterMetadataView) {
         List<JobClusterInfo.JarInfo> jarInfoList = DataFormatAdapter.convertNamedJobJarListToJarInfoList(jobClusterMetadataView.getJars());
-        JobClusterInfo jobClusterInfo =  new JobClusterInfo(jobClusterMetadataView.getName(),
+        return new JobClusterInfo(jobClusterMetadataView.getName(),
                 jobClusterMetadataView.getSla(),
                 jobClusterMetadataView.getOwner(),
                 jobClusterMetadataView.isDisabled(),
@@ -259,8 +253,6 @@ public class JobClusterProtoAdapter {
                 jarInfoList,
                 jobClusterMetadataView.getParameters(),
                 jobClusterMetadataView.getLabels());
-
-        return jobClusterInfo;
     }
 
     protected static List<Label> processLabels(MantisJobDefinition jd) {
@@ -404,7 +396,7 @@ public class JobClusterProtoAdapter {
         }
     }
 
-    public static final CompactJobInfo toCompactJobInfo(final MantisJobMetadataView view) {
+    public static CompactJobInfo toCompactJobInfo(final MantisJobMetadataView view) {
         MantisJobMetadata jm = view.getJobMetadata();
 
         int workers=0;
@@ -429,7 +421,7 @@ public class JobClusterProtoAdapter {
 
         return new CompactJobInfo(
             jm.getJobId(),
-            (jm.getJarUrl() != null) ? jm.getJarUrl().toString() : "",
+            jm.getJarUrl() != null ? jm.getJarUrl().toString() : "",
             jm.getSubmittedAt(),
             view.getTerminatedAt(),
             jm.getUser(),

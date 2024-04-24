@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TimedChunkerTest {
-    private static Logger logger = LoggerFactory.getLogger(TimedChunkerTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(TimedChunkerTest.class);
 
     private TestProcessor<Integer> processor;
     private MonitoredQueue<Integer> monitoredQueue;
@@ -159,7 +159,7 @@ public class TimedChunkerTest {
     public static class TestProcessor<T> extends ChunkProcessor<T> {
         private ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor();
         private List<T> processed = new ArrayList();
-        private long processingTimeMs = 0;
+        private long processingTimeMs;
 
         public TestProcessor(long processingTimeMs) {
             super(null);
@@ -172,6 +172,7 @@ public class TimedChunkerTest {
                 ScheduledFuture<Boolean> f = scheduledService.schedule(() -> true, processingTimeMs,
                         TimeUnit.MILLISECONDS);
                 while (!f.isDone()) {
+                    continue;
                 }
             }
             logger.info("processing {}", chunks);

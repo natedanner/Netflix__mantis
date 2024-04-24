@@ -71,12 +71,12 @@ public class MantisJobStore {
         logger.info("Beginning load of Archived Jobs");
         storageProvider.loadAllArchivedJobs()
                 .subscribeOn(Schedulers.io())
-                .subscribe((job) -> {
+                .subscribe(job -> {
                     archivedJobsMetadataCache.add(job);
                     archivedJobIds.put(job.getJobId().getId(), job.getJobId().getId());
                     terminatedJobsToDelete.add(new TerminatedJob(job.getJobId().getId(), getTerminatedAt(job)));
                 },
-                    (e) -> logger.warn("Exception loading archived Jobs", e),
+                    e -> logger.warn("Exception loading archived Jobs", e),
                     () -> logger.info("Finished Loading all archived Jobs!"));
     }
 
@@ -172,8 +172,9 @@ public class MantisJobStore {
 
     public List<? extends IMantisWorkerMetadata> storeNewWorkers(IMantisJobMetadata job, List<IMantisWorkerMetadata> workerRequests)
             throws IOException, InvalidJobException {
-        if (workerRequests == null || workerRequests.isEmpty())
+        if (workerRequests == null || workerRequests.isEmpty()) {
             return null;
+        }
         String jobId = workerRequests.get(0).getJobId();
         logger.debug("Adding {} workers for job {}", workerRequests.size(), jobId);
 
@@ -275,7 +276,7 @@ public class MantisJobStore {
         return storageProvider.listJobArtifactsToCache(clusterID);
     }
 
-    private static class TerminatedJob implements Comparable<TerminatedJob> {
+    private static final class TerminatedJob implements Comparable<TerminatedJob> {
 
         private final String jobId;
         private final long terminatedTime;

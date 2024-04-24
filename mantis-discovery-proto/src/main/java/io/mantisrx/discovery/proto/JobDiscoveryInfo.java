@@ -62,8 +62,12 @@ public class JobDiscoveryInfo {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         final JobDiscoveryInfo that = (JobDiscoveryInfo) o;
         return Objects.equals(jobId, that.jobId) &&
                 Objects.equals(stageWorkersMap, that.stageWorkersMap);

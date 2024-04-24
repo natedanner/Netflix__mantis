@@ -139,7 +139,7 @@ public class WorkerRegistryV2Test {
         Optional<Long> acceptedAt = workerRegistryV2.getAcceptedAt(new WorkerId("testGetAcceptedAt-1", 0, 5));
 
         assertTrue(acceptedAt.isPresent());
-        assertEquals(new Long(0), acceptedAt.get());
+        assertEquals(Long.valueOf(0), acceptedAt.get());
 
         // try an invalid worker
         acceptedAt = workerRegistryV2.getAcceptedAt(new WorkerId("testGetAcceptedAt-1",10,1));

@@ -36,7 +36,7 @@ public abstract class MigrationStrategy {
      *
      * @return list of WorkerNumber to migrate in this iteration
      */
-    abstract public List<Integer> execute(final ConcurrentSkipListSet<Integer> workersOnDisabledVms,
+    public abstract List<Integer> execute(final ConcurrentSkipListSet<Integer> workersOnDisabledVms,
                                           final int numRunningWorkers,
                                           final int totalNumWorkers,
                                           final long lastWorkerMigrationTimestamp);

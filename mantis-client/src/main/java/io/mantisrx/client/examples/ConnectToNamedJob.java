@@ -53,7 +53,7 @@ import rx.functions.Action1;
 public class ConnectToNamedJob {
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectToNamedJob.class);
-    private final static AtomicLong prevDroppedCount = new AtomicLong(0L);
+    private static final AtomicLong prevDroppedCount = new AtomicLong(0L);
     @Argument(alias = "p", description = "Specify a configuration file", required = true)
     private static String propFile = "";
     @Argument(alias = "n", description = "Job name for submission", required = true)
@@ -102,7 +102,6 @@ public class ConnectToNamedJob {
                                     }
                                 })
                                 .subscribe();
-                        ;
                     }
                 })
                 .subscribe();
@@ -231,10 +230,11 @@ public class ConnectToNamedJob {
         //                .subscribe();
         try {
             boolean await = latch.await(30, TimeUnit.SECONDS);
-            if (await)
+            if (await) {
                 System.out.println("PASSED");
-            else
+            } else {
                 System.err.println("FAILED!");
+            }
             Thread.sleep(5000000);
         } catch (InterruptedException e) {
             e.printStackTrace();

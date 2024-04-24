@@ -65,7 +65,7 @@ class MetricAggregator {
                             gaugeAggregates.put(gaugeName, currValue);
                         } else {
                             final Double prev = gaugeAggregates.get(gaugeName);
-                            final double max = (currValue > prev) ? currValue : prev;
+                            final double max = currValue > prev ? currValue : prev;
                             gaugeAggregates.put(gaugeName, max);
                         }
                         break;

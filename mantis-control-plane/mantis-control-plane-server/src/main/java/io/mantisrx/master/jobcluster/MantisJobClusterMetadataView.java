@@ -119,8 +119,12 @@ public class MantisJobClusterMetadataView {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MantisJobClusterMetadataView that = (MantisJobClusterMetadataView) o;
         return lastJobCount == that.lastJobCount &&
                 disabled == that.disabled &&
@@ -167,11 +171,11 @@ public class MantisJobClusterMetadataView {
         private  List<Parameter> parameters = Lists.newArrayList();
         private  JobOwner owner;
         private  long lastJobCount;
-        private  boolean disabled = false;
+        private  boolean disabled;
         private  boolean isReadyForJobMaster = true;
         private  WorkerMigrationConfig migrationConfig;
         private  List<Label> labels = Lists.newArrayList();
-        private  boolean cronActive = false;
+        private  boolean cronActive;
         private String latestVersion;
 
         public Builder() {

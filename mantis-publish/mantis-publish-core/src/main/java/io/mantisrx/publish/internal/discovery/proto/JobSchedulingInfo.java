@@ -31,8 +31,8 @@ public class JobSchedulingInfo {
     public static final String SendHBParam = "sendHB";
 
 
-    private String jobId;
-    private Map<Integer, WorkerAssignments> workerAssignments; // index by stage num
+    private final String jobId;
+    private final Map<Integer, WorkerAssignments> workerAssignments; // index by stage num
 
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)

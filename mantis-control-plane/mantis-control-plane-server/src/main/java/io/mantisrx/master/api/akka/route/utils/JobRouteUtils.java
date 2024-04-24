@@ -75,7 +75,7 @@ public class JobRouteUtils {
         }
 
         final Optional<Integer> limit = paramValueAsInt(params, QUERY_PARAM_LIMIT);
-        final Optional<JobState.MetaState> jobState = paramValue(params, QUERY_PARAM_JOB_STATE).map(p -> JobState.MetaState.valueOf(p));
+        final Optional<JobState.MetaState> jobState = paramValue(params, QUERY_PARAM_JOB_STATE).map(JobState.MetaState::valueOf);
         final List<Integer> stageNumber = paramValuesAsInt(params, QUERY_PARAM_STAGE_NUM);
         final List<Integer> workerIndex = paramValuesAsInt(params, QUERY_PARAM_WORKER_INDEX);
         final List<Integer> workerNumber = paramValuesAsInt(params, QUERY_PARAM_WORKER_NUM);
@@ -104,7 +104,7 @@ public class JobRouteUtils {
         }
 
         final Optional<Integer> limit = paramValueAsInt(params, QUERY_PARAM_LIMIT);
-        final Optional<JobState.MetaState> jobState = paramValue(params, QUERY_PARAM_JOB_STATE).map(p -> JobState.MetaState.valueOf(p));
+        final Optional<JobState.MetaState> jobState = paramValue(params, QUERY_PARAM_JOB_STATE).map(JobState.MetaState::valueOf);
         // list job ids is used on job cluster detail page, the UI does not set this flag explicitly but expects to see completed jobs as well
         final Optional<Boolean> activeOnly = Optional.of(paramValueAsBool(params, QUERY_PARAM_ACTIVE_ONLY).orElse(activeOnlyDefault));
         final Optional<String> labelsQuery = paramValue(params, QUERY_PARAM_LABELS_QUERY);

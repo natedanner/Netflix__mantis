@@ -46,7 +46,7 @@ public class JobClusterDefinitionImpl implements IJobClusterDefinition {
     private final List<JobClusterConfig> jobClusterConfigs = Lists.newArrayList();
     private final List<Parameter> parameters;
     private final List<Label> labels;
-    private boolean isReadyForJobMaster = false;
+    private final boolean isReadyForJobMaster;
 
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -167,8 +167,12 @@ public class JobClusterDefinitionImpl implements IJobClusterDefinition {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         JobClusterDefinitionImpl that = (JobClusterDefinitionImpl) o;
         return isReadyForJobMaster == that.isReadyForJobMaster &&
                 Objects.equals(name, that.name) &&
@@ -273,8 +277,12 @@ public class JobClusterDefinitionImpl implements IJobClusterDefinition {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             CompletedJob that = (CompletedJob) o;
             return submittedAt == that.submittedAt &&
                     terminatedAt == that.terminatedAt &&
@@ -296,11 +304,11 @@ public class JobClusterDefinitionImpl implements IJobClusterDefinition {
     public static class Builder {
 
         List<JobClusterConfig> jobClusterConfigs = new ArrayList<>();
-        JobOwner owner = null;
+        JobOwner owner;
         SLA sla = new SLA(0, 0, null, null);
         WorkerMigrationConfig migrationConfig = WorkerMigrationConfig.DEFAULT;
         boolean isReadyForJobMaster = true;
-        String name = null;
+        String name;
         String user = "default";
         List<Parameter> parameters = Lists.newArrayList();
         List<Label> labels = Lists.newArrayList();

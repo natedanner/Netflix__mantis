@@ -76,7 +76,7 @@ public class HttpSourceImpl<R, E, T> implements Source<T> {
 
     private static final String DEFAULT_BUFFER_SIZE = "0";
 
-    private static Logger logger = LoggerFactory.getLogger(HttpSourceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpSourceImpl.class);
 
     static {
         NettyUtils.setNettyThreads();
@@ -233,9 +233,7 @@ public class HttpSourceImpl<R, E, T> implements Source<T> {
                 .getServersToAdd()
                 .filter((ServerInfo serverInfo) -> !connectionManager.alreadyConnected(serverInfo) && !connectionManager
                         .connectionAlreadyAttempted(serverInfo))
-                .flatMap((ServerInfo serverInfo) -> {
-                    return streamServers(Observable.just(serverInfo));
-                })
+                .flatMap((ServerInfo serverInfo) -> streamServers(Observable.just(serverInfo)))
                 .doOnError((Throwable error) -> {
                     logger.error(String.format("The source encountered an error " + error.getMessage(), error));
                     observer.onError(error);
@@ -431,7 +429,7 @@ public class HttpSourceImpl<R, E, T> implements Source<T> {
                             connectionGauge.set(getConnectedServers().size());
                         })
                 )
-                .doOnNext((HttpClientResponse<E> response) -> checkResponseIsSuccessful(response))
+                .doOnNext(this::checkResponseIsSuccessful)
                 .doOnError((Throwable error) -> {
                     logger.error(
                         "Connecting to server {} failed: {}",
@@ -564,7 +562,7 @@ public class HttpSourceImpl<R, E, T> implements Source<T> {
         }
     }
 
-    public static class HttpSourceEvent {
+    public static final class HttpSourceEvent {
 
         private final ServerInfo server;
         private final EventType eventType;
@@ -596,11 +594,7 @@ public class HttpSourceImpl<R, E, T> implements Source<T> {
             if (eventType != that.eventType) {
                 return false;
             }
-            if (server != null ? !server.equals(that.server) : that.server != null) {
-                return false;
-            }
-
-            return true;
+            return !(server != null ? !server.equals(that.server) : that.server != null);
         }
 
         @Override
@@ -610,7 +604,7 @@ public class HttpSourceImpl<R, E, T> implements Source<T> {
             return result;
         }
 
-        public static enum EventType {
+        public enum EventType {
             SERVER_FOUND,
             CONNECTION_ATTEMPTED,
             CONNECTION_ESTABLISHED,

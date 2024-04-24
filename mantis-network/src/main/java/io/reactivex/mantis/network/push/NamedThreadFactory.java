@@ -21,8 +21,8 @@ import java.util.concurrent.ThreadFactory;
 
 public class NamedThreadFactory implements ThreadFactory {
 
-    private int count = 0;
-    private String name;
+    private int count;
+    private final String name;
 
     public NamedThreadFactory(String name) {
         this.name = name;

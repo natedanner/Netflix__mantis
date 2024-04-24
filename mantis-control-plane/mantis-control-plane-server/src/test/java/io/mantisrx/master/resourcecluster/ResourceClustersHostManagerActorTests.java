@@ -432,8 +432,8 @@ public class ResourceClustersHostManagerActorTests {
         latch.await(3, TimeUnit.SECONDS);
         verify(resProvider).provisionClusterIfNotPresent(request);
         verify(responseHandler).handleProvisionResponse(argThat(r ->
-                r.getError().getCause().getMessage()
-                .equals("test err msg")));
+                "test err msg"
+                .equals(r.getError().getCause().getMessage())));
 
         probe.getSystem().stop(resourceClusterActor);
     }
@@ -513,7 +513,7 @@ public class ResourceClustersHostManagerActorTests {
     }
 
     private ProvisionResourceClusterRequest buildProvisionRequest(String id, String user) {
-        ProvisionResourceClusterRequest request = ProvisionResourceClusterRequest.builder()
+        return ProvisionResourceClusterRequest.builder()
                 .clusterId(ClusterID.of(id))
                 .clusterSpec(MantisResourceClusterSpec.builder()
                         .id(ClusterID.of(id))
@@ -543,6 +543,5 @@ public class ResourceClustersHostManagerActorTests {
                                 .build())
                         .build())
                 .build();
-        return request;
     }
 }

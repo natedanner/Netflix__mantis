@@ -21,7 +21,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 
-public class DateTimeExt {
+public final class DateTimeExt {
 
     private static final DateTimeFormatter ISO_UTC_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.of("UTC"));
 

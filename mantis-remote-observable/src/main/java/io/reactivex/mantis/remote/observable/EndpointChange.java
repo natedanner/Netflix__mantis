@@ -38,12 +38,18 @@ public class EndpointChange {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         EndpointChange that = (EndpointChange) o;
 
-        if (type != that.type) return false;
+        if (type != that.type) {
+            return false;
+        }
         return endpoint != null ? endpoint.equals(that.endpoint) : that.endpoint == null;
 
     }

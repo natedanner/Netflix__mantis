@@ -81,7 +81,7 @@ public class JobListHelperActor extends AbstractActor {
         Timeout t = new Timeout(Duration.create(500, TimeUnit.MILLISECONDS));
         List<MantisJobMetadataView> resultList = Lists.newArrayList();
         getJobClustersMatchingRegex(request.jobClusterInfoMap.values(), request.listJobsRequest.getCriteria())
-                .flatMap((jobClusterInfo) -> {
+                .flatMap(jobClusterInfo -> {
                     CompletionStage<JobClusterManagerProto.ListJobsResponse> respCS = ask(jobClusterInfo.jobClusterActor, request.listJobsRequest, t)
                             .thenApply(JobClusterManagerProto.ListJobsResponse.class::cast);
                     return Observable.from(respCS.toCompletableFuture(), Schedulers.io())
@@ -91,20 +91,18 @@ public class JobListHelperActor extends AbstractActor {
                             });
                 })
                 .filter(Objects::nonNull)
-                .flatMapIterable((listJobsResp) -> listJobsResp.getJobList())
+                .flatMapIterable(listJobsResp -> listJobsResp.getJobList())
                 .toSortedList((o1, o2) -> Long.compare(o1.getJobMetadata().getSubmittedAt(),
                         o2.getJobMetadata().getSubmittedAt()))
                 .subscribeOn(Schedulers.computation())
                 .subscribe( resultList::addAll,
-                        (e) -> {
-                            request.sender.tell(new JobClusterManagerProto.ListJobsResponse(request.listJobsRequest.requestId, SERVER_ERROR, e.getMessage(), resultList), sender);
-                        },() -> {
+                        e ->
+                            request.sender.tell(new JobClusterManagerProto.ListJobsResponse(request.listJobsRequest.requestId, SERVER_ERROR, e.getMessage(), resultList), sender),() ->
 // todo limit is applied at cluster level as well if(request.listJobsRequest.getCriteria().getLimit().isPresent()) {
 //                                int limit = request.listJobsRequest.getCriteria().getLimit().get();
 //                                request.sender.tell(new JobClusterManagerProto.ListJobsResponse(request.listJobsRequest.requestId, SUCCESS, "", resultList.subList(0, Math.min(resultList.size(), limit))), sender);
 //                            }
-                            request.sender.tell(new JobClusterManagerProto.ListJobsResponse(request.listJobsRequest.requestId, SUCCESS, "", resultList), sender);
-                        })
+                            request.sender.tell(new JobClusterManagerProto.ListJobsResponse(request.listJobsRequest.requestId, SUCCESS, "", resultList), sender))
         ;
 
     }
@@ -115,7 +113,7 @@ public class JobListHelperActor extends AbstractActor {
         Timeout t = new Timeout(Duration.create(500, TimeUnit.MILLISECONDS));
         List<JobClusterProtoAdapter.JobIdInfo> resultList = Lists.newArrayList();
         getJobClustersMatchingRegex(request.jobClusterInfoMap.values(),request.listJobIdsRequest.getCriteria())
-                .flatMap((jobClusterInfo) -> {
+                .flatMap(jobClusterInfo -> {
                     CompletionStage<JobClusterManagerProto.ListJobIdsResponse> respCS = ask(jobClusterInfo.jobClusterActor, request.listJobIdsRequest, t)
                             .thenApply(JobClusterManagerProto.ListJobIdsResponse.class::cast);
                     return Observable.from(respCS.toCompletableFuture(), Schedulers.io())
@@ -129,7 +127,7 @@ public class JobListHelperActor extends AbstractActor {
                 .subscribeOn(Schedulers.computation())
                 .subscribe(
                     resultList::addAll
-                ,(error) -> {
+                ,error -> {
                         logger.warn("Exception in JobListHelperActor:onJobIdList", error);
                     request.sender.tell(new JobClusterManagerProto.ListJobIdsResponse(request.listJobIdsRequest.requestId, SERVER_ERROR, error.getMessage(), resultList), sender);
                 },() -> {
@@ -158,7 +156,7 @@ public class JobListHelperActor extends AbstractActor {
         List<MantisJobClusterMetadataView> clusterList = Lists.newArrayList();
 
         Observable.from(request.jobClusterInfoMap.values())
-                .flatMap((jInfo) -> {
+                .flatMap(jInfo -> {
                     CompletionStage<JobClusterManagerProto.GetJobClusterResponse> respCS = ask(jInfo.jobClusterActor, new JobClusterManagerProto.GetJobClusterRequest(jInfo.clusterName), timeout)
                             .thenApply(JobClusterManagerProto.GetJobClusterResponse.class::cast);
                     return Observable.from(respCS.toCompletableFuture(), Schedulers.io())
@@ -167,15 +165,15 @@ public class JobListHelperActor extends AbstractActor {
                                 return Observable.empty();
                             });
                 })
-                .filter((resp) -> resp !=null && resp.getJobCluster().isPresent())
-                .map((resp) -> resp.getJobCluster().get())
+                .filter(resp -> resp !=null && resp.getJobCluster().isPresent())
+                .map(resp -> resp.getJobCluster().get())
                 //.collect((Func0<ArrayList<MantisJobClusterMetadataView>>) ArrayList::new,ArrayList::add)
                 .doOnError(this::logError)
                 .subscribeOn(Schedulers.computation())
                 //.toBlocking()
                 .subscribe(
                     clusterList::add
-                    ,(err) -> {
+                    ,err -> {
                         logger.warn("Exception in onJobClusterList ", err);
                         if(logger.isTraceEnabled()) { logger.trace("Exit onJobClustersListRequest {}", err); }
                         request.sender.tell(new JobClusterManagerProto.ListJobClustersResponse(request.listJobClustersRequest.requestId, SERVER_ERROR, err.getMessage(), clusterList), callerActor);
@@ -194,7 +192,7 @@ public class JobListHelperActor extends AbstractActor {
     private Observable<JobClustersManagerActor.JobClusterInfo> getJobClustersMatchingRegex(Collection<JobClustersManagerActor.JobClusterInfo> jobClusterList, JobClusterManagerProto.ListJobCriteria criteria) {
 
         return Observable.from(jobClusterList)
-                .filter((jcInfo) -> {
+                .filter(jcInfo -> {
                     if(criteria.getMatchingRegex().isPresent()) {
                         try {
                             return Pattern.compile(criteria.getMatchingRegex().get(), Pattern.CASE_INSENSITIVE)

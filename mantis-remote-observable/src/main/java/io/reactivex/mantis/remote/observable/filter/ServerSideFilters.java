@@ -20,7 +20,7 @@ import java.util.Map;
 import rx.functions.Func1;
 
 
-public class ServerSideFilters {
+public final class ServerSideFilters {
 
     private ServerSideFilters() {}
 
@@ -51,9 +51,9 @@ public class ServerSideFilters {
                         } else {
                             String type = params.get("type");
                             if ("even".equals(type)) {
-                                return (t1 % 2 == 0);
+                                return t1 % 2 == 0;
                             } else if ("odd".equals(type)) {
-                                return (t1 % 2 != 0);
+                                return t1 % 2 != 0;
                             } else {
                                 throw new RuntimeException("Unsupported filter param 'type' for oddsAndEvens: " + type);
                             }

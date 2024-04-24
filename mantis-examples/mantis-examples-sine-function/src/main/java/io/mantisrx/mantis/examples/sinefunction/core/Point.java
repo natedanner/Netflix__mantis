@@ -26,8 +26,8 @@ import java.io.Serializable;
 
 public class Point implements JsonType, Serializable {
 
-    private double x;
-    private double y;
+    private final double x;
+    private final double y;
 
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)

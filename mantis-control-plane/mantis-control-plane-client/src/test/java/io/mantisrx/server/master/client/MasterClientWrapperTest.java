@@ -48,7 +48,7 @@ public class MasterClientWrapperTest {
         zkProps.put("mantis.localmode", "false");
     }
 
-    MasterClientWrapper clientWrapper = null;
+    MasterClientWrapper clientWrapper;
 
     //@Before
     public void init() {
@@ -65,7 +65,7 @@ public class MasterClientWrapperTest {
 
         clientWrapper
                 .getNamedJobsIds(jobname)
-                .subscribe((jId) -> {
+                .subscribe(jId -> {
                     cdLatch.countDown();
                     System.out.println("job id " + jId);
                     assertTrue(jId.startsWith(jobname));
@@ -87,10 +87,8 @@ public class MasterClientWrapperTest {
 
         clientWrapper
                 .getNamedJobsIds(jobname)
-                .flatMap((jName) -> {
-                    return clientWrapper.getSinkLocations(jName, 1, 0, 0);
-                })
-                .subscribe((ep) -> {
+                .flatMap(jName -> clientWrapper.getSinkLocations(jName, 1, 0, 0))
+                .subscribe(ep -> {
                     System.out.println("Got EP " + ep.getEndpoint() + " type " + ep.getType());
                     cdLatch.countDown();
                 });
@@ -113,11 +111,11 @@ public class MasterClientWrapperTest {
 
         Observable<MantisMasterGateway> mmciO = clientWrapper.getMasterClientApi().take(1).cache().subscribeOn(Schedulers.io());
 
-        Observable<EndpointChange> epO = jobidO.map((jId) -> clientWrapper.getSinkLocations(jId, sinkStageNumber, 0, 0))
+        Observable<EndpointChange> epO = jobidO.map(jId -> clientWrapper.getSinkLocations(jId, sinkStageNumber, 0, 0))
                 .flatMap(e -> e)
                 .take(3)
-                .doOnNext((ep) -> System.out.println("Ep change: " + ep))
-                .doOnNext((ep) -> cdLatch.countDown());
+                .doOnNext(ep -> System.out.println("Ep change: " + ep))
+                .doOnNext(ep -> cdLatch.countDown());
 
         Observable<Boolean> deleteWorkerO = jobidO.zipWith(mmciO, (String jId, MantisMasterGateway mmci) -> {
             System.out.println("Job id is " + jId);
@@ -144,14 +142,14 @@ public class MasterClientWrapperTest {
                     }).flatMap(b -> b);
         })
                 .flatMap(b -> b)
-                .doOnNext((result) -> {
+                .doOnNext(result -> {
                     assertTrue(result);
                     cdLatch.countDown();
                 });
 
-        epO.subscribeOn(Schedulers.io()).subscribe((ep) -> System.out.println(ep), (t) -> t.printStackTrace(), () -> System.out.println("ep change completed"));
+        epO.subscribeOn(Schedulers.io()).subscribe(System.out::println, t -> t.printStackTrace(), () -> System.out.println("ep change completed"));
 
-        deleteWorkerO.toBlocking().subscribe((n) -> System.out.println(n), (t) -> t.printStackTrace(),
+        deleteWorkerO.toBlocking().subscribe(System.out::println, t -> t.printStackTrace(),
                 () -> System.out.println("worker deletion completed"));
 
         try {
@@ -174,14 +172,11 @@ public class MasterClientWrapperTest {
                     public Observable<String> call(MantisMasterGateway mantisMasterClientApi) {
                         Integer sinkStage = null;
                         return mantisMasterClientApi.getJobStatusObservable(jobId)
-                                .map((status) -> {
-                                    return status;
-                                })
+                                .map(status -> status)
                                 ;
                     }
-                }).take(2).toBlocking().subscribe((ep) -> {
-            System.out.println("Endpoint Change -> " + ep);
-        });
+                }).take(2).toBlocking().subscribe(ep ->
+            System.out.println("Endpoint Change -> " + ep));
 
     }
 
@@ -195,7 +190,7 @@ public class MasterClientWrapperTest {
         CountDownLatch cdLatch = new CountDownLatch(1);
         clientWrapper.namedJobExists("APIRequestSource")
 
-                .subscribe((exists) -> {
+                .subscribe(exists -> {
                     assertTrue(exists);
                     cdLatch.countDown();
                 });

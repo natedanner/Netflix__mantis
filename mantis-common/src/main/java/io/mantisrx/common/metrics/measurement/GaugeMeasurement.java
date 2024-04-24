@@ -23,8 +23,8 @@ import io.mantisrx.shaded.com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GaugeMeasurement {
 
-    private String event;
-    private double value;
+    private final String event;
+    private final double value;
 
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)

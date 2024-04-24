@@ -448,10 +448,10 @@ public class RuntimeTaskImplExecutorTest {
 
     @Getter
     private static class CollectingTaskLifecycleListener implements Listener {
-        boolean startingCalled = false;
-        boolean failedCalled = false;
-        boolean cancellingCalled = false;
-        boolean cancelledCalled = false;
+        boolean startingCalled;
+        boolean failedCalled;
+        boolean cancellingCalled;
+        boolean cancelledCalled;
 
         @Override
         public void onTaskStarting(RuntimeTask task) {

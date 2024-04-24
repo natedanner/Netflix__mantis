@@ -80,32 +80,40 @@ public class WorkerTerminate implements WorkerEvent {
         final int prime = 31;
         int result = 1;
         result = prime * result + (int) (eventTime ^ (eventTime >>> 32));
-        result = prime * result + ((finalState == null) ? 0 : finalState.hashCode());
-        result = prime * result + ((reason == null) ? 0 : reason.hashCode());
-        result = prime * result + ((workerId == null) ? 0 : workerId.hashCode());
+        result = prime * result + (finalState == null ? 0 : finalState.hashCode());
+        result = prime * result + (reason == null ? 0 : reason.hashCode());
+        result = prime * result + (workerId == null ? 0 : workerId.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         WorkerTerminate other = (WorkerTerminate) obj;
-        if (eventTime != other.eventTime)
+        if (eventTime != other.eventTime) {
             return false;
-        if (finalState != other.finalState)
+        }
+        if (finalState != other.finalState) {
             return false;
-        if (reason != other.reason)
+        }
+        if (reason != other.reason) {
             return false;
+        }
         if (workerId == null) {
-            if (other.workerId != null)
+            if (other.workerId != null) {
                 return false;
-        } else if (!workerId.equals(other.workerId))
+            }
+        } else if (!workerId.equals(other.workerId)) {
             return false;
+        }
         return true;
     }
 

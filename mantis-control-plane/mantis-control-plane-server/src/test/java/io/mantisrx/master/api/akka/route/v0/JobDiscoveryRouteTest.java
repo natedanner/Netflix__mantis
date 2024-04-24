@@ -62,15 +62,15 @@ import org.testng.annotations.Test;
 import rx.Observable;
 
 public class JobDiscoveryRouteTest {
-    private final static Logger logger = LoggerFactory.getLogger(JobDiscoveryRouteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobDiscoveryRouteTest.class);
     private final ActorMaterializer materializer = ActorMaterializer.create(system);
     private final Http http = Http.get(system);
     private static Thread t;
     private static final int serverPort = 8217;
 
     private static volatile CompletionStage<ServerBinding> binding;
-    private static ActorSystem system = ActorSystem.create("JobDiscoveryRoute");
-    private static ActorRef agentsErrorMonitorActor = system.actorOf(AgentsErrorMonitorActor.props());
+    private static final ActorSystem system = ActorSystem.create("JobDiscoveryRoute");
+    private static final ActorRef agentsErrorMonitorActor = system.actorOf(AgentsErrorMonitorActor.props());
     private final TestMantisClient mantisClient = new TestMantisClient(serverPort);
 
     @BeforeClass

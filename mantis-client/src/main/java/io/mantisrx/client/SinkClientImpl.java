@@ -42,8 +42,8 @@ public class SinkClientImpl<T> implements SinkClient<T> {
     final String jobId;
     final SinkConnectionFunc<T> sinkConnectionFunc;
     final JobSinkLocator jobSinkLocator;
-    final private AtomicBoolean nowClosed = new AtomicBoolean(false);
-    final private SinkConnections<T> sinkConnections = new SinkConnections<>();
+    private final AtomicBoolean nowClosed = new AtomicBoolean(false);
+    private final SinkConnections<T> sinkConnections = new SinkConnections<>();
     private final String sinkGuageName = "SinkConnections";
     private final String expectedSinksGaugeName = "ExpectedSinkConnections";
     private final String sinkReceivingDataGaugeName = "sinkRecvngData";
@@ -88,12 +88,12 @@ public class SinkClientImpl<T> implements SinkClient<T> {
         sinkReceivingDataGauge = metrics.getGauge(sinkReceivingDataGaugeName);
         clientNotConnectedToAllSourcesGauge = metrics.getGauge(clientNotConnectedToAllSourcesGaugeName);
         numSinkWorkersObservable
-                .doOnNext((jobSinkNumWorkers) -> {
+                .doOnNext(jobSinkNumWorkers -> {
                     numSinkWorkers.set(jobSinkNumWorkers.getNumSinkWorkers());
                     numSinkRunningWorkers.set(jobSinkNumWorkers.getNumSinkRunningWorkers());
 
                 })
-                .takeWhile((integer) -> !nowClosed.get())
+                .takeWhile(integer -> !nowClosed.get())
                 .subscribe();
         this.sinkConnectionsStatusObserver = sinkConnectionsStatusObserver;
         this.dataRecvTimeoutSecs = dataRecvTimeoutSecs;
@@ -138,8 +138,9 @@ public class SinkClientImpl<T> implements SinkClient<T> {
                 .map(new Func1<EndpointChange, Observable<T>>() {
                     @Override
                     public Observable<T> call(EndpointChange endpointChange) {
-                        if (nowClosed.get())
+                        if (nowClosed.get()) {
                             return Observable.empty();
+                        }
                         if (endpointChange.getType() == EndpointChange.Type.complete) {
                             return handleEndpointClose(endpointChange);
                         } else {
@@ -222,10 +223,11 @@ public class SinkClientImpl<T> implements SinkClient<T> {
     }
 
     private void updateSinkDataReceivingStatus(Boolean flag) {
-        if (flag)
+        if (flag) {
             sinkReceivingDataGauge.increment();
-        else
+        } else {
             sinkReceivingDataGauge.decrement();
+        }
         expectedSinksGauge.set(numSinkWorkers.get());
         if (expectedSinksGauge.value() != sinkReceivingDataGauge.value()) {
             this.clientNotConnectedToAllSourcesGauge.set(1);
@@ -240,10 +242,11 @@ public class SinkClientImpl<T> implements SinkClient<T> {
     }
 
     private void updateSinkConx(Boolean flag) {
-        if (flag)
+        if (flag) {
             sinkGauge.increment();
-        else
+        } else {
             sinkGauge.decrement();
+        }
         expectedSinksGauge.set(numSinkWorkers.get());
         if (expectedSinksGauge.value() != sinkReceivingDataGauge.value()) {
             this.clientNotConnectedToAllSourcesGauge.set(1);
@@ -290,13 +293,14 @@ public class SinkClientImpl<T> implements SinkClient<T> {
     @ToString
     class SinkConnections<T> {
 
-        final private Map<String, SinkConnection<T>> sinkConnections = new HashMap<>();
-        private boolean isClosed = false;
+        private final Map<String, SinkConnection<T>> sinkConnections = new HashMap<>();
+        private boolean isClosed;
 
         private void put(String key, SinkConnection<T> val) {
             synchronized (sinkConnections) {
-                if (isClosed)
+                if (isClosed) {
                     return;
+                }
                 sinkConnections.put(key, val);
             }
         }

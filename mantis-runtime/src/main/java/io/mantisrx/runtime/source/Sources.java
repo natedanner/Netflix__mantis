@@ -23,7 +23,7 @@ import rx.Observable;
 import rx.functions.Func1;
 
 
-public class Sources {
+public final class Sources {
 
     private Sources() {}
 

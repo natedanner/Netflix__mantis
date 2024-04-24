@@ -106,7 +106,7 @@ public class DefaultMantisApiClientTest {
         Assertions.assertEquals(expectedMap, appJobClustersMap);
     }
 
-    private static final byte[] readStub(String resourceFile) throws IOException {
+    private static byte[] readStub(String resourceFile) throws IOException {
         InputStream inputStream = DefaultMantisApiClientTest.class.getClassLoader().getResourceAsStream(resourceFile);
         return IOUtils.toByteArray(inputStream);
     }

@@ -20,7 +20,7 @@ import java.util.EnumSet;
 import rx.functions.Func1;
 
 
-public class Validators {
+public final class Validators {
 
     private Validators() {}
 

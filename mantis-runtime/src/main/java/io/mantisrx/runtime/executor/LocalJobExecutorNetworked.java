@@ -65,7 +65,7 @@ import rx.functions.Func1;
 import rx.subjects.BehaviorSubject;
 
 
-public class LocalJobExecutorNetworked {
+public final class LocalJobExecutorNetworked {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalJobExecutorNetworked.class);
     private static final int numPartitions = 1;
@@ -92,7 +92,7 @@ public class LocalJobExecutorNetworked {
         if (logger.isDebugEnabled()) {
             StringBuilder portsToString = new StringBuilder();
             for (int previousPort : previousStagePorts) {
-                portsToString.append(previousPort + " ");
+                portsToString.append(previousPort).append(" ");
             }
             logger.debug("Creating intermediate consumer connecting to publishers on ports " + portsToString);
         }
@@ -121,7 +121,7 @@ public class LocalJobExecutorNetworked {
         if (logger.isDebugEnabled()) {
             StringBuilder portsToString = new StringBuilder();
             for (int previousPort : previousStagePorts) {
-                portsToString.append(previousPort + " ");
+                portsToString.append(previousPort).append(" ");
             }
             logger.debug("Creating sink consumer connecting to publishers on ports " + portsToString);
         }
@@ -176,7 +176,7 @@ public class LocalJobExecutorNetworked {
         // register netty metrics
         RxNetty.useMetricListenersFactory(new MantisNettyEventsListenerFactory());
         // start our metrics server
-        MetricsServer metricsServer = new MetricsServer(portSelector.acquirePort(), 1, Collections.EMPTY_MAP);
+        MetricsServer metricsServer = new MetricsServer(portSelector.acquirePort(), 1, Collections.emptyMap());
         metricsServer.start();
 
         Lifecycle lifecycle = job.getLifecycle();
@@ -233,9 +233,8 @@ public class LocalJobExecutorNetworked {
                         lifecycle.getServiceLocator(),
                         //new WorkerInfo(jobId, jobId, 1, i, i, MantisJobDurationType.Perpetual, "localhost", new ArrayList<>(),-1,-1),
                         workerInfo,
-                        MetricsRegistry.getInstance(), () -> {
-                    System.exit(0);
-                }, workerMapObservable,
+                        MetricsRegistry.getInstance(), () ->
+                    System.exit(0), workerMapObservable,
                     Thread.currentThread().getContextClassLoader());
 
                 // workers for stage 1

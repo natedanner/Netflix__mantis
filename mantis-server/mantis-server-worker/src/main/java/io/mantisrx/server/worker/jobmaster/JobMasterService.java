@@ -46,7 +46,7 @@ public class JobMasterService implements Service {
 
     private static final Logger logger = LoggerFactory.getLogger(JobMasterService.class);
 
-    private final static ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private static final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private final String jobId;
     private final WorkerMetricsClient workerMetricsClient;
     private final AutoScaleMetricsConfig autoScaleMetricsConfig;
@@ -58,7 +58,7 @@ public class JobMasterService implements Service {
     private final Action0 observableOnTerminateCallback;
     private final MantisMasterGateway masterClientApi;
 
-    private Subscription subscription = null;
+    private Subscription subscription;
 
     public JobMasterService(final String jobId,
                             final SchedulingInfo schedInfo,

@@ -560,7 +560,7 @@ public class RemoteObservableTest {
         PortSelectorWithinRange portSelector = new PortSelectorWithinRange(8000, 9000);
 
         // serve up first observable
-        final MutableReference<Boolean> sourceSubscriptionUnsubscribed = new MutableReference<Boolean>();
+        final MutableReference<Boolean> sourceSubscriptionUnsubscribed = new MutableReference<>();
         Observable<Integer> os = Observable.create(new OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
@@ -599,7 +599,7 @@ public class RemoteObservableTest {
     public void testUnsubscribeForChainedRemoteObservable() throws InterruptedException {
 
         // serve first node in chain
-        final MutableReference<Boolean> sourceSubscriptionUnsubscribed = new MutableReference<Boolean>();
+        final MutableReference<Boolean> sourceSubscriptionUnsubscribed = new MutableReference<>();
         PortSelectorWithinRange portSelector = new PortSelectorWithinRange(8000, 9000);
         Observable<Integer> os = Observable.create(new OnSubscribe<Integer>() {
             @Override
@@ -665,7 +665,7 @@ public class RemoteObservableTest {
         server.start();
 
         // connect
-        Map<String, String> subscribeParameters = new HashMap<String, String>();
+        Map<String, String> subscribeParameters = new HashMap<>();
         subscribeParameters.put("type", "even");
 
         Observable<Integer> oc = RemoteObservable.connect(new ConnectToObservable.Builder<Integer>()
@@ -706,7 +706,7 @@ public class RemoteObservableTest {
         server.start();
         // connect
         Observable<Integer> ro = RemoteObservable.connect("localhost", serverPort, Codecs.integer());
-        final MutableReference<Boolean> completed = new MutableReference<Boolean>();
+        final MutableReference<Boolean> completed = new MutableReference<>();
         ro.materialize().toBlocking().forEach(new Action1<Notification<Integer>>() {
             @Override
             public void call(Notification<Integer> notification) {

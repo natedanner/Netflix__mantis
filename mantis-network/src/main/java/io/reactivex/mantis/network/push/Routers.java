@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 import rx.functions.Func1;
 
 
-public class Routers {
+public final class Routers {
 
     private Routers() {}
 
@@ -100,8 +100,9 @@ public class Routers {
             @Override
             public byte[] call(final String value) {
                 final byte[] bytes = new byte[value.length()];
-                for (int i = 0; i < value.length(); i++)
+                for (int i = 0; i < value.length(); i++) {
                     bytes[i] = (byte) value.charAt(i);
+                }
                 return bytes;
             }
         };

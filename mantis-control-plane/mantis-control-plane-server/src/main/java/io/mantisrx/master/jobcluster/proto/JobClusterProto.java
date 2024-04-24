@@ -275,7 +275,7 @@ public class JobClusterProto {
     public static final class BookkeepingRequest {
         public final Instant time;
         public BookkeepingRequest(Instant time) {
-            this.time = time;;
+            this.time = time;
         }
         public BookkeepingRequest() {
             this(Instant.now());
@@ -286,7 +286,7 @@ public class JobClusterProto {
     public static final class TriggerCronRequest {
         public final Instant time;
         public TriggerCronRequest(Instant time) {
-            this.time = time;;
+            this.time = time;
         }
         public TriggerCronRequest() {
             this(Instant.now());

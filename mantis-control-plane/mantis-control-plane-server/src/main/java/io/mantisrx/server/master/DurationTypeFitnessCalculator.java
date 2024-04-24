@@ -39,17 +39,20 @@ public class DurationTypeFitnessCalculator implements VMTaskFitnessCalculator {
         int sameTypeTasks = 0;
         for (TaskRequest request : targetVM.getRunningTasks()) {
             totalTasks++;
-            if (((ScheduleRequest) request).getDurationType() == durationType)
+            if (((ScheduleRequest) request).getDurationType() == durationType) {
                 sameTypeTasks++;
+            }
         }
         for (TaskAssignmentResult result : targetVM.getTasksCurrentlyAssigned()) {
             totalTasks++;
-            if (((ScheduleRequest) result.getRequest()).getDurationType() == durationType)
+            if (((ScheduleRequest) result.getRequest()).getDurationType() == durationType) {
                 sameTypeTasks++;
+            }
         }
-        if (totalTasks == 0)
+        if (totalTasks == 0) {
             return 0.9; // an arbitrary preferential value to indicate that a fresh new host is not perfect
-        // fit but a better fit than a host that has tasks of different type
+            // fit but a better fit than a host that has tasks of different type
+        }
         return (double) sameTypeTasks / (double) totalTasks;
     }
 }

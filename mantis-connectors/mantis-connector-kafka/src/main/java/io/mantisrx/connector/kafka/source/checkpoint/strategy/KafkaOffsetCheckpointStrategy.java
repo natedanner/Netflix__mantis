@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class KafkaOffsetCheckpointStrategy implements CheckpointStrategy<OffsetAndMetadata> {
 
-    private static Logger logger = LoggerFactory.getLogger(KafkaOffsetCheckpointStrategy.class);
+    private static final Logger logger = LoggerFactory.getLogger(KafkaOffsetCheckpointStrategy.class);
 
     private final KafkaConsumer<?, ?> consumer;
     private final ConsumerMetrics consumerMetrics;

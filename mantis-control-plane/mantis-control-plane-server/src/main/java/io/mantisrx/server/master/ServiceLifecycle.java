@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class ServiceLifecycle {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceLifecycle.class);
-    private LinkedList<BaseService> servicesList = new LinkedList<BaseService>();
+    private final LinkedList<BaseService> servicesList = new LinkedList<>();
 
     void addService(BaseService service) {
         if (!servicesList.isEmpty()) {

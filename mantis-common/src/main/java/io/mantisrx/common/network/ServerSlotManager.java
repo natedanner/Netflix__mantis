@@ -33,8 +33,8 @@ public class ServerSlotManager<T> {
 
     private static final String CLIENT_ID = "clientId";
     private static final Logger LOG = LoggerFactory.getLogger(ServerSlotManager.class);
-    ConcurrentHashMap<String, SlotAssignmentManager<T>> slotManagerMap = new ConcurrentHashMap<String, SlotAssignmentManager<T>>();
-    private HashFunction hashAlgorithm;
+    ConcurrentHashMap<String, SlotAssignmentManager<T>> slotManagerMap = new ConcurrentHashMap<>();
+    private final HashFunction hashAlgorithm;
 
     public ServerSlotManager(HashFunction hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
@@ -50,7 +50,7 @@ public class ServerSlotManager<T> {
         // if slot manager doesn't already exist. create it
         if (sam == null) {
             LOG.info("Setting up new SlotAssignmentManager for sub: " + subId);
-            sam = new SlotAssignmentManager<T>(hashAlgorithm, subId);
+            sam = new SlotAssignmentManager<>(hashAlgorithm, subId);
             slotManagerMap.putIfAbsent(subId, sam);
         }
         sam.registerServer(node);
@@ -90,9 +90,9 @@ public class ServerSlotManager<T> {
 
     public static class SlotAssignmentManager<T> {
 
-        AtomicReference<ConsistentHash<WritableEndpoint<T>>> consistentHashRef = new AtomicReference<ConsistentHash<WritableEndpoint<T>>>();
-        ConcurrentSkipListSet<WritableEndpoint<T>> nodeList = new ConcurrentSkipListSet<WritableEndpoint<T>>();
-        ConcurrentHashMap<String, Integer> connectionIdToSlotNumberMap = new ConcurrentHashMap<String, Integer>();
+        AtomicReference<ConsistentHash<WritableEndpoint<T>>> consistentHashRef = new AtomicReference<>();
+        ConcurrentSkipListSet<WritableEndpoint<T>> nodeList = new ConcurrentSkipListSet<>();
+        ConcurrentHashMap<String, Integer> connectionIdToSlotNumberMap = new ConcurrentHashMap<>();
         private String consumerJobId;
         private HashFunction hashAlgo;
         private Gauge nodesOnRing;
@@ -124,7 +124,7 @@ public class ServerSlotManager<T> {
             }
             LOG.info("node " + sn + " add " + success);
             LOG.info("Ring: " + consumerJobId + " after force register: " + nodeList);
-            ConsistentHash<WritableEndpoint<T>> newConsistentHash = new ConsistentHash<WritableEndpoint<T>>(hashAlgo, new WritableEndpointConfiguration<T>(), nodeList);
+            ConsistentHash<WritableEndpoint<T>> newConsistentHash = new ConsistentHash<>(hashAlgo, new WritableEndpointConfiguration<T>(), nodeList);
             consistentHashRef.set(newConsistentHash);
             nodesOnRing.set(nodeList.size());
             return success;
@@ -135,7 +135,7 @@ public class ServerSlotManager<T> {
             boolean success = nodeList.add(sn);
             LOG.info("node " + sn + " add " + success);
             LOG.info("Ring: " + consumerJobId + " after register: " + nodeList);
-            ConsistentHash<WritableEndpoint<T>> newConsistentHash = new ConsistentHash<WritableEndpoint<T>>(hashAlgo, new WritableEndpointConfiguration<T>(), nodeList);
+            ConsistentHash<WritableEndpoint<T>> newConsistentHash = new ConsistentHash<>(hashAlgo, new WritableEndpointConfiguration<T>(), nodeList);
             consistentHashRef.set(newConsistentHash);
             nodesOnRing.set(nodeList.size());
             return success;
@@ -147,7 +147,7 @@ public class ServerSlotManager<T> {
             LOG.info("node " + node + " removed " + success);
             LOG.info("Ring: " + consumerJobId + " after deregister: " + nodeList);
             if (!nodeList.isEmpty()) {
-                ConsistentHash<WritableEndpoint<T>> newConsistentHash = new ConsistentHash<WritableEndpoint<T>>(hashAlgo, new WritableEndpointConfiguration<T>(), nodeList);
+                ConsistentHash<WritableEndpoint<T>> newConsistentHash = new ConsistentHash<>(hashAlgo, new WritableEndpointConfiguration<T>(), nodeList);
                 consistentHashRef.set(newConsistentHash);
             }
             nodesOnRing.set(nodeList.size());
@@ -181,40 +181,49 @@ public class ServerSlotManager<T> {
             int result = 1;
             result = prime
                     * result
-                    + ((connectionIdToSlotNumberMap == null) ? 0
+                    + (connectionIdToSlotNumberMap == null ? 0
                     : connectionIdToSlotNumberMap.hashCode());
             result = prime * result
-                    + ((consumerJobId == null) ? 0 : consumerJobId.hashCode());
+                    + (consumerJobId == null ? 0 : consumerJobId.hashCode());
             result = prime * result
-                    + ((nodeList == null) ? 0 : nodeList.hashCode());
+                    + (nodeList == null ? 0 : nodeList.hashCode());
             return result;
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             SlotAssignmentManager other = (SlotAssignmentManager) obj;
             if (connectionIdToSlotNumberMap == null) {
-                if (other.connectionIdToSlotNumberMap != null)
+                if (other.connectionIdToSlotNumberMap != null) {
                     return false;
+                }
             } else if (!connectionIdToSlotNumberMap
-                    .equals(other.connectionIdToSlotNumberMap))
+                .equals(other.connectionIdToSlotNumberMap)) {
                 return false;
+            }
             if (consumerJobId == null) {
-                if (other.consumerJobId != null)
+                if (other.consumerJobId != null) {
                     return false;
-            } else if (!consumerJobId.equals(other.consumerJobId))
+                }
+            } else if (!consumerJobId.equals(other.consumerJobId)) {
                 return false;
+            }
             if (nodeList == null) {
-                if (other.nodeList != null)
+                if (other.nodeList != null) {
                     return false;
-            } else if (!nodeList.equals(other.nodeList))
+                }
+            } else if (!nodeList.equals(other.nodeList)) {
                 return false;
+            }
             return true;
         }
 

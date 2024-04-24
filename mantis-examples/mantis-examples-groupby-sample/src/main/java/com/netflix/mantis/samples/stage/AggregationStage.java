@@ -57,9 +57,8 @@ public class AggregationStage implements GroupToScalarComputation<String, Reques
             return accumulator;
         })
                 //                                .map((count) -> RequestAggregation.builder().count(count).path(go.getKey()).build())
-                .doOnNext((aggregate) -> {
-                    log.debug("Generated aggregate {}", aggregate);
-                });
+                .doOnNext(aggregate ->
+                    log.debug("Generated aggregate {}", aggregate));
     }
 
     /**
@@ -72,11 +71,10 @@ public class AggregationStage implements GroupToScalarComputation<String, Reques
     @Override
     public Observable<RequestAggregation> call(Context context, Observable<MantisGroup<String, RequestEvent>> mantisGroupO) {
         return mantisGroupO
-                .doOnNext((mg) -> {
-                    log.info("Received " + mg.getKeyValue() + " on Thread " + Thread.currentThread().getName());
-                })
+                .doOnNext(mg ->
+                    log.info("Received " + mg.getKeyValue() + " on Thread " + Thread.currentThread().getName()))
                 .window(aggregationDurationMsec, TimeUnit.MILLISECONDS)
-                .flatMap((omg) -> omg.groupBy(MantisGroup::getKeyValue)
+                .flatMap(omg -> omg.groupBy(MantisGroup::getKeyValue)
                         .flatMap(//                                .map((count) -> RequestAggregation.builder().count(count).path(go.getKey()).build())
                                 this::aggregate
                         ));

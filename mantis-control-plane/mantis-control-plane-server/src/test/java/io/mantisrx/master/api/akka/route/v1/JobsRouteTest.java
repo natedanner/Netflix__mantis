@@ -89,7 +89,7 @@ import org.testng.util.Strings;
 
 
 public class JobsRouteTest extends RouteTestBase {
-    private final static Logger logger = LoggerFactory.getLogger(JobsRouteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobsRouteTest.class);
     private static Thread t;
     private static final int SERVER_PORT = 8204;
     private static CompletionStage<ServerBinding> binding;
@@ -386,7 +386,7 @@ public class JobsRouteTest extends RouteTestBase {
                         ContentTypes.APPLICATION_JSON,
                         JobClusterPayloads.JOB_CLUSTER_SUBMIT_NonExistent),
                 StatusCodes.NOT_FOUND,
-                (m) -> {
+                m -> {
                     assert m.contains("Job Cluster NonExistent doesn't exist");
                 });
     }
@@ -398,7 +398,7 @@ public class JobsRouteTest extends RouteTestBase {
                         ContentTypes.APPLICATION_JSON,
                         JobClusterPayloads.JOB_CLUSTER_SUBMIT),
                 StatusCodes.BAD_REQUEST,
-                (m) -> {
+                m -> {
                     assert m.contains("Cluster name specified in request payload [sine-function]" +
                                       " does not match with what specified in resource endpoint [NonExistent]");
                 });
@@ -450,7 +450,7 @@ public class JobsRouteTest extends RouteTestBase {
         testGet(
                 getJobInstanceEndpoint("NonExistent-1"),
                 StatusCodes.NOT_FOUND,
-                (m) -> {
+                m -> {
                     assert m.contains("Job NonExistent-1 doesn't exist");
                 });
     }
@@ -459,7 +459,7 @@ public class JobsRouteTest extends RouteTestBase {
         testGet(
                 getJobInstanceEndpoint("NonExistent", TEST_JOB_ID),
                 StatusCodes.NOT_FOUND,
-                (m) -> {
+                m -> {
                     assert m.contains("JobId [sine-function-1] exists but does not " +
                                       "belong to specified cluster [NonExistent]");
                 });
@@ -470,7 +470,7 @@ public class JobsRouteTest extends RouteTestBase {
         testGet(
                 getJobInstanceEndpoint(TEST_CLUSTER, "NonExistent-1"),
                 StatusCodes.NOT_FOUND,
-                (m) -> {
+                m -> {
                     assert m.contains("Job NonExistent-1 doesn't exist");
                 });
     }
@@ -544,7 +544,7 @@ public class JobsRouteTest extends RouteTestBase {
                         ContentTypes.APPLICATION_JSON,
                         JobPayloads.SCALE_STAGE),
                 StatusCodes.BAD_REQUEST,
-                (m) -> {
+                m -> {
                     assert m.contains("JobId specified in request payload [sine-function-1] " +
                                       "does not match with resource uri [NonExistent-1]");
                 });
@@ -640,7 +640,7 @@ public class JobsRouteTest extends RouteTestBase {
                 "mantis-examples-sine-function-0.2.9.zip");
 
         assert responseObj.get("parameters").size() == 2;
-        assert responseObj.get("jobSla").get("durationType").asText().equals("Perpetual");
+        assert "Perpetual".equals(responseObj.get("jobSla").get("durationType").asText());
         assert responseObj.get("numberOfStages").asInt() == 2;
         assert responseObj.get("schedulingInfo") != null;
         assert responseObj.get("labels").size() == 7;
@@ -656,7 +656,7 @@ public class JobsRouteTest extends RouteTestBase {
 
             assert responseObj.get("submittedAt") != null;
             assert responseObj.get("user") != null;
-            assert responseObj.get("type").asText().equals("Perpetual");
+            assert "Perpetual".equals(responseObj.get("type").asText());
             assert responseObj.get("numStages").asInt() == 2;
             assert responseObj.get("numWorkers").asInt() == 2;
             assert responseObj.get("totCPUs").asInt() == 2;
@@ -670,7 +670,7 @@ public class JobsRouteTest extends RouteTestBase {
                               .get("jobId")
                               .asText()
                               .startsWith("sine-function-");
-            assert responseObj.get("jobMetadata").get("name").asText().equals("sine-function");
+            assert "sine-function".equals(responseObj.get("jobMetadata").get("name").asText());
             assert responseObj.get("jobMetadata").get("jarUrl").asText().equals(
                     "https://mantis.staging.us-east-1.prod.netflix.net/mantis-artifacts/" +
                     "mantis-examples-sine-function-0.2.9.zip");

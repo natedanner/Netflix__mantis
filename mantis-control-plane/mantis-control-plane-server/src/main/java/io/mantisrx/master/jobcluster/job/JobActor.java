@@ -112,22 +112,22 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
     /**
      * Behavior after being initialized.
      */
-    private Receive initializedBehavior;
+    private final Receive initializedBehavior;
 
     /**
      * Behavior once active.
      */
-    private Receive activeBehavior;
+    private final Receive activeBehavior;
 
     /**
      * Behavior during termination.
      */
-    private Receive terminatingBehavior;
+    private final Receive terminatingBehavior;
 
     /**
      * Behavior after termination waiting for JCA to terminate actor.
      */
-    private Receive terminatedBehavior;
+    private final Receive terminatedBehavior;
 
     private final String clusterName;
     private final JobId jobId;
@@ -136,17 +136,17 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
 
     private final MantisJobStore jobStore;
     // load from config
-    private int workerWritesBatchSize = 10;
+    private final int workerWritesBatchSize = 10;
 
     // Manages life cycle of worker
-    private IWorkerManager workerManager = null;
+    private IWorkerManager workerManager;
 
     // Used to schedule and unschedule workers
     private final MantisScheduler mantisScheduler;
     private final LifecycleEventPublisher eventPublisher;
     private final CostsCalculator costsCalculator;
     private boolean hasJobMaster;
-    private volatile boolean allWorkersCompleted = false;
+    private volatile boolean allWorkersCompleted;
 
     /**
      * Used by the JobCluster Actor to create this Job Actor.
@@ -399,40 +399,40 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
                 // UNEXPECTED MESSAGES BEGIN //
 
                 // Worker related events
-                .match(WorkerEvent.class, (x) -> LOGGER.warn("Job {} is Terminating, ignoring worker Events {}",
+                .match(WorkerEvent.class, x -> LOGGER.warn("Job {} is Terminating, ignoring worker Events {}",
                         this.jobId.getId(), x))
 
-                .match(InitJob.class, (x) -> getSender().tell(new JobInitialized(x.requestId, SUCCESS,
+                .match(InitJob.class, x -> getSender().tell(new JobInitialized(x.requestId, SUCCESS,
                         genUnexpectedMsg(x.toString(), this.jobId.getId(), state), this.jobId, x.requstor), getSelf()))
                 // explicit resubmit worker
-                .match(ResubmitWorkerRequest.class, (x) -> getSender().tell(new ResubmitWorkerResponse(x.requestId,
+                .match(ResubmitWorkerRequest.class, x -> getSender().tell(new ResubmitWorkerResponse(x.requestId,
                         CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.jobId.getId(), state)), getSelf()))
                 // Heart beat accounting timers
-                .match(JobProto.CheckHeartBeat.class, (x) -> LOGGER.warn(genUnexpectedMsg(x.toString(),
+                .match(JobProto.CheckHeartBeat.class, x -> LOGGER.warn(genUnexpectedMsg(x.toString(),
                         this.jobId.getId(), state)))
                 // runtime limit reached
-                .match(JobProto.RuntimeLimitReached.class, (x) -> LOGGER.warn(genUnexpectedMsg(x.toString(),
+                .match(JobProto.RuntimeLimitReached.class, x -> LOGGER.warn(genUnexpectedMsg(x.toString(),
                         this.jobId.getId(), state)))
                 // Kill job request
-                .match(JobClusterProto.KillJobRequest.class, (x) -> getSender().tell(new KillJobResponse(x.requestId,
+                .match(JobClusterProto.KillJobRequest.class, x -> getSender().tell(new KillJobResponse(x.requestId,
                         SUCCESS, JobState.Noop, genUnexpectedMsg(x.toString(), this.jobId.getId(), state),
                         this.jobId, x.user), getSelf()))
                 // scale stage request
-                .match(ScaleStageRequest.class, (x) -> getSender().tell(new ScaleStageResponse(x.requestId,
+                .match(ScaleStageRequest.class, x -> getSender().tell(new ScaleStageResponse(x.requestId,
                         CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.jobId.getId(), state),
                         0), getSelf()))
                 // scheduling Info observable
-                .match(GetJobSchedInfoRequest.class, (x) -> getSender().tell(
+                .match(GetJobSchedInfoRequest.class, x -> getSender().tell(
                         new GetJobSchedInfoResponse(x.requestId, CLIENT_ERROR,
                                 genUnexpectedMsg(x.toString(), this.jobId.getId(), state), empty()), getSelf()))
-                .match(GetLatestJobDiscoveryInfoRequest.class, (x) -> getSender().tell(
+                .match(GetLatestJobDiscoveryInfoRequest.class, x -> getSender().tell(
                         new GetLatestJobDiscoveryInfoResponse(x.requestId, CLIENT_ERROR,
                                 genUnexpectedMsg(x.toString(), this.jobId.getId(), state), empty()), getSelf()))
 
                 .match(
                         JobProto.SendWorkerAssignementsIfChanged.class,
-                        (x) -> LOGGER.warn(genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
-                .match(KillJobResponse.class, (x) -> LOGGER.info("Received Kill Job Response in"
+                        x -> LOGGER.warn(genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
+                .match(KillJobResponse.class, x -> LOGGER.info("Received Kill Job Response in"
                         + "Terminating State Ignoring"))
 
                 .matchAny(x -> LOGGER.warn(genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
@@ -464,48 +464,48 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
 
                 // UNEXPECTED MESSAGES BEGIN //
 
-                .match(InitJob.class, (x) -> getSender().tell(
+                .match(InitJob.class, x -> getSender().tell(
                         new JobInitialized(x.requestId, SUCCESS, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state), this.jobId, x.requstor), getSelf()))
                 // explicit resubmit worker
-                .match(ResubmitWorkerRequest.class, (x) -> getSender().tell(
+                .match(ResubmitWorkerRequest.class, x -> getSender().tell(
                         new ResubmitWorkerResponse(x.requestId, CLIENT_ERROR,
                                 genUnexpectedMsg(x.toString(), this.jobId.getId(), state)), getSelf()))
                 // Heart beat accounting timers
-                .match(JobProto.CheckHeartBeat.class, (x) -> LOGGER.warn(
+                .match(JobProto.CheckHeartBeat.class, x -> LOGGER.warn(
                         genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
                 // Migrate worker request
-                .match(JobProto.MigrateDisabledVmWorkersRequest.class, (x) -> LOGGER.warn(
+                .match(JobProto.MigrateDisabledVmWorkersRequest.class, x -> LOGGER.warn(
                         genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
                 // runtime limit reached
-                .match(JobProto.RuntimeLimitReached.class, (x) -> LOGGER.warn(
+                .match(JobProto.RuntimeLimitReached.class, x -> LOGGER.warn(
                         genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
                 // Kill job request
-                .match(JobClusterProto.KillJobRequest.class, (x) -> getSender().tell(
+                .match(JobClusterProto.KillJobRequest.class, x -> getSender().tell(
                         new KillJobResponse(x.requestId, SUCCESS, JobState.Noop,
                                 genUnexpectedMsg(x.toString(), this.jobId.getId(), state), this.jobId, x.user),
                         getSelf()))
                 // scale stage request
-                .match(ScaleStageRequest.class, (x) -> getSender().tell(
+                .match(ScaleStageRequest.class, x -> getSender().tell(
                         new ScaleStageResponse(x.requestId, CLIENT_ERROR,
                                 genUnexpectedMsg(x.toString(), this.jobId.getId(), state), 0),
                         getSelf()))
                 // scheduling Info observable
-                .match(GetJobSchedInfoRequest.class, (x) -> getSender().tell(
+                .match(GetJobSchedInfoRequest.class, x -> getSender().tell(
                         new GetJobSchedInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state), empty()), getSelf()))
-                .match(GetLatestJobDiscoveryInfoRequest.class, (x) -> getSender().tell(
+                .match(GetLatestJobDiscoveryInfoRequest.class, x -> getSender().tell(
                         new GetLatestJobDiscoveryInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state), empty()), getSelf()))
 
-                .match(KillJobResponse.class, (x) -> LOGGER.info("Received Kill Job Response in"
+                .match(KillJobResponse.class, x -> LOGGER.info("Received Kill Job Response in"
                         + "Terminating State Ignoring"))
 
-                .match(JobProto.SendWorkerAssignementsIfChanged.class, (x) -> LOGGER.warn(genUnexpectedMsg(
+                .match(JobProto.SendWorkerAssignementsIfChanged.class, x -> LOGGER.warn(genUnexpectedMsg(
                         x.toString(), this.jobId.getId(), state)))
 
                 // Worker related events
-                .match(WorkerEvent.class, (x) -> LOGGER.info("Received worker event  in Terminated State Ignoring"))
+                .match(WorkerEvent.class, x -> LOGGER.info("Received worker event  in Terminated State Ignoring"))
 
                 .matchAny(x -> LOGGER.warn(genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
 
@@ -531,7 +531,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
                 .match(GetJobDefinitionUpdatedFromJobActorRequest.class, this::onGetJobDefinitionUpdatedFromJobActor)
 
                 // Worker related events
-                .match(WorkerEvent.class, r -> processWorkerEvent(r))
+                .match(WorkerEvent.class, this::processWorkerEvent)
                 // explicit resubmit worker
                 .match(ResubmitWorkerRequest.class, this::onResubmitWorker)
                 // Heart beat accounting timers
@@ -554,7 +554,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
 
                 // EXPECTED MESSAGES END//
                 // UNEXPECTED MESSAGES BEGIN //
-                .match(InitJob.class, (x) -> getSender().tell(new JobInitialized(x.requestId, SUCCESS,
+                .match(InitJob.class, x -> getSender().tell(new JobInitialized(x.requestId, SUCCESS,
                         genUnexpectedMsg(x.toString(), this.jobId.getId(), state), this.jobId, x.requstor), getSelf()))
 
                 .matchAny(x -> LOGGER.warn(genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
@@ -578,7 +578,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
                 // process request to get the given job definition updated by this job actor.
                 .match(GetJobDefinitionUpdatedFromJobActorRequest.class, this::onGetJobDefinitionUpdatedFromJobActor)
                 // Worker related events
-                .match(WorkerEvent.class, r -> processWorkerEvent(r))
+                .match(WorkerEvent.class, this::processWorkerEvent)
                 // Heart beat accounting timers
                 .match(JobProto.CheckHeartBeat.class, this::onCheckHeartBeats)
                 // Migrate workers from disabled VMs
@@ -597,18 +597,18 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
 
                 // UNEXPECTED MESSAGES BEGIN //
                 // explicit resubmit worker
-                .match(ResubmitWorkerRequest.class, (x) -> getSender().tell(
+                .match(ResubmitWorkerRequest.class, x -> getSender().tell(
                         new ResubmitWorkerResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state)), getSelf()))
                 // runtime limit reached
-                .match(JobProto.RuntimeLimitReached.class, (x) -> LOGGER.warn(genUnexpectedMsg(
+                .match(JobProto.RuntimeLimitReached.class, x -> LOGGER.warn(genUnexpectedMsg(
                         x.toString(), this.jobId.getId(), state)))
                 // scale stage request
-                .match(ScaleStageRequest.class, (x) -> getSender().tell(
+                .match(ScaleStageRequest.class, x -> getSender().tell(
                         new ScaleStageResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state), 0), getSelf()))
 
-                .match(InitJob.class, (x) -> getSender().tell(new JobInitialized(x.requestId, SUCCESS,
+                .match(InitJob.class, x -> getSender().tell(new JobInitialized(x.requestId, SUCCESS,
                         genUnexpectedMsg(x.toString(), this.jobId.getId(), state), this.jobId, x.requstor), getSelf()))
                 .matchAny(x -> LOGGER.warn(genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
                 // UNEXPECTED MESSAGES END //
@@ -632,52 +632,52 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
                 //UNEXPECTED MESSAGES BEGIN //
 
                 // get Job Details
-                .match(GetJobDetailsRequest.class, (x) -> getSender().tell(
+                .match(GetJobDetailsRequest.class, x -> getSender().tell(
                         new GetJobDetailsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state), empty()), getSelf()))
 
                 // no invalid metadata to use, return intermediate job definition directly
                 .match(
                         GetJobDefinitionUpdatedFromJobActorRequest.class,
-                        (r) -> getSender().tell(
+                        r -> getSender().tell(
                                 new JobClusterManagerProto.GetJobDefinitionUpdatedFromJobActorResponse(
                                         r.requestId, SUCCESS, "", r.getUser(), r.getJobDefinition(),
                                         r.isAutoResubmit(), r.isQuickSubmit(), r.getOriginalSender()),
                                 getSelf()))
 
                 // Worker related events
-                .match(WorkerEvent.class, (x) -> LOGGER.warn(genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
+                .match(WorkerEvent.class, x -> LOGGER.warn(genUnexpectedMsg(x.toString(), this.jobId.getId(), state)))
                 // explicit resubmit worker
-                .match(ResubmitWorkerRequest.class, (x) -> getSender().tell(
+                .match(ResubmitWorkerRequest.class, x -> getSender().tell(
                         new ResubmitWorkerResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state)), getSelf()))
                 // Heart beat accounting timers
-                .match(JobProto.CheckHeartBeat.class, (x) -> LOGGER.warn(genUnexpectedMsg(
+                .match(JobProto.CheckHeartBeat.class, x -> LOGGER.warn(genUnexpectedMsg(
                         x.toString(), this.jobId.getId(), state)))
                 // Migrate workers request
-                .match(JobProto.MigrateDisabledVmWorkersRequest.class, (x) -> LOGGER.warn(genUnexpectedMsg(
+                .match(JobProto.MigrateDisabledVmWorkersRequest.class, x -> LOGGER.warn(genUnexpectedMsg(
                         x.toString(), this.jobId.getId(), state)))
                 // runtime limit reached
-                .match(JobProto.RuntimeLimitReached.class, (x) -> LOGGER.warn(genUnexpectedMsg(
+                .match(JobProto.RuntimeLimitReached.class, x -> LOGGER.warn(genUnexpectedMsg(
                         x.toString(), this.jobId.getId(), state)))
                 // Kill job request
-                .match(JobClusterProto.KillJobRequest.class, (x) -> getSender().tell(
+                .match(JobClusterProto.KillJobRequest.class, x -> getSender().tell(
                         new KillJobResponse(x.requestId, CLIENT_ERROR, JobState.Noop, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state), this.jobId, x.user), getSelf()))
                 // scale stage request
-                .match(ScaleStageRequest.class, (x) -> getSender().tell(
+                .match(ScaleStageRequest.class, x -> getSender().tell(
                         new ScaleStageResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state), 0), getSelf()))
                 // list active workers request
-                .match(ListWorkersRequest.class, (x) -> getSender().tell(
+                .match(ListWorkersRequest.class, x -> getSender().tell(
                         new ListWorkersResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state), Lists.newArrayList()), getSelf()))
                 // scheduling Info observable
-                .match(GetJobSchedInfoRequest.class, (x) -> getSender().tell(
+                .match(GetJobSchedInfoRequest.class, x -> getSender().tell(
                         new GetJobSchedInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state), empty()), getSelf()))
                 // latest scheduling Info
-                .match(GetLatestJobDiscoveryInfoRequest.class, (x) -> getSender().tell(
+                .match(GetLatestJobDiscoveryInfoRequest.class, x -> getSender().tell(
                         new GetLatestJobDiscoveryInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(
                                 x.toString(), this.jobId.getId(), state), empty()), getSelf()))
 
@@ -1052,7 +1052,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
         JobDefinition.Builder jobDefnBuilder = new JobDefinition.Builder().fromWithInstanceCountInheritance(
                 givenJobDefn,
                 forceInheritance,
-                (stageId) -> lastJobMeta.getStageMetadata(stageId).map(IMantisStageMetadata::getNumWorkers));
+                stageId -> lastJobMeta.getStageMetadata(stageId).map(IMantisStageMetadata::getNumWorkers));
 
         try {
             JobDefinition mergedJobDefn = jobDefnBuilder.build();
@@ -1175,7 +1175,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
         private int lastUsed;
         private int currLimit;
 
-        private volatile boolean hasErrored = false;
+        private volatile boolean hasErrored;
 
         /**
          * Creates an instance of this class.
@@ -1243,7 +1243,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
         private ObjectMapper mapper = new ObjectMapper();
 
         private final WorkerNumberGenerator workerNumberGenerator;
-        private boolean allWorkersStarted = false;
+        private boolean allWorkersStarted;
         private final IMantisJobManager jobMgr;
         private ConcurrentSkipListSet<Integer> workersToMigrate = new ConcurrentSkipListSet<>();
         private int sinkStageNum;
@@ -1252,7 +1252,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
         private long lastWorkerMigrationTimestamp = Long.MIN_VALUE;
         private Map<Integer, WorkerAssignments> stageAssignments = new HashMap<>();
         private BehaviorSubject<JobSchedulingInfo> jobSchedulingInfoBehaviorSubject;
-        private String currentJobSchedulingInfoStr = null;
+        private String currentJobSchedulingInfoStr;
         private final WorkerResubmitRateLimiter resubmitRateLimiter = new WorkerResubmitRateLimiter();
         // Use expiring cache to effectively track worker resubmitted in the last hour.
         private Cache<Integer, Boolean> recentErrorWorkersCache = CacheBuilder.newBuilder()
@@ -1273,7 +1273,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
                 IMantisJobManager jobMgr, WorkerMigrationConfig migrationConfig, MantisScheduler scheduler,
                 boolean isSubmit) throws Exception {
 
-            workerNumberGenerator = new WorkerNumberGenerator((isSubmit) ? 0
+            workerNumberGenerator = new WorkerNumberGenerator(isSubmit ? 0
                     : jobMgr.getJobDetails().getNextWorkerNumberToUse(), WorkerNumberGenerator.DEFAULT_INCREMENT_STEP);
             this.scheduler = scheduler;
             this.jobMgr = jobMgr;
@@ -1564,7 +1564,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
                     }
                 }
 
-                ScheduleRequest sr = new ScheduleRequest(
+                return new ScheduleRequest(
                         workerId,
                         workerRequest.getStageNum(),
                         workerRequest.getNumberOfPorts(),
@@ -1585,7 +1585,6 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
                         softConstraints,
                         readyAt.orElse(0L),
                         workerRequest.getPreferredClusterOptional());
-                return sr;
             } catch (Exception e) {
                 LOGGER.error("Exception creating scheduleRequest ", e);
                 throw e;
@@ -1698,9 +1697,9 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
             LOGGER.info("Terminating all workers of job {}", jobId);
 
             Observable.from(mantisJobMetaData.getStageMetadata().values())
-                    .flatMap((st) -> Observable.from(st.getAllWorkers()))
-                    .filter((worker) -> !WorkerState.isTerminalState(worker.getMetadata().getState()))
-                    .map((worker) -> {
+                    .flatMap(st -> Observable.from(st.getAllWorkers()))
+                    .filter(worker -> !WorkerState.isTerminalState(worker.getMetadata().getState()))
+                    .map(worker -> {
                         LOGGER.info("Terminating " + worker);
                         terminateWorker(worker.getMetadata(), WorkerState.Completed, JobCompletedReason.Killed);
                         return worker;
@@ -1876,7 +1875,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
                 if (!workers.isEmpty()) {
                     LOGGER.info("Job {} Going to migrate {} workers in this iteration", jobId, workers.size());
                 }
-                workers.forEach((w) -> {
+                workers.forEach(w -> {
                     if (workerToStageMap.containsKey(w)) {
                         int stageNo = workerToStageMap.get(w);
                         Optional<IMantisStageMetadata> stageMetaOp = mantisJobMetaData.getStageMetadata(stageNo);
@@ -2064,7 +2063,7 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
         private int getNumberOfWorkersInStartedState() {
 
             return mantisJobMetaData.getStageMetadata().values().stream()
-                    .map((stageMeta) -> ((MantisStageMetadataImpl) stageMeta).getNumStartedWorkers())
+                    .map(stageMeta -> ((MantisStageMetadataImpl) stageMeta).getNumStartedWorkers())
                     .reduce(0, (acc, num) -> acc + num);
         }
 
@@ -2114,8 +2113,8 @@ public class JobActor extends AbstractActorWithTimers implements IMantisJobManag
         public List<IMantisWorkerMetadata> getActiveWorkers(int limit) {
             List<IMantisWorkerMetadata> workers = mantisJobMetaData.getStageMetadata().values()
                     .stream()
-                    .flatMap((st) -> st.getAllWorkers().stream())
-                    .filter((worker) -> !WorkerState.isTerminalState(worker.getMetadata().getState()))
+                    .flatMap(st -> st.getAllWorkers().stream())
+                    .filter(worker -> !WorkerState.isTerminalState(worker.getMetadata().getState()))
                     .map(JobWorker::getMetadata)
                     .collect(Collectors.toList());
 

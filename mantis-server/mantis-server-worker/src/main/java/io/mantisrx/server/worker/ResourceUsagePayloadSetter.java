@@ -61,17 +61,17 @@ public class ResourceUsagePayloadSetter implements Closeable {
     private final Gauge jvmMemoryUsedGauge;
     private final Gauge jvmMemoryMaxGauge;
     private final double nwBytesLimit;
-    private double prev_cpus_system_time_secs = -1.0;
-    private double prev_cpus_user_time_secs = -1.0;
-    private double prev_bytes_read = -1.0;
-    private double prev_bytes_written = -1.0;
-    private long prevStatsGatheredAt = 0L;
+    private double prevCpusSystemTimeSecs = -1.0;
+    private double prevCpusUserTimeSecs = -1.0;
+    private double prevBytesRead = -1.0;
+    private double prevBytesWritten = -1.0;
+    private long prevStatsGatheredAt;
     private double peakCpuUsage = 0.0;
     private double peakMemCache = 0.0;
     private double peakTotMem = 0.0;
     private double peakBytesRead = 0.0;
     private double peakBytesWritten = 0.0;
-    private StatusPayloads.ResourceUsage oldUsage = null;
+    private StatusPayloads.ResourceUsage oldUsage;
 
     public ResourceUsagePayloadSetter(Heartbeat heartbeat, WorkerConfiguration config, double networkMbps) {
         this.heartbeat = heartbeat;
@@ -131,8 +131,9 @@ public class ResourceUsagePayloadSetter implements Closeable {
     }
 
     private long getNextDelay() {
-        if (counter.get() >= reportingIntervals.length)
+        if (counter.get() >= reportingIntervals.length) {
             return reportingIntervals[reportingIntervals.length - 1];
+        }
         return reportingIntervals[counter.getAndIncrement()];
     }
 
@@ -175,32 +176,35 @@ public class ResourceUsagePayloadSetter implements Closeable {
     }
 
     private boolean closeToLimit(StatusPayloads.ResourceUsage usage) {
-        if (usage == null)
+        if (usage == null) {
             return false;
-        if (usage.getCpuUsageCurrent() / usage.getCpuLimit() > 0.9)
+        }
+        if (usage.getCpuUsageCurrent() / usage.getCpuLimit() > 0.9) {
             return true;
-        if (usage.getTotMemUsageCurrent() / usage.getMemLimit() > 0.9)
+        }
+        if (usage.getTotMemUsageCurrent() / usage.getMemLimit() > 0.9) {
             return true;
-        if (usage.getNwBytesCurrent() / nwBytesLimit > 0.9)
-            return true;
-        return false;
+        }
+        return usage.getNwBytesCurrent() / nwBytesLimit > 0.9;
     }
 
     private boolean isBigIncrease(StatusPayloads.ResourceUsage oldUsage, StatusPayloads.ResourceUsage newUsage) {
-        if (oldUsage == null || newUsage == null)
+        if (oldUsage == null || newUsage == null) {
             return true;
-        if (isBigIncrease(oldUsage.getCpuUsageCurrent(), newUsage.getCpuUsageCurrent()))
+        }
+        if (isBigIncrease(oldUsage.getCpuUsageCurrent(), newUsage.getCpuUsageCurrent())) {
             return true;
-        if (isBigIncrease(oldUsage.getTotMemUsageCurrent(), newUsage.getTotMemUsageCurrent()))
+        }
+        if (isBigIncrease(oldUsage.getTotMemUsageCurrent(), newUsage.getTotMemUsageCurrent())) {
             return true;
-        if (isBigIncrease(oldUsage.getNwBytesCurrent(), newUsage.getNwBytesCurrent()))
-            return true;
-        return false;
+        }
+        return isBigIncrease(oldUsage.getNwBytesCurrent(), newUsage.getNwBytesCurrent());
     }
 
     private boolean isBigIncrease(double old, double curr) {
-        if (old == 0.0)
+        if (old == 0.0) {
             return curr != 0;
+        }
         return (curr - old) / old > bigIncreaseThreshold;
     }
 
@@ -222,25 +226,29 @@ public class ResourceUsagePayloadSetter implements Closeable {
         } else {
             double elapsedInSecs =
                 ((double) System.currentTimeMillis() - (double) prevStatsGatheredAt) / 1000.0;
-            double cpuUsage = ((usage.getCpusSystemTimeSecs() - prev_cpus_system_time_secs) / elapsedInSecs) +
-                ((usage.getCpusUserTimeSecs() - prev_cpus_user_time_secs) / elapsedInSecs);
+            double cpuUsage = ((usage.getCpusSystemTimeSecs() - prevCpusSystemTimeSecs) / elapsedInSecs) +
+                ((usage.getCpusUserTimeSecs() - prevCpusUserTimeSecs) / elapsedInSecs);
             if (cpuUsage > peakCpuUsage) {
                 peakCpuUsage = cpuUsage;
             }
             if (cpuUsage > usage.getCpusLimit()) {
                 logger.warn("CPU usage {} greater than limit {}, usage={}, elapsedInSecs={}", cpuUsage, usage.getCpusLimit(), usage, elapsedInSecs);
             }
-            if (usage.getMemRssBytes() > peakTotMem)
+            if (usage.getMemRssBytes() > peakTotMem) {
                 peakTotMem = usage.getMemRssBytes();
+            }
             double memCache = Math.max(0.0, usage.getMemRssBytes() - usage.getMemAnonBytes());
-            if (memCache > peakMemCache)
+            if (memCache > peakMemCache) {
                 peakMemCache = memCache;
-            double readBw = (usage.getNetworkReadBytes() - prev_bytes_read) / elapsedInSecs; // TODO check if byteCounts are already rate counts
-            double writeBw = (usage.getNetworkWriteBytes() - prev_bytes_written) / elapsedInSecs;
-            if (readBw > peakBytesRead)
+            }
+            double readBw = (usage.getNetworkReadBytes() - prevBytesRead) / elapsedInSecs; // TODO check if byteCounts are already rate counts
+            double writeBw = (usage.getNetworkWriteBytes() - prevBytesWritten) / elapsedInSecs;
+            if (readBw > peakBytesRead) {
                 peakBytesRead = readBw;
-            if (writeBw > peakBytesWritten)
+            }
+            if (writeBw > peakBytesWritten) {
                 peakBytesWritten = writeBw;
+            }
             // set previous values to new values
             setPreviousStats(usage);
             return new StatusPayloads.ResourceUsage(
@@ -258,10 +266,10 @@ public class ResourceUsagePayloadSetter implements Closeable {
     }
 
     private void setPreviousStats(Usage usage) {
-        prev_cpus_system_time_secs = usage.getCpusSystemTimeSecs();
-        prev_cpus_user_time_secs = usage.getCpusUserTimeSecs();
-        prev_bytes_read = usage.getNetworkReadBytes();
-        prev_bytes_written = usage.getNetworkWriteBytes();
+        prevCpusSystemTimeSecs = usage.getCpusSystemTimeSecs();
+        prevCpusUserTimeSecs = usage.getCpusUserTimeSecs();
+        prevBytesRead = usage.getNetworkReadBytes();
+        prevBytesWritten = usage.getNetworkWriteBytes();
         prevStatsGatheredAt = System.currentTimeMillis();
     }
 }

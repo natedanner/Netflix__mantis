@@ -68,8 +68,8 @@ import org.junit.Test;
 
 public class JobTestHelper {
 
-    private final static String SPOOL_DIR = "/tmp/MantisSpool";
-    private final static String ARCHIVE_DIR = "/tmp/MantisArchive";
+    private static final String SPOOL_DIR = "/tmp/MantisSpool";
+    private static final String ARCHIVE_DIR = "/tmp/MantisArchive";
 
     public static void createDirsIfRequired() {
         File spoolDir = new File(SPOOL_DIR);

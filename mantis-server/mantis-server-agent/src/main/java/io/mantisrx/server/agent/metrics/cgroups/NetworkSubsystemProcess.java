@@ -62,8 +62,6 @@ class NetworkSubsystemProcess implements SubsystemProcess {
                 result.put(iface, new NetworkStats(rxBytes, rxPackets, txBytes, txPackets));
                 reader.finishLine();
             }
-        } catch (IOException e) {
-            throw e;
         } catch (NullPointerException | NumberFormatException e) {
             throw new IllegalStateException("problem parsing stats: " + e);
         }

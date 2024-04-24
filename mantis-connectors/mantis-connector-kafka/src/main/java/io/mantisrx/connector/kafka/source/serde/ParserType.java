@@ -22,8 +22,8 @@ package io.mantisrx.connector.kafka.source.serde;
 public enum ParserType {
     SIMPLE_JSON("simplejson", new SimpleJsonDeserializer());
 
-    private String propName;
-    private Parser parser;
+    private final String propName;
+    private final Parser parser;
 
     ParserType(String propName, Parser parserInstance) {
         this.propName = propName;

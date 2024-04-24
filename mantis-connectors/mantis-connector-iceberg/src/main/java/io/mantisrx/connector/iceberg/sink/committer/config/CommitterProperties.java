@@ -19,7 +19,7 @@ package io.mantisrx.connector.iceberg.sink.committer.config;
 /**
  * Property key names and default values for an Iceberg Committer.
  */
-public class CommitterProperties {
+public final class CommitterProperties {
 
     private CommitterProperties() {
     }

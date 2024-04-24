@@ -63,8 +63,9 @@ class Heartbeat {
 
     void setPayload(String name, String value) {
         logger.info("Setting payload " + name);
-        if (name != null && !name.isEmpty() && value != null)
+        if (name != null && !name.isEmpty() && value != null) {
             payloads.put(name, value);
+        }
     }
 
     boolean clearPayload(String name) {
@@ -94,8 +95,9 @@ class Heartbeat {
         }
         Status status = new Status(jobId, stageNumber, workerIndex, workerNumber, Status.TYPE.HEARTBEAT, "heartbeat", MantisJobState.Noop);
         host.ifPresent(status::setHostname);
-        if (!payloadList.isEmpty())
+        if (!payloadList.isEmpty()) {
             status.setPayloads(payloadList);
+        }
         return status;
     }
 

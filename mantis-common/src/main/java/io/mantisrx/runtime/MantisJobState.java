@@ -60,8 +60,9 @@ public enum MantisJobState {
 
     public boolean isValidStateChgTo(MantisJobState newState) {
         for(MantisJobState validState: validChanges.get(this))
-            if(validState == newState)
+            if (validState == newState) {
                 return true;
+            }
         return false;
     }
 
@@ -80,12 +81,7 @@ public enum MantisJobState {
     }
 
     public static boolean isErrorState(MantisJobState started) {
-        switch (started) {
-            case Failed:
-                return true;
-            default:
-                return false;
-        }
+        return started == MantisJobState.Failed;
     }
 
     public static boolean isRunningState(MantisJobState state) {

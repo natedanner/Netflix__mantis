@@ -17,7 +17,7 @@
 package io.mantisrx.common.network;
 
 
-public class HashFunctions {
+public final class HashFunctions {
 
     private HashFunctions() {}
 

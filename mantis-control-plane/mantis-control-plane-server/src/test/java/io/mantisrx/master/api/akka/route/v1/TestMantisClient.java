@@ -137,8 +137,9 @@ public class TestMantisClient {
                         .flatMap(new Func1<HttpClientResponse<ServerSentEvent>, Observable<NamedJobInfo>>() {
                             @Override
                             public Observable<NamedJobInfo> call(HttpClientResponse<ServerSentEvent> response) {
-                                if(!HttpResponseStatus.OK.equals(response.getStatus()))
+                                if (!HttpResponseStatus.OK.equals(response.getStatus())) {
                                     return Observable.error(new Exception(response.getStatus().reasonPhrase()));
+                                }
                                 return response.getContent()
                                     .map(new Func1<ServerSentEvent, NamedJobInfo>() {
                                         @Override

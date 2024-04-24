@@ -111,77 +111,99 @@ public class ClutchConfiguration {
     }
 
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof ClutchConfiguration)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof ClutchConfiguration)) {
+            return false;
+        }
         final ClutchConfiguration other = (ClutchConfiguration) o;
-        if (this.getMinSize() != other.getMinSize()) return false;
-        if (this.getMaxSize() != other.getMaxSize()) return false;
-        if (Double.compare(this.getRps(), other.getRps()) != 0) return false;
+        if (this.getMinSize() != other.getMinSize()) {
+            return false;
+        }
+        if (this.getMaxSize() != other.getMaxSize()) {
+            return false;
+        }
+        if (Double.compare(this.getRps(), other.getRps()) != 0) {
+            return false;
+        }
         final Object this$minSamples = this.getMinSamples();
         final Object other$minSamples = other.getMinSamples();
-        if (this$minSamples == null ? other$minSamples != null : !this$minSamples.equals(other$minSamples))
+        if (this$minSamples == null ? other$minSamples != null : !this$minSamples.equals(other$minSamples)) {
             return false;
+        }
         final Object this$cooldownSeconds = this.getCooldownSeconds();
         final Object other$cooldownSeconds = other.getCooldownSeconds();
-        if (this$cooldownSeconds == null ? other$cooldownSeconds != null : !this$cooldownSeconds.equals(other$cooldownSeconds))
+        if (this$cooldownSeconds == null ? other$cooldownSeconds != null : !this$cooldownSeconds.equals(other$cooldownSeconds)) {
             return false;
+        }
         final Object this$panicThresholdSeconds = this.getPanicThresholdSeconds();
         final Object other$panicThresholdSeconds = other.getPanicThresholdSeconds();
-        if (this$panicThresholdSeconds == null ? other$panicThresholdSeconds != null : !this$panicThresholdSeconds.equals(other$panicThresholdSeconds))
+        if (this$panicThresholdSeconds == null ? other$panicThresholdSeconds != null : !this$panicThresholdSeconds.equals(other$panicThresholdSeconds)) {
             return false;
+        }
         final Object this$maxAdjustment = this.getMaxAdjustment();
         final Object other$maxAdjustment = other.getMaxAdjustment();
-        if (this$maxAdjustment == null ? other$maxAdjustment != null : !this$maxAdjustment.equals(other$maxAdjustment))
+        if (this$maxAdjustment == null ? other$maxAdjustment != null : !this$maxAdjustment.equals(other$maxAdjustment)) {
             return false;
+        }
         final Object this$cpu = this.getCpu();
         final Object other$cpu = other.getCpu();
-        if (this$cpu == null ? other$cpu != null : !this$cpu.equals(other$cpu)) return false;
+        if (this$cpu == null ? other$cpu != null : !this$cpu.equals(other$cpu)) {
+            return false;
+        }
         final Object this$memory = this.getMemory();
         final Object other$memory = other.getMemory();
-        if (this$memory == null ? other$memory != null : !this$memory.equals(other$memory)) return false;
+        if (this$memory == null ? other$memory != null : !this$memory.equals(other$memory)) {
+            return false;
+        }
         final Object this$network = this.getNetwork();
         final Object other$network = other.getNetwork();
-        if (this$network == null ? other$network != null : !this$network.equals(other$network)) return false;
+        if (this$network == null ? other$network != null : !this$network.equals(other$network)) {
+            return false;
+        }
         final Object this$rpsConfig = this.getRpsConfig();
         final Object other$rpsConfig = other.getRpsConfig();
-        if (this$rpsConfig == null ? other$rpsConfig != null : !this$rpsConfig.equals(other$rpsConfig)) return false;
+        if (this$rpsConfig == null ? other$rpsConfig != null : !this$rpsConfig.equals(other$rpsConfig)) {
+            return false;
+        }
         final Object this$useExperimental = this.getUseExperimental();
         final Object other$useExperimental = other.getUseExperimental();
-        if (this$useExperimental == null ? other$useExperimental != null : !this$useExperimental.equals(other$useExperimental)) return false;
+        if (this$useExperimental == null ? other$useExperimental != null : !this$useExperimental.equals(other$useExperimental)) {
+            return false;
+        }
         final Object this$integralDecay = this.getIntegralDecay();
         final Object other$integralDecay = other.getIntegralDecay();
-        if (this$integralDecay == null ? other$integralDecay != null : !this$integralDecay.equals(other$integralDecay))
-            return false;
-        return true;
+        return !(this$integralDecay == null ? other$integralDecay != null : !this$integralDecay.equals(other$integralDecay));
     }
 
     public int hashCode() {
-        final int PRIME = 59;
+        final int prime = 59;
         int result = 1;
-        result = result * PRIME + this.getMinSize();
-        result = result * PRIME + this.getMaxSize();
+        result = result * prime + this.getMinSize();
+        result = result * prime + this.getMaxSize();
         final long $rps = Double.doubleToLongBits(this.getRps());
-        result = result * PRIME + (int) ($rps >>> 32 ^ $rps);
+        result = result * prime + (int) ($rps >>> 32 ^ $rps);
         final Object $minSamples = this.getMinSamples();
-        result = result * PRIME + ($minSamples == null ? 43 : $minSamples.hashCode());
+        result = result * prime + ($minSamples == null ? 43 : $minSamples.hashCode());
         final Object $cooldownSeconds = this.getCooldownSeconds();
-        result = result * PRIME + ($cooldownSeconds == null ? 43 : $cooldownSeconds.hashCode());
+        result = result * prime + ($cooldownSeconds == null ? 43 : $cooldownSeconds.hashCode());
         final Object $panicThresholdSeconds = this.getPanicThresholdSeconds();
-        result = result * PRIME + ($panicThresholdSeconds == null ? 43 : $panicThresholdSeconds.hashCode());
+        result = result * prime + ($panicThresholdSeconds == null ? 43 : $panicThresholdSeconds.hashCode());
         final Object $maxAdjustment = this.getMaxAdjustment();
-        result = result * PRIME + ($maxAdjustment == null ? 43 : $maxAdjustment.hashCode());
+        result = result * prime + ($maxAdjustment == null ? 43 : $maxAdjustment.hashCode());
         final Object $cpu = this.getCpu();
-        result = result * PRIME + ($cpu == null ? 43 : $cpu.hashCode());
+        result = result * prime + ($cpu == null ? 43 : $cpu.hashCode());
         final Object $memory = this.getMemory();
-        result = result * PRIME + ($memory == null ? 43 : $memory.hashCode());
+        result = result * prime + ($memory == null ? 43 : $memory.hashCode());
         final Object $network = this.getNetwork();
-        result = result * PRIME + ($network == null ? 43 : $network.hashCode());
+        result = result * prime + ($network == null ? 43 : $network.hashCode());
         final Object $rpsConfig = this.getRpsConfig();
-        result = result * PRIME + ($rpsConfig == null ? 43 : $rpsConfig.hashCode());
+        result = result * prime + ($rpsConfig == null ? 43 : $rpsConfig.hashCode());
         final Object $useExperimental = this.getUseExperimental();
-        result = result * PRIME + ($useExperimental == null ? 43 : $useExperimental.hashCode());
+        result = result * prime + ($useExperimental == null ? 43 : $useExperimental.hashCode());
         final Object $integralDecay = this.getIntegralDecay();
-        result = result * PRIME + ($integralDecay == null ? 43 : $integralDecay.hashCode());
+        result = result * prime + ($integralDecay == null ? 43 : $integralDecay.hashCode());
         return result;
     }
 

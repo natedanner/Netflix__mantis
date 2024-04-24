@@ -25,8 +25,8 @@ import rx.subscriptions.BooleanSubscription;
 public class RemoteUnsubscribe implements Subscription {
 
     private ObservableConnection<RemoteRxEvent, List<RemoteRxEvent>> connection;
-    private BooleanSubscription subscription = new BooleanSubscription();
-    private String observableName;
+    private final BooleanSubscription subscription = new BooleanSubscription();
+    private final String observableName;
 
     public RemoteUnsubscribe(String observableName) {
         this.observableName = observableName;

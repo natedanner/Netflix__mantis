@@ -41,7 +41,7 @@ public class KafkaDataNotification {
     private final KafkaData value;
     private final Kind kind;
     private final Throwable error;
-    private long elapsedMillis;
+    private final long elapsedMillis;
 
     protected KafkaDataNotification(KafkaData value, Kind kind, Throwable error, long elapsedMillis) {
         this.value = value;

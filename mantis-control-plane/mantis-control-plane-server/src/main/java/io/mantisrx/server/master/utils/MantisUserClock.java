@@ -18,7 +18,7 @@ package io.mantisrx.server.master.utils;
 
 public class MantisUserClock implements MantisClock {
 
-    private volatile long currentTime = 0l;
+    private volatile long currentTime;
 
     @Override
     public long now() {

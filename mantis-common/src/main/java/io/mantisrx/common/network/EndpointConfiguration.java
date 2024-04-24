@@ -27,7 +27,7 @@ import java.nio.charset.Charset;
  */
 public class EndpointConfiguration extends NodeConfiguration<Endpoint> {
 
-    private static Charset UTF8 = Charset.forName("UTF-8");
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     @Override
     public byte[] getKeyForNode(Endpoint node, int repetition) {

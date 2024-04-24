@@ -73,7 +73,7 @@ public class AgentClusterOperationsImpl extends BaseService implements AgentClus
     private final JobMessageRouter jobMessageRouter;
     private final MantisScheduler scheduler;
     private final LifecycleEventPublisher lifecycleEventPublisher;
-    private volatile ActiveVmAttributeValues activeVmAttributeValues=null;
+    private volatile ActiveVmAttributeValues activeVmAttributeValues;
     private final ConcurrentMap<String, List<VirtualMachineCurrentState>> vmStatesMap;
     private final AgentClustersAutoScaler agentClustersAutoScaler;
     private final String attrName;
@@ -158,10 +158,10 @@ public class AgentClusterOperationsImpl extends BaseService implements AgentClus
                         for (TaskRequest r: currentState.getRunningTasks()) {
                             final Optional<WorkerId> workerId = WorkerId.fromId(r.getId());
                             s.addJob(new AgentClusterOperations.JobOnVMInfo(
-                                workerId.map(w -> w.getJobId()).orElse("InvalidJobId"),
+                                workerId.map(WorkerId::getJobId).orElse("InvalidJobId"),
                                 -1,
-                                workerId.map(w -> w.getWorkerIndex()).orElse(-1),
-                                workerId.map(w -> w.getWorkerNum()).orElse(-1)));
+                                workerId.map(WorkerId::getWorkerIndex).orElse(-1),
+                                workerId.map(WorkerId::getWorkerNum).orElse(-1)));
                         }
                         result.add(s);
                     }
@@ -208,9 +208,10 @@ public class AgentClusterOperationsImpl extends BaseService implements AgentClus
             for (VirtualMachineCurrentState s : vmStates) {
                 List<VirtualMachineLease.Range> ranges = s.getCurrAvailableResources().portRanges();
                 int ports = 0;
-                if (ranges != null && !ranges.isEmpty())
+                if (ranges != null && !ranges.isEmpty()) {
                     for (VirtualMachineLease.Range r : ranges)
                         ports += r.getEnd() - r.getBeg();
+                }
                 Map<String, Protos.Attribute> attributeMap = s.getCurrAvailableResources().getAttributeMap();
                 Map<String, String> attributes = new HashMap<>();
                 if (attributeMap != null && !attributeMap.isEmpty()) {
@@ -249,8 +250,9 @@ public class AgentClusterOperationsImpl extends BaseService implements AgentClus
     }
 
     private String getTimeString(long disabledUntil) {
-        if (System.currentTimeMillis() > disabledUntil)
+        if (System.currentTimeMillis() > disabledUntil) {
             return null;
+        }
         return DateTimeExt.toUtcDateTimeString(disabledUntil);
     }
 
@@ -258,32 +260,33 @@ public class AgentClusterOperationsImpl extends BaseService implements AgentClus
         List<String> inactiveVMs = new ArrayList<>();
         if(currentStates!=null && !currentStates.isEmpty()) {
             final Set<String> values = getActiveVMsAttributeValues();
-            if(values==null || values.isEmpty())
-                return Collections.EMPTY_LIST; // treat no valid active VMs attribute value as all are active
-            for(VirtualMachineCurrentState currentState: currentStates) {
+            if (values == null || values.isEmpty()) {
+                return Collections.emptyList(); // treat no valid active VMs attribute value as all are active
+            }
+            for (VirtualMachineCurrentState currentState : currentStates) {
                 final VirtualMachineLease lease = currentState.getCurrAvailableResources();
                 //logger.info("Lease for VM: " + currentState.getCurrAvailableResources());
-                if(lease != null) {
+                if (lease != null) {
                     final Collection<TaskRequest> runningTasks = currentState.getRunningTasks();
-                    if(runningTasks!=null && !runningTasks.isEmpty()) {
-                        final Map<String,Protos.Attribute> attributeMap = lease.getAttributeMap();
-                        if(attributeMap!=null && !attributeMap.isEmpty()) {
+                    if (runningTasks != null && !runningTasks.isEmpty()) {
+                        final Map<String, Protos.Attribute> attributeMap = lease.getAttributeMap();
+                        if (attributeMap != null && !attributeMap.isEmpty()) {
                             final Protos.Attribute attribute = attributeMap.get(attrName);
-                            if(attribute!=null && attribute.hasText()) {
-                                if(!isIn(attribute.getText().getValue(), values)) {
+                            if (attribute != null && attribute.hasText()) {
+                                if (!isIn(attribute.getText().getValue(), values)) {
                                     inactiveVMs.add(lease.hostname());
-                                    for(TaskRequest t: runningTasks) {
+                                    for (TaskRequest t : runningTasks) {
                                         Optional<WorkerId> workerIdO = WorkerId.fromId(t.getId());
                                         workerIdO.ifPresent(workerId -> jobMessageRouter.routeWorkerEvent(new WorkerOnDisabledVM(workerId)));
                                     }
                                 }
-                            }
-                            else
+                            } else {
                                 logger.warn("No attribute value for " + attrName + " found on VM " + lease.hostname() +
                                     " that has " + runningTasks.size() + " tasks on it");
-                        }
-                        else
+                            }
+                        } else {
                             logger.warn("No attributes found on VM " + lease.hostname() + " that has " + runningTasks.size() + " tasks on it");
+                        }
                     }
 
                 }

@@ -25,9 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ServiceRegistry {
+public final class ServiceRegistry {
 
-    private static Logger logger = LoggerFactory.getLogger(ServiceRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServiceRegistry.class);
     private final AtomicReference<State> registryRef = new AtomicReference<>(null);
     public static ServiceRegistry INSTANCE = new ServiceRegistry();
 

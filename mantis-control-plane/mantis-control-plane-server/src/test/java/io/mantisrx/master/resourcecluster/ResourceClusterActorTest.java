@@ -445,7 +445,7 @@ public class ResourceClusterActorTest {
         final int n = 10;
         List<String> expectedJobIdList = new ArrayList<>(n);
         for (int i = 0; i < n * 2; i ++) {
-            int idx = (i % n);
+            int idx = i % n;
             TaskExecutorID taskExecutorID = TaskExecutorID.of("taskExecutorId" + i);
             assertEquals(Ack.getInstance(), resourceCluster.registerTaskExecutor(
                 TaskExecutorRegistration.builder()
@@ -507,7 +507,7 @@ public class ResourceClusterActorTest {
             resJobsList.addAll(jobsList.getActiveJobs());
             assertTrue(jobsList.getActiveJobs().size() <= 5);
             start = jobsList.getEndPosition();
-        } while (jobsList.getActiveJobs().size() > 0);
+        } while (!jobsList.getActiveJobs().isEmpty());
         assertEquals(expectedJobIdList, resJobsList);
     }
 

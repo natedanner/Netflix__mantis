@@ -61,15 +61,15 @@ public class MantisWorkerMetadataImpl implements IMantisWorkerMetadata {
     private volatile WorkerState state;
     private volatile String slave;
     private volatile String slaveID;
-    private volatile long acceptedAt = 0;
-    private volatile long launchedAt = 0;
-    private volatile long startingAt = 0;
-    private volatile long startedAt = 0;
-    private volatile long completedAt = 0;
+    private volatile long acceptedAt;
+    private volatile long launchedAt;
+    private volatile long startingAt;
+    private volatile long startedAt;
+    private volatile long completedAt;
 
     private volatile JobCompletedReason reason;
     private volatile int resubmitOf = -1;
-    private volatile int totalResubmitCount = 0;
+    private volatile int totalResubmitCount;
     @JsonIgnore
     private volatile Optional<Instant> lastHeartbeatAt = Optional.empty();
 
@@ -191,7 +191,7 @@ public class MantisWorkerMetadataImpl implements IMantisWorkerMetadata {
     }
 
     void addPorts(final WorkerPorts ports) {
-        this.workerPorts = (ports);
+        this.workerPorts = ports;
     }
 
     public int getTotalResubmitCount() {
@@ -238,8 +238,9 @@ public class MantisWorkerMetadataImpl implements IMantisWorkerMetadata {
     }
 
     private void validateStateChange(WorkerState newState) throws InvalidWorkerStateChangeException {
-        if (!WorkerState.isValidStateChgTo(state, newState))
+        if (!WorkerState.isValidStateChgTo(state, newState)) {
             throw new InvalidWorkerStateChangeException(jobId, workerId, state, newState);
+        }
     }
 
     /**
@@ -362,8 +363,12 @@ public class MantisWorkerMetadataImpl implements IMantisWorkerMetadata {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MantisWorkerMetadataImpl that = (MantisWorkerMetadataImpl) o;
         return workerIndex == that.workerIndex
                 && workerNumber == that.workerNumber

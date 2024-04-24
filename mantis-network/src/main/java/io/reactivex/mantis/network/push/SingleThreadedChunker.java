@@ -25,13 +25,13 @@ public class SingleThreadedChunker<T> implements Callable<Void> {
 
     final MonitoredQueue<T> inputQueue;
     final int TIME_PROBE_COUNT = 100000;
-    final private int chunkSize;
-    final private long maxChunkInterval;
-    final private ConnectionManager<T> connectionManager;
-    final private ChunkProcessor<T> processor;
-    final private Object[] chunk;
-    int iteration = 0;
-    private int index = 0;
+    private final int chunkSize;
+    private final long maxChunkInterval;
+    private final ConnectionManager<T> connectionManager;
+    private final ChunkProcessor<T> processor;
+    private final Object[] chunk;
+    int iteration;
+    private int index;
 
     public SingleThreadedChunker(ChunkProcessor<T> processor, MonitoredQueue<T> iQ, int chunkSize, long maxChunkInterval, ConnectionManager<T> connMgr) {
         this.inputQueue = iQ;
@@ -87,7 +87,7 @@ public class SingleThreadedChunker<T> implements Callable<Void> {
     private void drain() {
 
         if (index > 0) {
-            List<T> copy = new ArrayList<T>(index);
+            List<T> copy = new ArrayList<>(index);
             for (int i = 0; i < index; i++) {
                 copy.add((T) chunk[i]);
             }

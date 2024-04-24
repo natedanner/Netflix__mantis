@@ -74,36 +74,45 @@ public class JobSla {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((durationType == null) ? 0 : durationType.hashCode());
+        result = prime * result + (durationType == null ? 0 : durationType.hashCode());
         result = prime * result + (int) (minRuntimeSecs ^ (minRuntimeSecs >>> 32));
         result = prime * result + (int) (runtimeLimitSecs ^ (runtimeLimitSecs >>> 32));
-        result = prime * result + ((slaType == null) ? 0 : slaType.hashCode());
-        result = prime * result + ((userProvidedType == null) ? 0 : userProvidedType.hashCode());
+        result = prime * result + (slaType == null ? 0 : slaType.hashCode());
+        result = prime * result + (userProvidedType == null ? 0 : userProvidedType.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         JobSla other = (JobSla) obj;
-        if (durationType != other.durationType)
+        if (durationType != other.durationType) {
             return false;
-        if (minRuntimeSecs != other.minRuntimeSecs)
+        }
+        if (minRuntimeSecs != other.minRuntimeSecs) {
             return false;
-        if (runtimeLimitSecs != other.runtimeLimitSecs)
+        }
+        if (runtimeLimitSecs != other.runtimeLimitSecs) {
             return false;
-        if (slaType != other.slaType)
+        }
+        if (slaType != other.slaType) {
             return false;
+        }
         if (userProvidedType == null) {
-            if (other.userProvidedType != null)
+            if (other.userProvidedType != null) {
                 return false;
-        } else if (!userProvidedType.equals(other.userProvidedType))
+            }
+        } else if (!userProvidedType.equals(other.userProvidedType)) {
             return false;
+        }
         return true;
     }
 
@@ -120,8 +129,8 @@ public class JobSla {
     public static class Builder {
 
         private static final ObjectMapper objectMapper = new ObjectMapper();
-        private long runtimeLimit = 0L;
-        private long minRuntimeSecs = 0L;
+        private long runtimeLimit;
+        private long minRuntimeSecs;
         private StreamSLAType slaType = StreamSLAType.Lossy;
         private MantisJobDurationType durationType = MantisJobDurationType.Perpetual;
         private Map<String, String> userProvidedTypes = new HashMap<>();

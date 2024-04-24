@@ -65,15 +65,15 @@ public abstract class PushServer<T, R> {
     protected int port;
     protected MonitoredQueue<T> outboundBuffer;
     protected ConnectionManager<T> connectionManager;
-    private int writeRetryCount;
+    private final int writeRetryCount;
     private RxServer<?, ?> server;
-    private Counter processedWrites;
-    private Counter successfulWrites;
-    private Counter failedWrites;
-    private Gauge batchWriteSize;
-    private Set<Future<Void>> consumerThreadFutures = new HashSet<>();
-    private Observable<String> serverSignals;
-    private String serverName;
+    private final Counter processedWrites;
+    private final Counter successfulWrites;
+    private final Counter failedWrites;
+    private final Gauge batchWriteSize;
+    private final Set<Future<Void>> consumerThreadFutures = new HashSet<>();
+    private final Observable<String> serverSignals;
+    private final String serverName;
     private final int maxNotWritableTimeSec;
     private final ScheduledExecutorService scheduledExecutorService;
     private final MetricsRegistry metricsRegistry;
@@ -86,7 +86,7 @@ public abstract class PushServer<T, R> {
         maxNotWritableTimeSec = config.getMaxNotWritableTimeSec();
         metricsRegistry = config.getMetricsRegistry();
 
-        outboundBuffer = new MonitoredQueue<T>(serverName, config.getBufferCapacity(), config.useSpscQueue());
+        outboundBuffer = new MonitoredQueue<>(serverName, config.getBufferCapacity(), config.useSpscQueue());
         trigger.setBuffer(outboundBuffer);
 
         Action0 doOnFirstConnection = new Action0() {
@@ -107,7 +107,7 @@ public abstract class PushServer<T, R> {
         final BasicTag idTag = new BasicTag(GROUP_ID_TAG, serverNameValue);
         final MetricGroupId metricsGroup = new MetricGroupId("PushServer", idTag);
         // manager will auto add metrics for connection groups
-        connectionManager = new ConnectionManager<T>(metricsRegistry, doOnFirstConnection,
+        connectionManager = new ConnectionManager<>(metricsRegistry, doOnFirstConnection,
             doOnZeroConnections);
 
 
@@ -307,7 +307,7 @@ public abstract class PushServer<T, R> {
             writableCheck = null;
         }
 
-        final AsyncConnection<T> connection = new AsyncConnection<T>(host,
+        final AsyncConnection<T> connection = new AsyncConnection<>(host,
             port, id, slotId, groupId, subject, predicate);
 
         final Channel channel = writer.getChannel();
@@ -362,7 +362,7 @@ public abstract class PushServer<T, R> {
                                         for (List<byte[]> buffer : bufferOfBuffers) {
 
                                             for (byte[] data : buffer) {
-                                                totalBytes += (data.length + prefix.length + nwnw.length);
+                                                totalBytes += data.length + prefix.length + nwnw.length;
                                             }
                                         }
                                         byte[] block = new byte[totalBytes];
@@ -380,7 +380,7 @@ public abstract class PushServer<T, R> {
                                     for (List<byte[]> buffer : bufferOfBuffers) {
 
                                         for (byte[] data : buffer) {
-                                            totalBytes += (data.length);
+                                            totalBytes += data.length;
                                         }
                                     }
                                     byte[] block = new byte[totalBytes];

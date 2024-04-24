@@ -28,7 +28,7 @@ import io.mantisrx.shaded.com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 public class DefaultObjectMapper extends ObjectMapper {
 
-    private static DefaultObjectMapper INSTANCE = new DefaultObjectMapper();
+    private static DefaultObjectMapper instance = new DefaultObjectMapper();
 
     private DefaultObjectMapper() {
         this(null);
@@ -47,6 +47,6 @@ public class DefaultObjectMapper extends ObjectMapper {
     }
 
     public static DefaultObjectMapper getInstance() {
-        return INSTANCE;
+        return instance;
     }
 }

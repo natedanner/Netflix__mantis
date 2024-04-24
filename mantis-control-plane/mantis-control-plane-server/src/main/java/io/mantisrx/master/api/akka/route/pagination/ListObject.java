@@ -127,13 +127,13 @@ public class ListObject<T> {
 
 
     public static class Builder<T> {
-        private List<T> objects = null;
+        private List<T> objects;
         private Class<T> targetType;
         private int limit = Integer.MAX_VALUE;
-        private int offset = 0;
-        private String sortField = null;
+        private int offset;
+        private String sortField;
         private boolean sortAscending = true;
-        private Uri uri = null;
+        private Uri uri;
 
         public Builder() {
         }

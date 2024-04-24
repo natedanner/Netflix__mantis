@@ -41,7 +41,7 @@ public class RoundRobinEventTransmitter implements EventTransmitter {
     private static final Logger LOG = LoggerFactory.getLogger(RoundRobinEventTransmitter.class);
 
     private final MrePublishConfiguration configuration;
-    private static volatile int nextWorkerIdx = 0;
+    private static volatile int nextWorkerIdx;
     private final Registry registry;
     private final Timer channelSendTime;
     private final MantisJobDiscovery jobDiscovery;

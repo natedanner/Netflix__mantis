@@ -90,7 +90,7 @@ public class JobStatusConnectedWSActor extends AbstractActor {
                 logger.debug("writing to WS {}", js);
                 wsActor.tell(js, self());
             })
-            .match(Terminated.class, t -> onTerminated(t))
+            .match(Terminated.class, this::onTerminated)
             .build();
     }
 

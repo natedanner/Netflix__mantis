@@ -65,7 +65,7 @@ public class MantisWorker extends BaseService {
     //    static {
     //    	RxNetty.useNativeTransportIfApplicable();
     //    }
-    private List<Service> mantisServices = new LinkedList<Service>();
+    private List<Service> mantisServices = new LinkedList<>();
 
     public MantisWorker(ConfigurationFactory configFactory, io.mantisrx.server.master.client.config.ConfigurationFactory coreConfigFactory) {
         this(configFactory, Optional.empty());

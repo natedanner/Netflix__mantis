@@ -28,7 +28,7 @@ public abstract class Router<T> {
     protected Func1<T, byte[]> encoder;
     protected Counter numEventsRouted;
     protected Counter numEventsProcessed;
-    private Metrics metrics;
+    private final Metrics metrics;
 
     public Router(String name, Func1<T, byte[]> encoder) {
         this.encoder = encoder;

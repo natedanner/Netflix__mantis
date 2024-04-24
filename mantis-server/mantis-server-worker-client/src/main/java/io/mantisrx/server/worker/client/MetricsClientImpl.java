@@ -45,8 +45,8 @@ class MetricsClientImpl<T> implements MetricsClient<T> {
     final String jobId;
     final WorkerConnectionFunc<T> workerConnectionFunc;
     final JobWorkerMetricsLocator jobWorkerMetricsLocator;
-    final private AtomicBoolean nowClosed = new AtomicBoolean(false);
-    final private WorkerConnections workerConnections = new WorkerConnections();
+    private final AtomicBoolean nowClosed = new AtomicBoolean(false);
+    private final WorkerConnections workerConnections = new WorkerConnections();
     private final String workersGuageName = "MetricsConnections";
     private final String expectedWorkersGaugeName = "ExpectedMetricsConnections";
     private final String workerConnReceivingDataGaugeName = "metricsRecvngData";
@@ -122,8 +122,9 @@ class MetricsClientImpl<T> implements MetricsClient<T> {
                 .map(new Func1<EndpointChange, Observable<T>>() {
                     @Override
                     public Observable<T> call(EndpointChange endpointChange) {
-                        if (nowClosed.get())
+                        if (nowClosed.get()) {
                             return Observable.empty();
+                        }
                         if (endpointChange.getType() == EndpointChange.Type.complete) {
                             return handleEndpointClose(endpointChange);
                         } else {
@@ -208,10 +209,11 @@ class MetricsClientImpl<T> implements MetricsClient<T> {
     }
 
     private void updateWorkerDataReceivingStatus(Boolean flag) {
-        if (flag)
+        if (flag) {
             workerConnReceivingDataGauge.increment();
-        else
+        } else {
             workerConnReceivingDataGauge.decrement();
+        }
         expectedWorkersGauge.set(numWorkers.get());
         if (workerConnectionsStatusObserver != null) {
             synchronized (workerConnectionsStatusObserver) {
@@ -221,10 +223,11 @@ class MetricsClientImpl<T> implements MetricsClient<T> {
     }
 
     private void updateWorkerConx(Boolean flag) {
-        if (flag)
+        if (flag) {
             workersGauge.increment();
-        else
+        } else {
             workersGauge.decrement();
+        }
         expectedWorkersGauge.set(numWorkers.get());
         if (workerConnectionsStatusObserver != null) {
             synchronized (workerConnectionsStatusObserver) {
@@ -273,13 +276,14 @@ class MetricsClientImpl<T> implements MetricsClient<T> {
 
     class WorkerConnections {
 
-        final private Map<String, WorkerConnection<T>> workerConnections = new HashMap<>();
-        private boolean isClosed = false;
+        private final Map<String, WorkerConnection<T>> workerConnections = new HashMap<>();
+        private boolean isClosed;
 
         private void put(String key, WorkerConnection<T> val) {
             synchronized (workerConnections) {
-                if (isClosed)
+                if (isClosed) {
                     return;
+                }
                 workerConnections.put(key, val);
             }
         }

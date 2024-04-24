@@ -34,7 +34,7 @@ import rx.functions.Action1;
 public class StaticServerPollerTest {
 
     private Set<ServerInfo> servers;
-    private int pollingInterval = 1;
+    private final int pollingInterval = 1;
 
     @Before
     public void setUp() throws Exception {

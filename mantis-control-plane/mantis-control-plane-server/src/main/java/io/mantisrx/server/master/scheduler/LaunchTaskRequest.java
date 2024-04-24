@@ -40,13 +40,18 @@ public class LaunchTaskRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         LaunchTaskRequest that = (LaunchTaskRequest) o;
 
-        if (scheduleRequest != null ? !scheduleRequest.equals(that.scheduleRequest) : that.scheduleRequest != null)
+        if (scheduleRequest != null ? !scheduleRequest.equals(that.scheduleRequest) : that.scheduleRequest != null) {
             return false;
+        }
         return ports != null ? ports.equals(that.ports) : that.ports == null;
     }
 

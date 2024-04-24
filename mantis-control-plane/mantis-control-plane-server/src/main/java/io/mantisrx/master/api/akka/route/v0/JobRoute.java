@@ -148,8 +148,8 @@ public class JobRoute extends BaseRoute {
      * @return Route job list route
      */
     private Route jobListRoute(final Optional<String> regex) {
-        return parameterOptional(StringUnmarshallers.BOOLEAN, "jobIdsOnly", (jobIdsOnly) ->
-            parameterOptional(StringUnmarshallers.BOOLEAN, "compact", (isCompact) ->
+        return parameterOptional(StringUnmarshallers.BOOLEAN, "jobIdsOnly", jobIdsOnly ->
+            parameterOptional(StringUnmarshallers.BOOLEAN, "compact", isCompact ->
                 parameterMultiMap(params -> {
                     if (jobIdsOnly.isPresent() && jobIdsOnly.get()) {
                         logger.debug("/api/jobs/list jobIdsOnly called");
@@ -158,7 +158,7 @@ public class JobRoute extends BaseRoute {
                                 jobRouteHandler.listJobIds(createListJobIdsRequest(params, regex, true)),
                                 resp -> completeOK(
                                         resp.getJobIds().stream()
-                                        .map(jobId -> jobId.getJobId())
+                                        .map(JobClusterProtoAdapter.JobIdInfo::getJobId)
                                         .collect(Collectors.toList()),
                                         Jackson.marshaller()))));
                     }
@@ -170,7 +170,7 @@ public class JobRoute extends BaseRoute {
                             resp -> completeOK(
                                 resp.getJobList()
                                     .stream()
-                                    .map(jobMetadataView -> JobClusterProtoAdapter.toCompactJobInfo(jobMetadataView))
+                                    .map(JobClusterProtoAdapter::toCompactJobInfo)
                                     .collect(Collectors.toList()),
                                 Jackson.marshaller()))));
                     } else {
@@ -322,7 +322,7 @@ public class JobRoute extends BaseRoute {
                         jobListLabelMatchGET.increment();
                         return jobListRoute(Optional.empty());
                     }),
-                    path(segment("list").slash(PathMatchers.segment()), (jobId) -> {
+                    path(segment("list").slash(PathMatchers.segment()), jobId -> {
                         logger.debug("/api/jobs/list/{} called", jobId);
                         jobListJobIdGET.increment();
                         return completeAsync(
@@ -334,13 +334,13 @@ public class JobRoute extends BaseRoute {
                                     Jackson.marshaller());
                             });
                     }),
-                    path(segment("list").slash("matching").slash(PathMatchers.segment()), (regex) -> {
+                    path(segment("list").slash("matching").slash(PathMatchers.segment()), regex -> {
                         jobListRegexGET.increment();
                         return jobListRoute(Optional.ofNullable(regex)
                             .filter(r -> !r.isEmpty()));
                     }),
-                    path(segment("archived").slash(PathMatchers.segment()), (jobId) ->
-                        parameterOptional(StringUnmarshallers.INTEGER, "limit", (limit) -> {
+                    path(segment("archived").slash(PathMatchers.segment()), jobId ->
+                        parameterOptional(StringUnmarshallers.INTEGER, "limit", limit -> {
                             jobArchivedWorkersGET.increment();
                             Optional<JobId> jobIdO = JobId.fromId(jobId);
                             if (jobIdO.isPresent()) {
@@ -351,7 +351,7 @@ public class JobRoute extends BaseRoute {
                                     jobRouteHandler.listArchivedWorkers(req),
                                     resp -> {
                                         List<MantisWorkerMetadataWritable> workers = resp.getWorkerMetadata().stream()
-                                            .map(wm -> DataFormatAdapter.convertMantisWorkerMetadataToMantisWorkerMetadataWritable(wm))
+                                            .map(DataFormatAdapter::convertMantisWorkerMetadataToMantisWorkerMetadataWritable)
                                             .collect(Collectors.toList());
                                         return completeOK(workers,
                                             Jackson.marshaller());

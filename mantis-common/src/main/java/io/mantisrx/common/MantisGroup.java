@@ -18,8 +18,8 @@ package io.mantisrx.common;
 
 public class MantisGroup<K, V> {
 
-    private K keyValue;
-    private V value;
+    private final K keyValue;
+    private final V value;
 
 
     public MantisGroup(K keyValue, V value) {

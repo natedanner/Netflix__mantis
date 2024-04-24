@@ -444,7 +444,9 @@ public class ResourceClusterNonLeaderRedirectRouteTest extends JUnitRouteTest {
         @Override
         public CompletionStage<ResourceClusterProvisionSubmissionResponse> provisionClusterIfNotPresent(
             ProvisionResourceClusterRequest clusterSpec) {
-            if (this.injectedProvider != null) return this.injectedProvider.provisionClusterIfNotPresent(clusterSpec);
+            if (this.injectedProvider != null) {
+                return this.injectedProvider.provisionClusterIfNotPresent(clusterSpec);
+            }
             return CompletableFuture.supplyAsync(() -> {
                 try {
                     Thread.sleep(500);
@@ -457,7 +459,9 @@ public class ResourceClusterNonLeaderRedirectRouteTest extends JUnitRouteTest {
 
         @Override
         public CompletionStage<ScaleResourceResponse> scaleResource(ScaleResourceRequest scaleRequest) {
-            if (this.injectedProvider != null) return this.injectedProvider.scaleResource(scaleRequest);
+            if (this.injectedProvider != null) {
+                return this.injectedProvider.scaleResource(scaleRequest);
+            }
             return CompletableFuture.completedFuture(
                 ScaleResourceResponse.builder()
                     .message("test scale resp")
@@ -486,7 +490,9 @@ public class ResourceClusterNonLeaderRedirectRouteTest extends JUnitRouteTest {
 
         @Override
         public ResourceClusterResponseHandler getResponseHandler() {
-            if (this.injectedProvider != null) return this.injectedProvider.getResponseHandler();
+            if (this.injectedProvider != null) {
+                return this.injectedProvider.getResponseHandler();
+            }
             return new NoopResourceClusterResponseHandler();
         }
     }

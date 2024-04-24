@@ -47,11 +47,11 @@ public class NamedJob {
     private JobOwner owner;
     private volatile SLA sla;
     private List<Parameter> parameters;
-    private boolean isReadyForJobMaster = false;
+    private boolean isReadyForJobMaster;
     private WorkerMigrationConfig migrationConfig;
-    private volatile long lastJobCount = 0;
-    private volatile boolean disabled = false;
-    private volatile boolean cronActive = false;
+    private volatile long lastJobCount;
+    private volatile boolean disabled;
+    private volatile boolean cronActive;
     private volatile boolean isActive = true;
     private MantisJobOperations jobOps;
     private List<Label> labels;
@@ -68,8 +68,9 @@ public class NamedJob {
 
         this.jobOps = jobOps;
         this.name = name;
-        if (sla == null)
+        if (sla == null) {
             sla = new SLA(0, 0, null, null);
+        }
         this.disabled = disabled;
         this.isReadyForJobMaster = isReadyForJobMaster;
         this.migrationConfig = Optional.ofNullable(migrationConfig).orElse(WorkerMigrationConfig.DEFAULT);
@@ -211,11 +212,13 @@ public class NamedJob {
      */
     @JsonIgnore
     Jar getJar(String version) {
-        if (version == null || version.isEmpty())
+        if (version == null || version.isEmpty()) {
             return jars.get(jars.size() - 1);
+        }
         for (Jar j : jars)
-            if (version.equals(j.version))
+            if (version.equals(j.version)) {
                 return j;
+            }
         return null;
     }
 
@@ -314,7 +317,7 @@ public class NamedJob {
                    @JsonProperty("version") String version, @JsonProperty("schedulingInfo") SchedulingInfo schedulingInfo) {
             this.url = url;
             this.uploadedAt = uploadedAt;
-            this.version = (version == null || version.isEmpty()) ?
+            this.version = version == null || version.isEmpty() ?
                     "" + System.currentTimeMillis() :
                     version;
             this.schedulingInfo = schedulingInfo;
@@ -363,9 +366,9 @@ public class NamedJob {
         @JsonIgnore
         private CronTrigger<NamedJob> scheduledTrigger;
         @JsonIgnore
-        private String triggerGroup = null;
+        private String triggerGroup;
         @JsonIgnore
-        private String triggerId = null;
+        private String triggerId;
 
         @JsonCreator
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -407,12 +410,15 @@ public class NamedJob {
         }
 
         private void validate() throws InvalidNamedJobException {
-            if (max < min)
+            if (max < min) {
                 throw new InvalidNamedJobException("Cannot have max=" + max + " < min=" + min);
-            if (min > MaxValueForSlaMin)
+            }
+            if (min > MaxValueForSlaMin) {
                 throw new InvalidNamedJobException("Specified min sla value " + min + " cannot be >" + MaxValueForSlaMin);
-            if (max > MaxValueForSlaMax)
+            }
+            if (max > MaxValueForSlaMax) {
                 throw new InvalidNamedJobException("Max sla value " + max + " cannot be >" + MaxValueForSlaMax);
+            }
         }
 
         // caller must lock to avoid concurrent access with destroyCron()

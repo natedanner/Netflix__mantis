@@ -46,9 +46,9 @@ import rx.functions.Func1;
 
 public class LegacyTcpPushServer<T> extends PushServer<T, RemoteRxEvent> {
 
-    private Func1<Map<String, List<String>>, Func1<T, Boolean>> predicate;
-    private String name;
-    private MetricsRegistry metricsRegistry;
+    private final Func1<Map<String, List<String>>, Func1<T, Boolean>> predicate;
+    private final String name;
+    private final MetricsRegistry metricsRegistry;
 
     public LegacyTcpPushServer(PushTrigger<T> trigger, ServerConfig<T> config,
                                Observable<String> serverSignals) {
@@ -60,8 +60,7 @@ public class LegacyTcpPushServer<T> extends PushServer<T, RemoteRxEvent> {
 
     @Override
     public RxServer<?, ?> createServer() {
-        RxServer<RemoteRxEvent, RemoteRxEvent> server
-                = RxNetty.newTcpServerBuilder(port, new ConnectionHandler<RemoteRxEvent, RemoteRxEvent>() {
+        return RxNetty.newTcpServerBuilder(port, new ConnectionHandler<RemoteRxEvent, RemoteRxEvent>() {
             @Override
             public Observable<Void> handle(
                     final ObservableConnection<RemoteRxEvent, RemoteRxEvent> newConnection) {
@@ -169,6 +168,5 @@ public class LegacyTcpPushServer<T> extends PushServer<T, RemoteRxEvent> {
                 .channelOption(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(1024 * 1024, 5 * 1024 * 1024))
 
                 .build();
-        return server;
     }
 }

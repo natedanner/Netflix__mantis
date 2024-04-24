@@ -80,7 +80,7 @@ public class ParameterDefinition<T> {
         protected String description;
         protected T defaultValue;
         protected Validator<? super T> validator;
-        protected boolean required = false;
+        protected boolean required;
 
         public abstract ParameterDecoder<T> decoder();
 

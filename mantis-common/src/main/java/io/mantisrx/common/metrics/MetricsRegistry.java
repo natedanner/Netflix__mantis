@@ -24,10 +24,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 
-public class MetricsRegistry {
+public final class MetricsRegistry {
 
     private static final MetricsRegistry instance = new MetricsRegistry();
-    private ConcurrentMap<String, Metrics> metricsRegistered = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Metrics> metricsRegistered = new ConcurrentHashMap<>();
 
     private MetricsRegistry() {}
 
@@ -57,8 +57,9 @@ public class MetricsRegistry {
     public Collection<Metrics> getMetrics(String prefix) {
         List<Metrics> result = new ArrayList<>();
         for (Metrics m : metricsRegistered.values()) {
-            if (m.getMetricGroupId().id().startsWith(prefix))
+            if (m.getMetricGroupId().id().startsWith(prefix)) {
                 result.add(m);
+            }
         }
         return result;
     }

@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 public class DownloadJob {
 
     private static final Logger logger = LoggerFactory.getLogger(DownloadJob.class);
-    private URL jobArtifactUrl;
-    private String jobName;
-    private String locationToStore;
+    private final URL jobArtifactUrl;
+    private final String jobName;
+    private final String locationToStore;
 
     public DownloadJob(
             URL jobArtifactUrl, String jobName,

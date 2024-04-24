@@ -42,7 +42,7 @@ public class StaticPartitionAssignorTest {
         StaticPartitionAssignor partitionAssigner = new StaticPartitionAssignorImpl();
         for (int i = 0; i < totalNumConsumers; i++) {
             List<TopicPartition> assignedPartitions = partitionAssigner.assignPartitionsToConsumer(i, topicPartitionCounts, totalNumConsumers);
-            assertTrue(assignedPartitions.size() >= 1 && assignedPartitions.size() <= 2);
+            assertTrue(!assignedPartitions.isEmpty() && assignedPartitions.size() <= 2);
             LOGGER.info("Consumer[{}] -> {}", i, assignedPartitions);
         }
 

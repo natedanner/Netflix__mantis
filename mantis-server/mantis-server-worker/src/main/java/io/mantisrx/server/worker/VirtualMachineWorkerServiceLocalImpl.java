@@ -59,9 +59,9 @@ public class VirtualMachineWorkerServiceLocalImpl extends BaseService implements
     private static final Logger logger = LoggerFactory.getLogger(VirtualMachineWorkerServiceLocalImpl.class);
     private final WorkerTopologyInfo.Data workerInfo;
     private MesosExecutorDriver mesosDriver;
-    private ExecutorService executor;
-    private Observer<WrappedExecuteStageRequest> executeStageRequestObserver;
-    private Observable<VirtualMachineTaskStatus> vmTaskStatusObservable;
+    private final ExecutorService executor;
+    private final Observer<WrappedExecuteStageRequest> executeStageRequestObserver;
+    private final Observable<VirtualMachineTaskStatus> vmTaskStatusObservable;
 
     public VirtualMachineWorkerServiceLocalImpl(final WorkerTopologyInfo.Data workerInfo,
                                                 Observer<WrappedExecuteStageRequest> executeStageRequestObserver,
@@ -136,9 +136,10 @@ public class VirtualMachineWorkerServiceLocalImpl extends BaseService implements
                     @Override
                     public void onNext(List<Boolean> booleans) {
                         logger.info("onNext called for request failure handler with items: " +
-                                ((booleans == null) ? "-1" : booleans.size()));
-                        if ((booleans == null) || booleans.isEmpty())
+                                (booleans == null ? "-1" : booleans.size()));
+                        if ((booleans == null) || booleans.isEmpty()) {
                             errorHandler.call();
+                        }
                     }
                 });
     }

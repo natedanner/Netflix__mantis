@@ -57,11 +57,11 @@ import rx.observables.GroupedObservable;
 import rx.schedulers.Schedulers;
 
 
-public class StageExecutors {
+public final class StageExecutors {
 
     private static final Logger logger = LoggerFactory.getLogger(StageExecutors.class);
 
-    private static Counter groupsExpiredCounter;
+    private static final Counter groupsExpiredCounter;
     private static long stageBufferIntervalMs = 100;
     private static int maxItemsInBuffer = 100;
 
@@ -167,8 +167,9 @@ public class StageExecutors {
                                                 // comment out as it induces NPE in merge supposedly fixed in rxJava 1.0
                                                 .doOnUnsubscribe(() -> {
                                                     //logger.info("Expiring group in executeGroupsInParallel" + group.getKey());
-                                                    if (groupsExpiredCounter != null)
+                                                    if (groupsExpiredCounter != null) {
                                                         groupsExpiredCounter.increment();
+                                                    }
                                                 })
                                                 .timeout(groupTakeUntil, TimeUnit.SECONDS, Observable.empty())
 

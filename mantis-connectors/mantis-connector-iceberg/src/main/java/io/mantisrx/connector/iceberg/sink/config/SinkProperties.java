@@ -19,7 +19,7 @@ package io.mantisrx.connector.iceberg.sink.config;
 /**
  * Property key names and default values for the base Iceberg Sink config.
  */
-public class SinkProperties {
+public final class SinkProperties {
 
     private SinkProperties() {
     }

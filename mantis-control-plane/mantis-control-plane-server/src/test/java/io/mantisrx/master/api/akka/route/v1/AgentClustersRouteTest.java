@@ -77,13 +77,13 @@ import rx.Observer;
 
 public class AgentClustersRouteTest extends RouteTestBase {
 
-    private final static Logger logger = LoggerFactory.getLogger(AgentClustersRouteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AgentClustersRouteTest.class);
     private static Thread t;
     private static final int serverPort = 8202;
     private static final ObjectMapper mapper = new ObjectMapper().configure(
         DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
         false);
-    private static String SERVER_ENDPOINT = String.format(
+    private static final String SERVER_ENDPOINT = String.format(
         "http://127.0.0.1:%d/api/v1/agentClusters",
         serverPort);
 

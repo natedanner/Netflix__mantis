@@ -50,9 +50,9 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
     };
     private final Func1<? super Observable<? extends Notification<?>>, ? extends Observable<?>> controlHandlerFunction;
     private final Scheduler scheduler;
-    private Observable<T> source;
-    private boolean stopOnComplete;
-    private boolean stopOnError;
+    private final Observable<T> source;
+    private final boolean stopOnComplete;
+    private final boolean stopOnError;
 
     public OnSubscribeRedo(Observable<T> source, Func1<? super Observable<? extends Notification<?>>, ? extends Observable<?>> f, boolean stopOnComplete, boolean stopOnError,
                            Scheduler scheduler) {
@@ -68,10 +68,12 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
     }
 
     public static <T> Observable<T> retry(Observable<T> source, final long count) {
-        if (count < 0)
+        if (count < 0) {
             throw new IllegalArgumentException("count >= 0 expected");
-        if (count == 0)
+        }
+        if (count == 0) {
             return source;
+        }
         return retry(source, new RedoFinite(count));
     }
 
@@ -99,8 +101,9 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
         if (count == 0) {
             return Observable.empty();
         }
-        if (count < 0)
+        if (count < 0) {
             throw new IllegalArgumentException("count >= 0 expected");
+        }
         return repeat(source, new RedoFinite(count - 1), scheduler);
     }
 
@@ -122,7 +125,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
         final AtomicBoolean resumeBoundary = new AtomicBoolean(true);
         // incremented when requests are made, decremented when requests are fulfilled
         final AtomicLong consumerCapacity = new AtomicLong(0l);
-        final AtomicReference<Producer> currentProducer = new AtomicReference<Producer>();
+        final AtomicReference<Producer> currentProducer = new AtomicReference<>();
 
         final Scheduler.Worker worker = scheduler.createWorker();
         child.add(worker);
@@ -191,11 +194,11 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                             @Override
                             public void onNext(Notification<?> t) {
-                                if (t.isOnCompleted() && stopOnComplete)
+                                if (t.isOnCompleted() && stopOnComplete) {
                                     child.onCompleted();
-                                else if (t.isOnError() && stopOnError)
+                                } else if (t.isOnError() && stopOnError) {
                                     child.onError(t.getThrowable());
-                                else {
+                                } else {
                                     isLocked.set(false);
                                     filteredTerminals.onNext(t);
                                 }
@@ -306,10 +309,11 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 @Override
                 public Notification<Integer> call(Notification<Integer> n, Notification<?> term) {
                     final int value = n.getValue();
-                    if (predicate.call(value, term.getThrowable()).booleanValue())
+                    if (predicate.call(value, term.getThrowable()).booleanValue()) {
                         return Notification.createOnNext(value + 1);
-                    else
+                    } else {
                         return (Notification<Integer>) term;
+                    }
                 }
             });
         }

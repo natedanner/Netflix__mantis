@@ -17,6 +17,7 @@
 package io.mantisrx.master.jobcluster.job;
 
 import io.mantisrx.master.jobcluster.job.worker.IMantisWorkerMetadata;
+import io.mantisrx.master.jobcluster.job.worker.JobWorker;
 import io.mantisrx.master.jobcluster.job.worker.WorkerState;
 import io.mantisrx.server.master.domain.DataFormatAdapter;
 import io.mantisrx.server.master.store.MantisJobMetadata;
@@ -83,7 +84,7 @@ public class MantisJobMetadataView {
             this.workerMetadataList = jobMeta.getStageMetadata().values().stream()
                 .map(IMantisStageMetadata::getAllWorkers)
                 .flatMap(jobWorkers -> jobWorkers.stream()
-                    .map(jw -> jw.getMetadata())
+                    .map(JobWorker::getMetadata)
                     .filter((IMantisWorkerMetadata workerMetadata) -> workerFilter(workerMetadata, workerIndexList, workerNumberList, workerStateList))
                     .map(DataFormatAdapter::convertMantisWorkerMetadataToFilterableMantisWorkerMetadataWritable)
                 )

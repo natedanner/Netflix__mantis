@@ -32,14 +32,14 @@ public class QueryParamUtils {
     public static Optional<String> paramValue(final Map<String, List<String>> params, final String key) {
         List<String> values = params.get(key);
         return Optional.ofNullable(values)
-            .filter(vs -> vs.size() > 0)
+            .filter(vs -> !vs.isEmpty())
             .map(x -> x.get(0));
     }
 
     public static Optional<Integer> paramValueAsInt(final Map<String, List<String>> params, final String key) {
         List<String> values = params.get(key);
         return Optional.ofNullable(values)
-            .filter(vs -> vs.size() > 0)
+            .filter(vs -> !vs.isEmpty())
             .map(x -> {
                 try {
                     return Integer.parseInt(x.get(0));
@@ -52,7 +52,7 @@ public class QueryParamUtils {
     public static Optional<Boolean> paramValueAsBool(final Map<String, List<String>> params, final String key) {
         List<String> values = params.get(key);
         return Optional.ofNullable(values)
-            .filter(vs -> vs.size() > 0)
+            .filter(vs -> !vs.isEmpty())
             .map(x -> {
                 try {
                     return Boolean.valueOf(x.get(0));
@@ -81,7 +81,7 @@ public class QueryParamUtils {
         List<String> values = params.get(key);
         if (values != null) {
             return new ArrayList<>(values.stream()
-                .map(s -> WorkerState.MetaState.valueOf(s))
+                .map(WorkerState.MetaState::valueOf)
                 .collect(Collectors.toSet()));
         } else {
             return Collections.emptyList();

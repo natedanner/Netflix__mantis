@@ -27,7 +27,7 @@ import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 
-public class MantisAuditLogWriter {
+public final class MantisAuditLogWriter {
 
     private static final Logger logger = LoggerFactory.getLogger(MantisAuditLogWriter.class);
     private static MantisAuditLogWriter instance;
@@ -53,8 +53,9 @@ public class MantisAuditLogWriter {
     }
 
     public static MantisAuditLogWriter getInstance() {
-        if (instance == null)
+        if (instance == null) {
             throw new IllegalStateException(MantisAuditLogWriter.class.getName() + " must be initialized before use");
+        }
         return instance;
     }
 

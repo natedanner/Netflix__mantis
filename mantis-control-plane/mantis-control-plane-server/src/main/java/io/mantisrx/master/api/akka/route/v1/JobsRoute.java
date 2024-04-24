@@ -111,7 +111,7 @@ public class JobsRoute extends BaseRoute {
                         // api/v1/jobs/{jobId}
                         path(
                                 PathMatchers.segment(),
-                                (jobId) -> pathEndOrSingleSlash(() -> concat(
+                                jobId -> pathEndOrSingleSlash(() -> concat(
 
                                         // GET - retrieve job detail by job ID
                                         get(() -> getJobInstanceRoute(jobId)),
@@ -125,7 +125,7 @@ public class JobsRoute extends BaseRoute {
                         ),
 
                         path(PathMatchers.segment().slash("archivedWorkers"),
-                             (jobId) -> pathEndOrSingleSlash(() -> concat(
+                             jobId -> pathEndOrSingleSlash(() -> concat(
                                      get(()-> getArchivedWorkers(jobId))
                              ))
                         ),
@@ -153,7 +153,7 @@ public class JobsRoute extends BaseRoute {
                         // api/v1/jobs/{jobId}/actions/scaleStage
                         path(
                                 PathMatchers.segment().slash("actions").slash("scaleStage"),
-                                (jobId) -> pathEndOrSingleSlash(
+                                jobId -> pathEndOrSingleSlash(
                                         // POST - scale stage
                                         () -> post(() -> postJobInstanceScaleStageRoute(jobId))
                                 )
@@ -162,14 +162,14 @@ public class JobsRoute extends BaseRoute {
                         // api/v1/jobs/{jobId}/actions/resubmitWorker
                         path(
                                 PathMatchers.segment().slash("actions").slash("resubmitWorker"),
-                                (jobId) -> pathEndOrSingleSlash(
+                                jobId -> pathEndOrSingleSlash(
                                         () ->
                                                 // POST - resubmit worker
                                                 post(() -> postJobInstanceResubmitWorkerRoute(jobId))
                                 )
                         ))
                 ),
-                pathPrefix(CLUSTER_JOBS_API_PREFIX, (cluster) -> concat(
+                pathPrefix(CLUSTER_JOBS_API_PREFIX, cluster -> concat(
 
                         // api/v1/jobClusters/{clusterName}/jobs
                         pathEndOrSingleSlash(() -> concat(
@@ -184,7 +184,7 @@ public class JobsRoute extends BaseRoute {
                         // api/v1/jobClusters/{clusterName}/jobs/{jobId}
                         path(
                                 PathMatchers.segment(),
-                                (jobId) -> pathEndOrSingleSlash(() -> concat(
+                                jobId -> pathEndOrSingleSlash(() -> concat(
 
                                         // GET - retrieve job detail by cluster & job ID
                                         get(() -> getJobInstanceRoute(Optional.of(cluster), jobId)),
@@ -210,14 +210,14 @@ public class JobsRoute extends BaseRoute {
     }
 
     private Route getJobsRoute(Optional<String> clusterName) {
-        return parameterOptional(StringUnmarshallers.INTEGER, ParamName.PAGINATION_LIMIT, (pageSize) ->
-                parameterOptional(StringUnmarshallers.INTEGER, ParamName.PAGINATION_OFFSET, (offset) ->
-                 parameterOptional(StringUnmarshallers.BOOLEAN, ParamName.SORT_ASCENDING, (ascending) ->
-                  parameterOptional(StringUnmarshallers.STRING, ParamName.SORT_BY, (sortField) ->
-                   parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_FIELDS, (fields) ->
-                    parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_TARGET, (target) ->
-                     parameterOptional(StringUnmarshallers.BOOLEAN, ParamName.JOB_COMPACT, (isCompact) ->
-                      parameterOptional(StringUnmarshallers.STRING, ParamName.JOB_FILTER_MATCH, (matching) ->
+        return parameterOptional(StringUnmarshallers.INTEGER, ParamName.PAGINATION_LIMIT, pageSize ->
+                parameterOptional(StringUnmarshallers.INTEGER, ParamName.PAGINATION_OFFSET, offset ->
+                 parameterOptional(StringUnmarshallers.BOOLEAN, ParamName.SORT_ASCENDING, ascending ->
+                  parameterOptional(StringUnmarshallers.STRING, ParamName.SORT_BY, sortField ->
+                   parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_FIELDS, fields ->
+                    parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_TARGET, target ->
+                     parameterOptional(StringUnmarshallers.BOOLEAN, ParamName.JOB_COMPACT, isCompact ->
+                      parameterOptional(StringUnmarshallers.STRING, ParamName.JOB_FILTER_MATCH, matching ->
                        parameterMultiMap(params ->
                                alwaysCache(routeResultCache, getRequestUriKeyer , () -> extractUri(uri -> {
                             String endpoint;
@@ -238,7 +238,7 @@ public class JobsRoute extends BaseRoute {
                               return completeAsync(
                                     jobRouteHandler.listJobs(listJobsRequest),
                                     resp -> completeOK(
-                                            (isCompact.isPresent() && isCompact.get()) ?
+                                            isCompact.isPresent() && isCompact.get() ?
                                                     resp.getJobList(
                                                             JobClusterProtoAdapter::toCompactJobInfo,
                                                             CompactJobInfo.class,
@@ -372,8 +372,8 @@ public class JobsRoute extends BaseRoute {
             endpoint = HttpRequestMetrics.Endpoints.JOBS;
         }
 
-        return parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_FIELDS, (fields) ->
-                parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_TARGET, (target) ->
+        return parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_FIELDS, fields ->
+                parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_TARGET, target ->
                 completeAsync(
                         jobRouteHandler.getJobDetails(
                                 new JobClusterManagerProto.GetJobDetailsRequest("masterAPI", jobId))
@@ -424,13 +424,13 @@ public class JobsRoute extends BaseRoute {
         if (!parsedJobId.isPresent()){
             return complete(StatusCodes.BAD_REQUEST, super.generateFailureResponsePayload("Invalid jobId in URI", -1));
         } else {
-            return parameterOptional(StringUnmarshallers.INTEGER, ParamName.PAGINATION_LIMIT, (pageSize) ->
-                    parameterOptional(StringUnmarshallers.INTEGER, ParamName.PAGINATION_OFFSET, (offset) ->
-                     parameterOptional(StringUnmarshallers.BOOLEAN, ParamName.SORT_ASCENDING, (ascending) ->
-                      parameterOptional(StringUnmarshallers.STRING, ParamName.SORT_BY, (sortField) ->
-                       parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_FIELDS, (fields) ->
-                        parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_TARGET, (target) ->
-                        parameterOptional(StringUnmarshallers.INTEGER, ParamName.SERVER_FILTER_LIMIT, (limit) ->
+            return parameterOptional(StringUnmarshallers.INTEGER, ParamName.PAGINATION_LIMIT, pageSize ->
+                    parameterOptional(StringUnmarshallers.INTEGER, ParamName.PAGINATION_OFFSET, offset ->
+                     parameterOptional(StringUnmarshallers.BOOLEAN, ParamName.SORT_ASCENDING, ascending ->
+                      parameterOptional(StringUnmarshallers.STRING, ParamName.SORT_BY, sortField ->
+                       parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_FIELDS, fields ->
+                        parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_TARGET, target ->
+                        parameterOptional(StringUnmarshallers.INTEGER, ParamName.SERVER_FILTER_LIMIT, limit ->
                          parameterMultiMap(params -> extractUri(uri -> {
                             JobClusterManagerProto.ListArchivedWorkersRequest req =
                                     new JobClusterManagerProto.ListArchivedWorkersRequest(
@@ -458,8 +458,8 @@ public class JobsRoute extends BaseRoute {
 
         logger.info("DELETE /api/v1/jobs/{} called", jobId);
 
-        return parameterOptional(StringUnmarshallers.STRING, ParamName.USER, (user) ->
-                parameterOptional(StringUnmarshallers.STRING, ParamName.REASON, (reason) -> {
+        return parameterOptional(StringUnmarshallers.STRING, ParamName.USER, user ->
+                parameterOptional(StringUnmarshallers.STRING, ParamName.REASON, reason -> {
 
                             String userStr = user.orElse(null);
                             String reasonStr = reason.orElse(null);

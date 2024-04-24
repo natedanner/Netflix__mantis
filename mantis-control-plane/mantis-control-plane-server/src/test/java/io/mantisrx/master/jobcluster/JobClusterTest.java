@@ -159,7 +159,7 @@ public class JobClusterTest {
 
     private MantisJobStore jobStore;
     private IMantisPersistenceProvider storageProvider;
-    private static LifecycleEventPublisher eventPublisher = new LifecycleEventPublisherImpl(new AuditEventSubscriberLoggingImpl(), new StatusEventSubscriberLoggingImpl(), new WorkerEventSubscriberLoggingImpl());
+    private static final LifecycleEventPublisher eventPublisher = new LifecycleEventPublisherImpl(new AuditEventSubscriberLoggingImpl(), new StatusEventSubscriberLoggingImpl(), new WorkerEventSubscriberLoggingImpl());
     private static final String user = "mantis";
     @Rule
     public TemporaryFolder rootDir = new TemporaryFolder();
@@ -1051,7 +1051,7 @@ public class JobClusterTest {
                     .withSubscriptionTimeoutSecs(300)
                     .withJobSla(new JobSla(0, 0, JobSla.StreamSLAType.Lossy, MantisJobDurationType.Transient, ""))
 
-                    .build();;
+                    .build();
             String jobId = clusterName + "-1";
 
             JobTestHelper.submitJobAndVerifySuccess(probe, clusterName, jobClusterActor, jobDefn, jobId);
@@ -1129,7 +1129,7 @@ public class JobClusterTest {
                     .withSubscriptionTimeoutSecs(300)
                     .withJobSla(new JobSla(0, 0, JobSla.StreamSLAType.Lossy, MantisJobDurationType.Transient, ""))
 
-                    .build();;
+                    .build();
             String jobId = clusterName + "-1";
 
             JobTestHelper.submitJobAndVerifySuccess(probe, clusterName, jobClusterActor, jobDefn, jobId);
@@ -1154,7 +1154,7 @@ public class JobClusterTest {
                     .withSubscriptionTimeoutSecs(300)
                     .withJobSla(new JobSla(0, 0, JobSla.StreamSLAType.Lossy, MantisJobDurationType.Transient, ""))
 
-                    .build();;
+                    .build();
             String jobId2 = clusterName + "-2";
 
             JobTestHelper.submitJobAndVerifySuccess(probe, clusterName, jobClusterActor, jobDefn2, jobId2);
@@ -1939,7 +1939,7 @@ public class JobClusterTest {
             assertEquals(clusterLabels.size() + LabelManager.numberOfMandatoryLabels(),detailsResp.getJobMetadata().get().getLabels().size());
             // confirm that the clusters labels got inherited
             assertEquals(1, detailsResp.getJobMetadata().get()
-                    .getLabels().stream().filter(l -> l.getName().equals("clabelName")).count());
+                    .getLabels().stream().filter(l -> "clabelName".equals(l.getName())).count());
             //assertEquals(label, detailsResp.getJobMetadata().get().getLabels().get(0));
 
 
@@ -2148,7 +2148,7 @@ public class JobClusterTest {
             BehaviorSubject<JobId> jobIdBehaviorSubject =
                     getLastSubmittedJobIdStreamResponse.getjobIdBehaviorSubject().get();
 
-            jobIdBehaviorSubject.subscribeOn(Schedulers.io()).subscribe((jId) -> {
+            jobIdBehaviorSubject.subscribeOn(Schedulers.io()).subscribe(jId -> {
                 System.out.println("Got Jid ------> " + jId);
                 String jIdStr = jId.getId();
                 assertEquals(clusterName + "-1",jIdStr);
@@ -2415,10 +2415,10 @@ public class JobClusterTest {
             smap.put(StageScalingPolicy.ScalingReason.CPU, new StageScalingPolicy.Strategy(StageScalingPolicy.ScalingReason.CPU, 0.5, 0.75, null));
             smap.put(StageScalingPolicy.ScalingReason.DataDrop, new StageScalingPolicy.Strategy(StageScalingPolicy.ScalingReason.DataDrop, 0.0, 2.0, null));
 
-            SchedulingInfo SINGLE_WORKER_SCHED_INFO = new SchedulingInfo.Builder().numberOfStages(1)
+            SchedulingInfo singleWorkerSchedInfo = new SchedulingInfo.Builder().numberOfStages(1)
                     .multiWorkerScalableStageWithConstraints(1,DEFAULT_MACHINE_DEFINITION,Lists.newArrayList(),Lists.newArrayList(),new StageScalingPolicy(1,1,10,1,1,1, smap)).build();
 
-            final JobDefinition jobDefn = createJob(clusterName, 1, MantisJobDurationType.Transient, "USER_TYPE", SINGLE_WORKER_SCHED_INFO, Lists.newArrayList());
+            final JobDefinition jobDefn = createJob(clusterName, 1, MantisJobDurationType.Transient, "USER_TYPE", singleWorkerSchedInfo, Lists.newArrayList());
 
             String jobId = clusterName + "-1";
 
@@ -2943,8 +2943,8 @@ public class JobClusterTest {
             JobTestHelper.sendWorkerTerminatedEvent(probe, jobClusterActor, jobId, workerId);
 
             // replaced worker comes up and sends events
-            WorkerId workerId2_replaced = new WorkerId(jobId, 0, 2);
-            JobTestHelper.sendLaunchedInitiatedStartedEventsToWorker(probe, jobClusterActor, jobId, stageNo, workerId2_replaced);
+            WorkerId workerId2Replaced = new WorkerId(jobId, 0, 2);
+            JobTestHelper.sendLaunchedInitiatedStartedEventsToWorker(probe, jobClusterActor, jobId, stageNo, workerId2Replaced);
 
             jobClusterActor.tell(new GetJobDetailsRequest("nj", jobId), probe.getRef());
 

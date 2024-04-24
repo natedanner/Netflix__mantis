@@ -57,7 +57,7 @@ public interface KeyValueStore {
     default Map<String, Map<String, String>> getAllRows(String tableName) throws IOException {
         Map<String, Map<String, String>> results = new HashMap<>();
         for (String pKey : getAllPartitionKeys(tableName)) {
-            results.computeIfAbsent(pKey, (k) -> new HashMap<>());
+            results.computeIfAbsent(pKey, k -> new HashMap<>());
             results.get(pKey).putAll(getAll(tableName, pKey));
         }
         return results;

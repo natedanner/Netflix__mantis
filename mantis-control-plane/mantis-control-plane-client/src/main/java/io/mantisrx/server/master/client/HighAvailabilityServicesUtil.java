@@ -43,7 +43,7 @@ import rx.schedulers.Schedulers;
  */
 @Slf4j
 public class HighAvailabilityServicesUtil {
-  private final static AtomicReference<HighAvailabilityServices> HAServiceInstanceRef = new AtomicReference<>();
+  private static final AtomicReference<HighAvailabilityServices> HAServiceInstanceRef = new AtomicReference<>();
 
   public static HighAvailabilityServices createHAServices(CoreConfiguration configuration) {
     if (configuration.isLocalMode()) {

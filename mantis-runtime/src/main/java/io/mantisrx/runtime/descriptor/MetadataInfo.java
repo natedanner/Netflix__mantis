@@ -23,8 +23,8 @@ import io.mantisrx.shaded.com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MetadataInfo {
 
-    private String name;
-    private String description;
+    private final String name;
+    private final String description;
 
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)

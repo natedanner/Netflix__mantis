@@ -30,10 +30,10 @@ import rx.functions.Func1;
 
 public class ServeObservable<T> extends ServeConfig<T, T> {
 
-    private Encoder<T> encoder;
-    private Observable<T> observable;
-    private boolean subscriptionPerConnection;
-    private boolean isHotStream;
+    private final Encoder<T> encoder;
+    private final Observable<T> observable;
+    private final boolean subscriptionPerConnection;
+    private final boolean isHotStream;
 
     public ServeObservable(Builder<T> builder) {
         super(builder.name, builder.slottingStrategy,
@@ -141,7 +141,7 @@ public class ServeObservable<T> extends ServeConfig<T, T> {
         }
 
         public ServeObservable<T> build() {
-            return new ServeObservable<T>(this);
+            return new ServeObservable<>(this);
         }
 
         public Builder<T> subscriptionPerConnection() {

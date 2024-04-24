@@ -64,12 +64,12 @@ import rx.functions.Func2;
 import rx.observables.GroupedObservable;
 
 
-public class RemoteObservable {
+public final class RemoteObservable {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteObservable.class);
 
     private static boolean enableHeartBeating = true;
-    private static boolean enableNettyLogging = false;
+    private static boolean enableNettyLogging;
     private static boolean enableCompression = true;
     private static int maxFrameLength = 5242880; // 5 MB max frame
 
@@ -85,19 +85,19 @@ public class RemoteObservable {
     private static void loadFastProperties() {
         String enableHeartBeatingStr =
                 ServiceRegistry.INSTANCE.getPropertiesService().getStringValue("mantis.netty.enableHeartBeating", "true");
-        if (enableHeartBeatingStr.equals("false")) {
+        if ("false".equals(enableHeartBeatingStr)) {
             enableHeartBeating = false;
         }
 
         String enableNettyLoggingStr =
                 ServiceRegistry.INSTANCE.getPropertiesService().getStringValue("mantis.netty.enableLogging", "false");
-        if (enableNettyLoggingStr.equals("true")) {
+        if ("true".equals(enableNettyLoggingStr)) {
             enableNettyLogging = true;
         }
 
         String enableCompressionStr =
                 ServiceRegistry.INSTANCE.getPropertiesService().getStringValue("mantis.netty.enableCompression", "true");
-        if (enableCompressionStr.equals("false")) {
+        if ("false".equals(enableCompressionStr)) {
             enableCompression = false;
         }
 
@@ -148,7 +148,7 @@ public class RemoteObservable {
     public static <T> RemoteRxConnection<T> connect(final ConnectToObservable<T> params) {
         final RxMetrics metrics = new RxMetrics();
 
-        return new RemoteRxConnection<T>(Observable.create(new OnSubscribe<T>() {
+        return new RemoteRxConnection<>(Observable.create(new OnSubscribe<T>() {
             @Override
             public void call(Subscriber<? super T> subscriber) {
                 RemoteUnsubscribe remoteUnsubscribe = new RemoteUnsubscribe(params.getName());
@@ -166,7 +166,7 @@ public class RemoteObservable {
     public static <K, V> RemoteRxConnection<GroupedObservable<K, V>> connect(
             final ConnectToGroupedObservable<K, V> config) {
         final RxMetrics metrics = new RxMetrics();
-        return new RemoteRxConnection<GroupedObservable<K, V>>(Observable.create(
+        return new RemoteRxConnection<>(Observable.create(
                 new OnSubscribe<GroupedObservable<K, V>>() {
                     @Override
                     public void call(Subscriber<? super GroupedObservable<K, V>> subscriber) {
@@ -187,7 +187,7 @@ public class RemoteObservable {
     public static <K, V> RemoteRxConnection<MantisGroup<K, V>> connectToMGO(
             final ConnectToGroupedObservable<K, V> config, final SpscArrayQueue<MantisGroup<?, ?>> inputQueue) {
         final RxMetrics metrics = new RxMetrics();
-        return new RemoteRxConnection<MantisGroup<K, V>>(Observable.create(
+        return new RemoteRxConnection<>(Observable.create(
                 new OnSubscribe<MantisGroup<K, V>>() {
                     @Override
                     public void call(Subscriber<? super MantisGroup<K, V>> subscriber) {
@@ -419,7 +419,7 @@ public class RemoteObservable {
 
                             @Override
                             public Boolean call(RemoteRxEvent rxEvent) {
-                                return (rxEvent.getType() == RemoteRxEvent.Type.next);
+                                return rxEvent.getType() == RemoteRxEvent.Type.next;
                             }
 
                         })

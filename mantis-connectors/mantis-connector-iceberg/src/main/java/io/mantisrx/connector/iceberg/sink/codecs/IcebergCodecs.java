@@ -62,7 +62,7 @@ public class IcebergCodecs {
         return new ObjectCodec<>(MantisDataFile.class);
     }
 
-    private static class MantisRecordCodec implements Codec<MantisRecord> {
+    private static final class MantisRecordCodec implements Codec<MantisRecord> {
 
         private final IcebergEncoder<Record> encoder;
         private final IcebergDecoder<Record> decoder;
@@ -108,7 +108,7 @@ public class IcebergCodecs {
         Long timestamp;
     }
 
-    private static class RecordCodec<T> implements Codec<T> {
+    private static final class RecordCodec<T> implements Codec<T> {
 
         private final IcebergEncoder<T> encoder;
         private final IcebergDecoder<T> decoder;
@@ -137,7 +137,7 @@ public class IcebergCodecs {
         }
     }
 
-    private static class ObjectCodec<T> implements Codec<T> {
+    private static final class ObjectCodec<T> implements Codec<T> {
 
         private final Class<T> tClass;
 

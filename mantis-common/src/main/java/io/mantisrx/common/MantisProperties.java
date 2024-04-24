@@ -19,10 +19,10 @@ package io.mantisrx.common;
 import java.util.Map;
 
 
-public class MantisProperties {
+public final class MantisProperties {
 
     private static final MantisProperties instance = new MantisProperties();
-    private Map<String, String> env;
+    private final Map<String, String> env;
 
     private MantisProperties() {
         env = System.getenv();

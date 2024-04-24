@@ -66,8 +66,8 @@ public class VirtualMachineMasterServiceMesosImpl extends BaseService implements
     private final MesosDriverSupplier mesosDriver;
     private final AtomicBoolean initializationDone = new AtomicBoolean(false);
     private volatile int workerJvmMemoryScaleBackPct;
-    private MasterConfiguration masterConfig;
-    private ExecutorService executor;
+    private final MasterConfiguration masterConfig;
+    private final ExecutorService executor;
     private final JsonSerializer jsonSerializer = new JsonSerializer();
 
     public VirtualMachineMasterServiceMesosImpl(
@@ -109,9 +109,9 @@ public class VirtualMachineMasterServiceMesosImpl extends BaseService implements
                 errorResults.put(request.getScheduleRequest(), e);
             }
         }
-        if (!taskInfos.isEmpty())
+        if (!taskInfos.isEmpty()) {
             mesosDriver.get().launchTasks(offerIDs, taskInfos);
-        else { // reject offers to prevent offer leak, but shouldn't happen
+        } else { // reject offers to prevent offer leak, but shouldn't happen
             for (VirtualMachineLease l : leases) {
                 mesosDriver.get().declineOffer(l.getOffer().getId());
             }
@@ -236,8 +236,9 @@ public class VirtualMachineMasterServiceMesosImpl extends BaseService implements
     private int getMemSize(int original) {
         // If job asked for >999MB but <4000MB, subtract out 500 MB for JVM, meta_space, code_cache, etc.
         // leaving rest for the heap, Xmx.
-        if (original < 4000)
+        if (original < 4000) {
             return original > 999 ? original - 500 : original;
+        }
         // If job asked for >4000, subtract out based on scale back percentage, but at least 500 MB
         return original - Math.max((int) (original * workerJvmMemoryScaleBackPct / 100.0), 500);
     }
@@ -269,7 +270,7 @@ public class VirtualMachineMasterServiceMesosImpl extends BaseService implements
                 .addVariables(
                         Protos.Environment.Variable.newBuilder()
                                 .setName("JVM_MEMORY_MB")
-                                .setValue("" + (memSize))
+                                .setValue("" + memSize)
                 )
                 .addVariables(
                         Protos.Environment.Variable.newBuilder()
@@ -419,8 +420,9 @@ public class VirtualMachineMasterServiceMesosImpl extends BaseService implements
             @Override
             public void call() {
                 logger.info("Registering Mantis Framework with Mesos");
-                if (!initializationDone.compareAndSet(false, true))
+                if (!initializationDone.compareAndSet(false, true)) {
                     throw new IllegalStateException("Duplicate start() call");
+                }
 
                 executor.execute(() -> {
                     try {

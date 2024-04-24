@@ -94,7 +94,7 @@ public class TaskExecutorStarter extends AbstractIdleService {
     }
 
     @SuppressWarnings("unused")
-    public static class TaskExecutorStarterBuilder {
+    public static final class TaskExecutorStarterBuilder {
         private final WorkerConfiguration workerConfiguration;
         private Configuration configuration;
         private MantisPropertiesLoader propertiesLoader;

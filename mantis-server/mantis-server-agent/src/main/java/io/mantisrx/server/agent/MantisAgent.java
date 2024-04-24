@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class MantisAgent implements Service {
 
     private static final Logger logger = LoggerFactory.getLogger(MantisAgent.class);
-    private CountDownLatch blockUntilShutdown = new CountDownLatch(1);
+    private final CountDownLatch blockUntilShutdown = new CountDownLatch(1);
 
     public MantisAgent() {
         Thread t = new Thread() {

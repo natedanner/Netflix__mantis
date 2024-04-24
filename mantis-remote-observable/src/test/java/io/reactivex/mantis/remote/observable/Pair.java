@@ -18,8 +18,8 @@ package io.reactivex.mantis.remote.observable;
 
 public class Pair {
 
-    private String name;
-    private Integer value;
+    private final String name;
+    private final Integer value;
 
     public Pair(String name, Integer value) {
         this.name = name;

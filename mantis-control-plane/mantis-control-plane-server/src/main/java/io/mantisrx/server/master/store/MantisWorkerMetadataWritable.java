@@ -36,31 +36,31 @@ public class MantisWorkerMetadataWritable implements MantisWorkerMetadata {
     private final WorkerId workerId;
     @JsonIgnore
     private final ReentrantLock lock = new ReentrantLock();
-    private int workerIndex;
-    private int workerNumber;
-    private String jobId;
-    private int stageNum;
-    private int numberOfPorts;
+    private final int workerIndex;
+    private final int workerNumber;
+    private final String jobId;
+    private final int stageNum;
+    private final int numberOfPorts;
     private int metricsPort;
     private int consolePort;
     private int debugPort = -1;
     private int customPort;
-    private List<Integer> ports;
+    private final List<Integer> ports;
     private volatile MantisJobState state;
     private String slave;
     private String slaveID;
     private Optional<String> cluster = Optional.empty();
     private Optional<ClusterID> resourceCluster = Optional.empty();
-    private long acceptedAt = 0;
-    private long launchedAt = 0;
-    private long startingAt = 0;
-    private long startedAt = 0;
-    private long completedAt = 0;
+    private long acceptedAt;
+    private long launchedAt;
+    private long startingAt;
+    private long startedAt;
+    private long completedAt;
     private JobCompletedReason reason;
     private int resubmitOf = -1;
-    private int totalResubmitCount = 0;
+    private int totalResubmitCount;
     @JsonIgnore
-    private volatile long lastHeartbeatAt = 0;
+    private volatile long lastHeartbeatAt;
 
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -183,8 +183,9 @@ public class MantisWorkerMetadataWritable implements MantisWorkerMetadata {
     }
 
     private void validateStateChange(MantisJobState newState) throws InvalidJobStateChangeException {
-        if (!state.isValidStateChgTo(newState))
+        if (!state.isValidStateChgTo(newState)) {
             throw new InvalidJobStateChangeException(jobId, state, newState);
+        }
     }
 
     /**
@@ -350,10 +351,10 @@ public class MantisWorkerMetadataWritable implements MantisWorkerMetadata {
     @Override
     public String toString() {
         return "Worker " + workerNumber + " state=" + state + ", acceptedAt=" + acceptedAt +
-                ((launchedAt == 0) ? "" : ", launchedAt=" + launchedAt) +
-                ((startingAt == 0) ? "" : ", startingAt=" + startingAt) +
-                ((startedAt == 0) ? "" : ", startedAt=" + startedAt) +
-                ((completedAt == 0) ? "" : ", completedAt=" + completedAt) +
+                (launchedAt == 0 ? "" : ", launchedAt=" + launchedAt) +
+                (startingAt == 0 ? "" : ", startingAt=" + startingAt) +
+                (startedAt == 0 ? "" : ", startedAt=" + startedAt) +
+                (completedAt == 0 ? "" : ", completedAt=" + completedAt) +
                 ", #ports=" + ports.size() + ", ports=" + ports;
     }
 

@@ -98,9 +98,9 @@ jobDefinitions [{
  */
 public class JobClusterMetadataImpl implements IJobClusterMetadata {
 
-	final private IJobClusterDefinition jobClusterDefinition;
-	final private long lastJobCount;
-	final private boolean disabled;
+	private final IJobClusterDefinition jobClusterDefinition;
+	private final long lastJobCount;
+	private final boolean disabled;
 
 	@JsonCreator
 	@JsonIgnoreProperties(ignoreUnknown=true)
@@ -138,8 +138,12 @@ public class JobClusterMetadataImpl implements IJobClusterMetadata {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 		JobClusterMetadataImpl that = (JobClusterMetadataImpl) o;
 		return lastJobCount == that.lastJobCount &&
 				disabled == that.disabled &&
@@ -161,7 +165,7 @@ public class JobClusterMetadataImpl implements IJobClusterMetadata {
 
 	public static class Builder {
 		private JobClusterDefinitionImpl jobClusterDefinition;
-		private long lastJobCount = 0;
+		private long lastJobCount;
 		private boolean disabled;
 
 		public Builder() {}

@@ -39,19 +39,23 @@ public class JobAssignmentResult implements JsonType {
         if (first == null) {
             return second == null;
         }
-        if (second == null)
+        if (second == null) {
             return false;
-        if (first.size() != second.size())
+        }
+        if (first.size() != second.size()) {
             return false;
+        }
         int item = 0;
         for (Failure f : first) {
             boolean found = false;
             for (int fi = 0; fi < second.size() && !found; fi++) {
-                if (f.isIdentical(second.get(fi)))
+                if (f.isIdentical(second.get(fi))) {
                     found = true;
+                }
             }
-            if (!found)
+            if (!found) {
                 return false;
+            }
         }
         return true;
     }
@@ -65,12 +69,15 @@ public class JobAssignmentResult implements JsonType {
     }
 
     public boolean isIdentical(JobAssignmentResult that) {
-        if (that == null)
+        if (that == null) {
             return false;
-        if (this == that)
+        }
+        if (this == that) {
             return true;
-        if (!jobId.equals(that.jobId))
+        }
+        if (!jobId.equals(that.jobId)) {
             return false;
+        }
         return failuresIdentical(failures, that.failures);
     }
 
@@ -117,8 +124,9 @@ public class JobAssignmentResult implements JsonType {
         }
 
         private boolean isIdentical(Failure that) {
-            if (that == null)
+            if (that == null) {
                 return false;
+            }
             return workerNumber == that.workerNumber
                     && type.equals(that.type)
                     && asking == that.asking

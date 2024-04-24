@@ -192,8 +192,7 @@ public class JobClusterRoute extends BaseRoute {
         final CachingSettings cachingSettings = defaultCachingSettings.withLfuCacheSettings(lfuCacheSettings);
         // Created outside the route to potentially allow using
         // the same cache across multiple calls
-        final Cache<Uri, RouteResult> jobClustersListCache = LfuCache.create(cachingSettings);
-        return jobClustersListCache;
+        return LfuCache.create(cachingSettings);
     }
 
     private static final PathMatcher0 API_V0_JOBCLUSTER = segment("api").slash("namedjob");
@@ -214,18 +213,18 @@ public class JobClusterRoute extends BaseRoute {
      * @return Route job list route
      */
     private Route jobClusterListRoute(final String jobCluster) {
-        return parameterOptional(StringUnmarshallers.BOOLEAN, "jobIdsOnly", (jobIdsOnly) ->
+        return parameterOptional(StringUnmarshallers.BOOLEAN, "jobIdsOnly", jobIdsOnly ->
             parameterMultiMap(params -> {
                 if (jobIdsOnly.isPresent() && jobIdsOnly.get()) {
                     logger.debug("/api/namedjob/listJobIds jobIdsOnly called");
                     return alwaysCache(cache, requestUriKeyer, () ->
                         extractUri(uri -> completeAsync(
                             jobRouteHandler.listJobIds(createListJobIdsRequest(params,
-                                    (Strings.isNullOrEmpty(jobCluster)) ? Optional.empty() : Optional.of("^" + jobCluster + "$"),
+                                    Strings.isNullOrEmpty(jobCluster) ? Optional.empty() : Optional.of("^" + jobCluster + "$"),
                                     true)),
                             resp -> completeOK(
                                     resp.getJobIds().stream()
-                                    .map(jobId -> jobId.getJobId())
+                                    .map(JobClusterProtoAdapter.JobIdInfo::getJobId)
                                     .collect(Collectors.toList()),
                                     Jackson.marshaller())
                             )
@@ -238,7 +237,7 @@ public class JobClusterRoute extends BaseRoute {
                     extractUri(uri -> {
                         return completeAsync(
                             jobRouteHandler.listJobIds(createListJobIdsRequest(params,
-                                    (Strings.isNullOrEmpty(jobCluster)) ? Optional.empty() : Optional.of("^" + jobCluster + "$"),
+                                    Strings.isNullOrEmpty(jobCluster) ? Optional.empty() : Optional.of("^" + jobCluster + "$"),
                                     false)),
                             resp -> completeOK(
                                 resp.getJobIds(),
@@ -559,13 +558,13 @@ public class JobClusterRoute extends BaseRoute {
                                     resp -> completeOK(
                                         resp.getJobClusters()
                                             .stream()
-                                            .map(jobClusterMetadataView -> JobClusterProtoAdapter.toJobClusterInfo(jobClusterMetadataView))
+                                            .map(JobClusterProtoAdapter::toJobClusterInfo)
                                             .collect(Collectors.toList())
                                             ,
                                         Jackson.marshaller()),
                                     resp -> completeOK(Collections.emptyList(), Jackson.marshaller()))));
                         }),
-                        path(PathMatchers.segment(), (jobCluster) -> {
+                        path(PathMatchers.segment(), jobCluster -> {
                             if (logger.isDebugEnabled()) {
                                 logger.debug("/api/namedjob/list/{} called", jobCluster);
                             }
@@ -573,13 +572,13 @@ public class JobClusterRoute extends BaseRoute {
                             return completeAsync(
                                 jobClusterRouteHandler.getJobClusterDetails(new JobClusterManagerProto.GetJobClusterRequest(jobCluster)),
                                 resp -> completeOK(
-                                    resp.getJobCluster().map(jc -> Arrays.asList(jc)).orElse(Collections.emptyList()),
+                                    resp.getJobCluster().map(Arrays::asList).orElse(Collections.emptyList()),
                                     Jackson.marshaller()),
                                 resp -> completeOK(Collections.emptyList(), Jackson.marshaller())
                             );
                         })
                     )),
-                    path(segment("listJobIds").slash(PathMatchers.segment()), (jobCluster) -> {
+                    path(segment("listJobIds").slash(PathMatchers.segment()), jobCluster -> {
                         logger.debug("/api/namedjob/listJobIds/{} called", jobCluster);
                         jobClusterListJobIdGET.increment();
                         return jobClusterListRoute(jobCluster);

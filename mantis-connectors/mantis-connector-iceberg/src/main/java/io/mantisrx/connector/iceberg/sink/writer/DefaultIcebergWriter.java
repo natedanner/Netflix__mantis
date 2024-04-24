@@ -174,7 +174,7 @@ public class DefaultIcebergWriter implements IcebergWriter {
                     .withPath(file.location())
                     .withInputFile(file.toInputFile())
                     .withFileSizeInBytes(appender.length())
-                    .withPartition(spec.fields().size() == 0 ? null : partitionKey)
+                    .withPartition(spec.fields().isEmpty() ? null : partitionKey)
                     .withMetrics(appender.metrics())
                     .withSplitOffsets(appender.splitOffsets())
                     .build();

@@ -74,8 +74,9 @@ public class Context {
         this.serviceLocator = serviceLocator;
         this.workerInfo = workerInfo;
         this.metricsRegistry = metricsRegistry;
-        if (completeAndExitAction == null)
+        if (completeAndExitAction == null) {
             throw new IllegalArgumentException("Null complete action provided in Context contructor");
+        }
         this.completeAndExitAction = completeAndExitAction;
         this.workerMapObservable = workerMapObservable;
         this.classLoader = classLoader;

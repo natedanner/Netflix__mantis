@@ -901,7 +901,7 @@ public class JobClusterManagerProto {
             this.workerStateList = workerState;
             this.activeOnly = activeOnly;
             this.matchingRegex = matchingRegex;
-            this.matchingLabels = matchingLabels.map(query -> LabelUtils.generatePairs(query))
+            this.matchingLabels = matchingLabels.map(LabelUtils::generatePairs)
                                                 .orElse(Collections.emptyList());
             this.labelsOperand = labelsOperand;
         }
@@ -1799,8 +1799,12 @@ public class JobClusterManagerProto {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             GetLatestJobDiscoveryInfoRequest that = (GetLatestJobDiscoveryInfoRequest) o;
             return Objects.equals(jobCluster, that.jobCluster);
         }

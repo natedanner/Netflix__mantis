@@ -21,7 +21,7 @@ import io.mantisrx.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class MantisMetaMessage {
 
-    final protected ObjectMapper mapper = new ObjectMapper();
+    protected final ObjectMapper mapper = new ObjectMapper();
 
     public abstract String getType();
 

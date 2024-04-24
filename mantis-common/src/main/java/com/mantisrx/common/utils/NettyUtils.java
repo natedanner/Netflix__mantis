@@ -47,7 +47,7 @@ public class NettyUtils {
         String useSingleThreadKey = "JOB_PARAM_mantis.netty.useSingleThread";
         String useSingleThreadStr = MantisProperties.getProperty(useSingleThreadKey);
 
-        if (useSingleThreadStr != null && !useSingleThreadStr.isEmpty() && useSingleThreadStr.equalsIgnoreCase("true")) {
+        if (useSingleThreadStr != null && !useSingleThreadStr.isEmpty() && "true".equalsIgnoreCase(useSingleThreadStr)) {
             RxNetty.useEventLoopProvider(new SingleNioLoopProvider(1));
             System.out.println(">>>>>>Set Netty to use single thread ");
         } else {

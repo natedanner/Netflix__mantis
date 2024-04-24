@@ -284,9 +284,7 @@ public class ServerSentEventRequestHandler<T> implements
                             return Observable.error(new ClosedChannelException());
                         }
 
-                        List<String> filteredList = valueList.stream().filter(e -> {
-                            return slotMgr.filter(sn, e.getBytes());
-                        }).collect(Collectors.toList());
+                        List<String> filteredList = valueList.stream().filter(e -> slotMgr.filter(sn, e.getBytes())).collect(Collectors.toList());
                         if (response.getChannel().isWritable()) {
 
 

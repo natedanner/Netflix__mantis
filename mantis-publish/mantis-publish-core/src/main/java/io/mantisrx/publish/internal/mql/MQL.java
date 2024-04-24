@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 public class MQL {
 
     private static final Logger LOG = LoggerFactory.getLogger(MQL.class);
-    private static IFn require = Clojure.var("io.mantisrx.mql.shaded.clojure.core", "require");
-    private static IFn cljMakeQuery = Clojure.var("io.mantisrx.mql.jvm.interfaces.server", "make-query");
-    private static IFn cljSuperset = Clojure.var("io.mantisrx.mql.jvm.interfaces.core", "queries->superset-projection");
+    private static final IFn require = Clojure.var("io.mantisrx.mql.shaded.clojure.core", "require");
+    private static final IFn cljMakeQuery = Clojure.var("io.mantisrx.mql.jvm.interfaces.server", "make-query");
+    private static final IFn cljSuperset = Clojure.var("io.mantisrx.mql.jvm.interfaces.core", "queries->superset-projection");
 
     static {
         require.invoke(Clojure.read("io.mantisrx.mql.jvm.interfaces.server"));
@@ -56,18 +56,18 @@ public class MQL {
         }
 
         IFn ssProjector = (IFn) cljSuperset.invoke(new ArrayList(qs));
-        return (datum) -> (Map<String, Object>) (ssProjector.invoke(datum));
+        return datum -> (Map<String, Object>) (ssProjector.invoke(datum));
     }
 
     public static String preprocess(String criterion) {
-        return criterion.toLowerCase().equals("true") ? "select * where true" :
-                criterion.toLowerCase().equals("false") ? "select * where false" :
+        return "true".equals(criterion.toLowerCase()) ? "select * where true" :
+                "false".equals(criterion.toLowerCase()) ? "select * where false" :
                         criterion;
     }
 
     public static boolean isContradictionQuery(String query) {
-        return query.equals("false") ||
-                query.equals("select * where false") ||
-                query.equals("select * from stream where false");
+        return "false".equals(query) ||
+                "select * where false".equals(query) ||
+                "select * from stream where false".equals(query);
     }
 }

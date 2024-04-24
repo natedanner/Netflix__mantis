@@ -69,7 +69,7 @@ public class FunctionCombinator<T, R> {
                     if (fn instanceof FilterFunction) {
                         current = current.filter(((FilterFunction) fn)::apply);
                     } else if (fn instanceof MapFunction) {
-                        current = current.map(e -> ((MapFunction) fn).apply(e));
+                        current = current.map(((MapFunction) fn)::apply);
                     } else if (fn instanceof FlatMapFunction) {
                         current = current.flatMap(e -> Observable.from(((FlatMapFunction) fn).apply(e)));
                     }
@@ -96,7 +96,7 @@ public class FunctionCombinator<T, R> {
                         if (fn instanceof FilterFunction) {
                             current = current.filter(((FilterFunction) fn)::apply);
                         } else if (fn instanceof MapFunction) {
-                            current = current.map(x -> ((MapFunction) fn).apply(x));
+                            current = current.map(((MapFunction) fn)::apply);
                         } else if (fn instanceof FlatMapFunction) {
                             current = current.flatMap(x -> Observable.from(((FlatMapFunction) fn).apply(x)));
                         } else if (fn instanceof WindowFunction) {
@@ -104,7 +104,7 @@ public class FunctionCombinator<T, R> {
                         } else if (fn instanceof ReduceFunction) {
                             ReduceFunction reduceFn = (ReduceFunction) fn;
                             current = ((Observable<Observable<?>>) current)
-                                .map(obs -> obs.reduce(reduceFn.initialValue(), (acc, e) -> reduceFn.reduce(acc, e)))
+                                .map(obs -> obs.reduce(reduceFn.initialValue(), reduceFn::reduce))
                                 .flatMap(x -> x)
                                 .filter(x -> x != SimpleReduceFunction.EMPTY);
                         }

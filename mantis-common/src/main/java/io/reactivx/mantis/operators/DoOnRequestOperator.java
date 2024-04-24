@@ -34,7 +34,7 @@ public class DoOnRequestOperator<T> implements Operator<T, T> {
 
     @Override
     public Subscriber<? super T> call(Subscriber<? super T> child) {
-        final RequestSubscriber<T> requestSubscriber = new RequestSubscriber<T>(child);
+        final RequestSubscriber<T> requestSubscriber = new RequestSubscriber<>(child);
         child.setProducer(new Producer() {
 
             @Override
@@ -54,7 +54,7 @@ public class DoOnRequestOperator<T> implements Operator<T, T> {
     static class RequestSubscriber<T> extends Subscriber<T> {
 
         final Subscriber<? super T> child;
-        boolean once = false;
+        boolean once;
 
         public RequestSubscriber(Subscriber<? super T> child) {
             super(child);

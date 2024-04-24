@@ -130,7 +130,7 @@ public class MantisStreamImpl<T> implements MantisStream<T> {
         final AtomicReference<FunctionCombinator<?, ?>> composite = new AtomicReference<>(new FunctionCombinator<>(false));
         for (OperandNode<?> n : operandNodes) {
             Set<OperandNode<?>> successorsNodes = graphDag.successors(n);
-            if (successorsNodes.size() == 0) {
+            if (successorsNodes.isEmpty()) {
                 continue;
             }
             // remove self-loop
@@ -206,7 +206,9 @@ public class MantisStreamImpl<T> implements MantisStream<T> {
             .collect(Collectors.toList());
         while (!starts.isEmpty()) {
             starts.forEach(x -> graphDag.successors(x).forEach(nbr -> {
-                if (nbr != x) inDegreeMap.get(nbr).decrementAndGet();
+                if (nbr != x) {
+                    inDegreeMap.get(nbr).decrementAndGet();
+                }
             }));
             visited.addAll(starts);
             nodeOrder.addAll(starts);

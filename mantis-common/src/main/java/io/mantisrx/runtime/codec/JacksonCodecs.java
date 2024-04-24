@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class JacksonCodecs {
 
-    private final static ObjectMapper mapper;
+    private static final ObjectMapper mapper;
 
     static {
         mapper = new ObjectMapper(new CBORFactory());

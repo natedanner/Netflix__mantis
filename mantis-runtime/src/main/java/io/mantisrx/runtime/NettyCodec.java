@@ -18,7 +18,7 @@ package io.mantisrx.runtime;
 
 import io.mantisrx.common.codec.Codec;
 
-public class NettyCodec<T> implements Codec<T> {
+public final class NettyCodec<T> implements Codec<T> {
     private final io.reactivex.netty.codec.Codec<T> codec;
 
     private NettyCodec(io.reactivex.netty.codec.Codec<T> codec) {

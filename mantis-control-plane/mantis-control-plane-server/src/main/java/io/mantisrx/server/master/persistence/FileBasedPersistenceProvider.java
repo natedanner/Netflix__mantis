@@ -52,7 +52,7 @@ public class FileBasedPersistenceProvider extends KeyValueBasedPersistenceProvid
     };
 
     public FileBasedPersistenceProvider(boolean actualStorageProvider) {
-        this((actualStorageProvider) ? new FileBasedStore() : KeyValueStore.NO_OP,
+        this(actualStorageProvider ? new FileBasedStore() : KeyValueStore.NO_OP,
             noopEventPublisher);
     }
 

@@ -64,7 +64,7 @@ public class HttpRequestFactories {
         return new PostRequestWithContentFactory(uri, entity);
     }
 
-    private static class GetRequestFactory implements HttpRequestFactory<ByteBuf> {
+    private static final class GetRequestFactory implements HttpRequestFactory<ByteBuf> {
 
         private final String uri;
 
@@ -78,7 +78,7 @@ public class HttpRequestFactories {
         }
     }
 
-    private static class SimplePostRequestFactory implements HttpRequestFactory<ByteBuf> {
+    private static final class SimplePostRequestFactory implements HttpRequestFactory<ByteBuf> {
 
         private final String uri;
 
@@ -92,7 +92,7 @@ public class HttpRequestFactories {
         }
     }
 
-    private static class PostRequestWithContentFactory implements HttpRequestFactory<ByteBuf> {
+    private static final class PostRequestWithContentFactory implements HttpRequestFactory<ByteBuf> {
 
         private final String uri;
         private final byte[] content;

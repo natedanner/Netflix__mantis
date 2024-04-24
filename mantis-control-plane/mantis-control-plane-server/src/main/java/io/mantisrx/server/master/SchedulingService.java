@@ -120,10 +120,10 @@ public class SchedulingService extends BaseService implements MantisScheduler {
     private final String slaveClusterAttributeName;
     private final long vmCurrentStatesCheckInterval = 10000;
     private final AtomicLong lastVmCurrentStatesCheckDone = new AtomicLong(System.currentTimeMillis());
-    private VirtualMachineMasterService virtualMachineService;
-    private long SCHEDULING_ITERATION_INTERVAL_MILLIS = 50;
-    private long MAX_DELAY_MILLIS_BETWEEN_SCHEDULING_ITER = 5_000;
-    private AtomicLong lastSchedulingResultCallback = new AtomicLong(System.currentTimeMillis());
+    private final VirtualMachineMasterService virtualMachineService;
+    private long schedulingIterationIntervalMillis = 50;
+    private static final long MAX_DELAY_MILLIS_BETWEEN_SCHEDULING_ITER = 5_000;
+    private final AtomicLong lastSchedulingResultCallback = new AtomicLong(System.currentTimeMillis());
 
     public SchedulingService(final JobMessageRouter jobMessageRouter,
                              final WorkerRegistry workerRegistry,
@@ -135,7 +135,7 @@ public class SchedulingService extends BaseService implements MantisScheduler {
         this.workerRegistry = workerRegistry;
         this.virtualMachineService = virtualMachineService;
         this.slaveClusterAttributeName = ConfigurationProvider.getConfig().getSlaveClusterAttributeName();
-        SCHEDULING_ITERATION_INTERVAL_MILLIS = ConfigurationProvider.getConfig().getSchedulerIterationIntervalMillis();
+        schedulingIterationIntervalMillis = ConfigurationProvider.getConfig().getSchedulerIterationIntervalMillis();
         AgentFitnessCalculator agentFitnessCalculator = new AgentFitnessCalculator();
         TaskScheduler.Builder schedulerBuilder = new TaskScheduler.Builder()
                 .withLeaseRejectAction(virtualMachineService::rejectLease)
@@ -143,8 +143,9 @@ public class SchedulingService extends BaseService implements MantisScheduler {
                 .withFitnessCalculator(agentFitnessCalculator)
                 .withFitnessGoodEnoughFunction(agentFitnessCalculator.getFitnessGoodEnoughFunc())
                 .withAutoScaleByAttributeName(ConfigurationProvider.getConfig().getAutoscaleByAttributeName()); // set this always
-        if (ConfigurationProvider.getConfig().getDisableShortfallEvaluation())
+        if (ConfigurationProvider.getConfig().getDisableShortfallEvaluation()) {
             schedulerBuilder = schedulerBuilder.disableShortfallEvaluation();
+        }
         taskScheduler = setupTaskSchedulerAndAutoScaler(vmLeaseRescindedObservable, schedulerBuilder);
         taskScheduler.setActiveVmGroupAttributeName(ConfigurationProvider.getConfig().getActiveSlaveAttributeName());
 
@@ -235,8 +236,9 @@ public class SchedulingService extends BaseService implements MantisScheduler {
                         schedulerBuilder = schedulerBuilder.withAutoScaleRule(rule);
                         minMinIdle = Math.min(minMinIdle, rule.getMinIdleHostsToKeep());
                     }
-                } else
+                } else {
                     logger.warn("No auto scale rules setup");
+                }
             }
         } catch (IllegalStateException e) {
             logger.warn("Ignoring: " + e.getMessage());
@@ -247,10 +249,11 @@ public class SchedulingService extends BaseService implements MantisScheduler {
                 .doOnNext(new Action1<String>() {
                     @Override
                     public void call(String s) {
-                        if (s.equals("ALL"))
+                        if ("ALL".equals(s)) {
                             scheduler.expireAllLeases();
-                        else
+                        } else {
                             scheduler.expireLease(s);
+                        }
                     }
                 })
                 .subscribe();
@@ -260,13 +263,10 @@ public class SchedulingService extends BaseService implements MantisScheduler {
                 @Override
                 public void call(AutoScaleAction action) {
                     try {
-                        switch (action.getType()) {
-                        case Up:
+                        if (action.getType() == AutoScaleAction.Type.Up) {
                             numAutoScaleUpActions.increment();
-                            break;
-                        case Down:
+                        } else if (action.getType() == AutoScaleAction.Type.Down) {
                             numAutoScaleDownActions.increment();
-                            break;
                         }
                         autoScaleActionObserver.onNext(action);
                     } catch (Exception e) {
@@ -318,7 +318,7 @@ public class SchedulingService extends BaseService implements MantisScheduler {
     private TaskSchedulingService setupTaskSchedulingService(TaskScheduler taskScheduler) {
         TaskSchedulingService.Builder builder = new TaskSchedulingService.Builder()
                 .withTaskScheduler(taskScheduler)
-                .withLoopIntervalMillis(SCHEDULING_ITERATION_INTERVAL_MILLIS)
+                .withLoopIntervalMillis(schedulingIterationIntervalMillis)
                 .withMaxDelayMillis(MAX_DELAY_MILLIS_BETWEEN_SCHEDULING_ITER) // sort of rate limiting when no assignments were made and no new offers available
                 .withSchedulingResultCallback(this::schedulingResultHandler)
                 .withTaskQueue(taskQueue)
@@ -528,7 +528,7 @@ public class SchedulingService extends BaseService implements MantisScheduler {
 
     @Override
     public void rescindOffer(final String offerId) {
-        if (offerId.equals("ALL")) {
+        if ("ALL".equals(offerId)) {
             taskScheduler.expireAllLeases();
         } else {
             taskScheduler.expireLease(offerId);
@@ -590,9 +590,8 @@ public class SchedulingService extends BaseService implements MantisScheduler {
             setupSchedulingServiceWatcherMetric();
             if (logger.isDebugEnabled()) {
                 try {
-                    taskSchedulingService.requestAllTasks(taskStateCollectionMap -> taskStateCollectionMap.forEach((state, tasks) -> {
-                        logger.debug("state {} tasks {}", state, tasks.toString());
-                    }));
+                    taskSchedulingService.requestAllTasks(taskStateCollectionMap -> taskStateCollectionMap.forEach((state, tasks) ->
+                        logger.debug("state {} tasks {}", state, tasks.toString())));
                 } catch (TaskQueueException e) {
                     logger.error("caught exception", e);
                 }
@@ -614,12 +613,12 @@ public class SchedulingService extends BaseService implements MantisScheduler {
                         if (logger.isDebugEnabled()) {
                             final Set<String> jobMgrWorkers = workerRegistry.getAllRunningWorkers(null)
                                     .stream()
-                                    .map(w -> w.getId())
+                                    .map(WorkerId::getId)
                                     .collect(Collectors.toSet());
 
                             final Set<String> fenzoWorkers = tasks
                                     .stream()
-                                    .map(t -> t.getId())
+                                    .map(TaskRequest::getId)
                                     .collect(Collectors.toSet());
 
                             final Sets.SetView<String> extraJobMgrWorkers = Sets.difference(jobMgrWorkers, fenzoWorkers);
@@ -672,16 +671,16 @@ public class SchedulingService extends BaseService implements MantisScheduler {
         totalAvailableCPUs.set((long) totalCPU);
         totalAllocatedCPUs.set((long) usedCPU);
         cpuUtilization.set((long) (usedCPU * 100.0 / totalCPU));
-        double DRU = usedCPU * 100.0 / totalCPU;
+        double dru = usedCPU * 100.0 / totalCPU;
         totalAvailableMemory.set((long) totalMemory);
         totalAllocatedMemory.set((long) usedMemory);
         memoryUtilization.set((long) (usedMemory * 100.0 / totalMemory));
-        DRU = Math.max(DRU, usedMemory * 100.0 / totalMemory);
+        dru = Math.max(dru, usedMemory * 100.0 / totalMemory);
         totalAvailableNwMbps.set((long) totalNwMbps);
         totalAllocatedNwMbps.set((long) usedNwMbps);
         networkUtilization.set((long) (usedNwMbps * 100.0 / totalNwMbps));
-        DRU = Math.max(DRU, usedNwMbps * 100.0 / totalNwMbps);
-        dominantResUtilization.set((long) DRU);
+        dru = Math.max(dru, usedNwMbps * 100.0 / totalNwMbps);
+        dominantResUtilization.set((long) dru);
     }
 
     @Override

@@ -28,14 +28,14 @@ import rx.subjects.ReplaySubject;
 import rx.subjects.Subject;
 
 
-public class MergedObservable<T> {
+public final class MergedObservable<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(MergedObservable.class);
 
-    private Subject<Observable<T>, Observable<T>> subject;
-    private MergeCounts counts;
-    private Map<String, PublishSubject<Integer>> takeUntilSubjects =
-            new HashMap<String, PublishSubject<Integer>>();
+    private final Subject<Observable<T>, Observable<T>> subject;
+    private final MergeCounts counts;
+    private final Map<String, PublishSubject<Integer>> takeUntilSubjects =
+        new HashMap<>();
 
     private MergedObservable(int expectedTerminalCount, Subject<Observable<T>, Observable<T>> subject) {
         this.subject = subject;
@@ -43,11 +43,11 @@ public class MergedObservable<T> {
     }
 
     public static <T> MergedObservable<T> create(int expectedTerminalCount) {
-        return new MergedObservable<T>(expectedTerminalCount, PublishSubject.<Observable<T>>create());
+        return new MergedObservable<>(expectedTerminalCount, PublishSubject.<Observable<T>>create());
     }
 
     public static <T> MergedObservable<T> createWithReplay(int expectedTerminalCount) {
-        return new MergedObservable<T>(expectedTerminalCount, ReplaySubject.<Observable<T>>create());
+        return new MergedObservable<>(expectedTerminalCount, ReplaySubject.<Observable<T>>create());
     }
 
     public synchronized void mergeIn(String key, Observable<T> o) {

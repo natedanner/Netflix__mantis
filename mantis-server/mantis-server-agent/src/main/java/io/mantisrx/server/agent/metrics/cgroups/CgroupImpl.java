@@ -18,6 +18,7 @@ package io.mantisrx.server.agent.metrics.cgroups;
 
 import io.mantisrx.shaded.org.apache.curator.shaded.com.google.common.base.Preconditions;
 import io.vavr.Tuple2;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,7 +47,7 @@ public class CgroupImpl implements Cgroup {
      * cgroupv1.
      */
     @Getter(lazy = true, value = AccessLevel.PRIVATE)
-    private final boolean old = getSubsystems().size() > 0;
+    private final boolean old = !getSubsystems().isEmpty();
 
     @Override
     public Boolean isV1() {
@@ -129,9 +130,9 @@ public class CgroupImpl implements Cgroup {
         return
             Arrays.asList(Objects.requireNonNull(Paths.get(path).toFile().listFiles()))
                 .stream()
-                .filter(s -> s.isDirectory())
-                .map(s -> s.getName())
-                .filter(s -> knownSubsystems.contains(s))
+                .filter(File::isDirectory)
+                .map(File::getName)
+                .filter(knownSubsystems::contains)
                 .collect(Collectors.toList());
     }
 }

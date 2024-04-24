@@ -22,11 +22,11 @@ import rx.Observable;
 
 public class MantisJobStatus {
 
-    private String jobId;
-    private String name;
-    private long timestamp;
-    private Observable<Status> status;
-    private String fatalError = null;
+    private final String jobId;
+    private final String name;
+    private final long timestamp;
+    private final Observable<Status> status;
+    private String fatalError;
 
     MantisJobStatus(String jobId, Observable<Status> status,
                     String name) {

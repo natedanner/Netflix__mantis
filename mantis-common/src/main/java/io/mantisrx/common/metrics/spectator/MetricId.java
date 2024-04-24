@@ -80,13 +80,21 @@ public class MetricId {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         MetricId metricId = (MetricId) o;
 
-        if (!metricGroup.equals(metricId.metricGroup)) return false;
-        if (!metricName.equals(metricId.metricName)) return false;
+        if (!metricGroup.equals(metricId.metricGroup)) {
+            return false;
+        }
+        if (!metricName.equals(metricId.metricName)) {
+            return false;
+        }
         return tags.equals(metricId.tags);
 
     }

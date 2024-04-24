@@ -37,9 +37,8 @@ public class JobRegistryImpl implements JobRegistry {
 
     @Override
     public void addClusters(List<IJobClusterMetadata> jobClusters) {
-        jobClusters.forEach((jc) -> {
-            jobClusterMap.put(jc.getJobClusterDefinition().getName(), jc);
-        });
+        jobClusters.forEach(jc ->
+            jobClusterMap.put(jc.getJobClusterDefinition().getName(), jc));
 
     }
 
@@ -56,10 +55,8 @@ public class JobRegistryImpl implements JobRegistry {
 
     @Override
     public void addJobs(String clusterName, List<IMantisJobMetadata> jobList) {
-        jobList.forEach((jb) -> {
-            jobMap.put(jb.getJobId(),jb);
-
-        });
+        jobList.forEach(jb ->
+            jobMap.put(jb.getJobId(),jb));
 
         clusterToJobsMap.computeIfAbsent(clusterName,(x -> new HashSet<>())).addAll(jobList);
 

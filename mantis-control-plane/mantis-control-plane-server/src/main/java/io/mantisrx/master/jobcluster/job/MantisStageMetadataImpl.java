@@ -64,12 +64,12 @@ public class MantisStageMetadataImpl implements IMantisStageMetadata {
     private final MachineDefinition machineDefinition;
     private int numWorkers;
     @JsonIgnore
-    private boolean isSubscribed = false;
+    private boolean isSubscribed;
     private final List<JobConstraints> hardConstraints;
     private final List<JobConstraints> softConstraints;
     // scaling policy be null
-    private StageScalingPolicy scalingPolicy;
-    private boolean scalable;
+    private final StageScalingPolicy scalingPolicy;
+    private final boolean scalable;
     @JsonIgnore
     private final ConcurrentMap<Integer, JobWorker> workerByIndexMetadataSet;
     @JsonIgnore
@@ -135,8 +135,12 @@ public class MantisStageMetadataImpl implements IMantisStageMetadata {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MantisStageMetadataImpl that = (MantisStageMetadataImpl) o;
         return stageNum == that.stageNum && numStages == that.numStages && numWorkers == that.numWorkers
                 && scalable == that.scalable && Objects.equals(jobId, that.jobId)
@@ -161,9 +165,9 @@ public class MantisStageMetadataImpl implements IMantisStageMetadata {
 
         private JobId jobId;
         private int stageNum = -1;
-        private int numStages = 0;
+        private int numStages;
         private MachineDefinition machineDefinition;
-        private int numWorkers = 0;
+        private int numWorkers;
         private List<JobConstraints> hardConstraints = Collections.emptyList();
         private List<JobConstraints> softConstraints = Collections.emptyList();
         private StageScalingPolicy scalingPolicy;
@@ -277,18 +281,18 @@ public class MantisStageMetadataImpl implements IMantisStageMetadata {
          */
         public Builder from(WorkerRequest workerRequest) {
             Objects.requireNonNull(workerRequest);
-            this.jobId = (JobId.fromId(workerRequest.getJobId()).orElse(null));
-            this.stageNum = (workerRequest.getWorkerStage());
-            this.numStages = (workerRequest.getTotalStages());
-            this.machineDefinition = (workerRequest.getDefinition());
-            this.numWorkers = (workerRequest.getNumInstancesAtStage());
-            this.hardConstraints = (workerRequest.getHardConstraints() != null ? workerRequest.getHardConstraints()
-                    : new ArrayList<>());
-            this.softConstraints = (workerRequest.getSoftConstraints() != null ? workerRequest.getSoftConstraints()
-                    : new ArrayList<>());
-            this.scalingPolicy = (workerRequest.getSchedulingInfo().forStage(
-                    workerRequest.getWorkerStage()).getScalingPolicy());
-            this.scalable = (workerRequest.getSchedulingInfo().forStage(workerRequest.getWorkerStage()).getScalable());
+            this.jobId = JobId.fromId(workerRequest.getJobId()).orElse(null);
+            this.stageNum = workerRequest.getWorkerStage();
+            this.numStages = workerRequest.getTotalStages();
+            this.machineDefinition = workerRequest.getDefinition();
+            this.numWorkers = workerRequest.getNumInstancesAtStage();
+            this.hardConstraints = workerRequest.getHardConstraints() != null ? workerRequest.getHardConstraints()
+                    : new ArrayList<>();
+            this.softConstraints = workerRequest.getSoftConstraints() != null ? workerRequest.getSoftConstraints()
+                    : new ArrayList<>();
+            this.scalingPolicy = workerRequest.getSchedulingInfo().forStage(
+                    workerRequest.getWorkerStage()).getScalingPolicy();
+            this.scalable = workerRequest.getSchedulingInfo().forStage(workerRequest.getWorkerStage()).getScalable();
             return this;
         }
 
@@ -392,8 +396,9 @@ public class MantisStageMetadataImpl implements IMantisStageMetadata {
     @Override
     public JobWorker getWorkerByIndex(int workerId) throws InvalidJobException {
         JobWorker worker = workerByIndexMetadataSet.get(workerId);
-        if (worker == null)
+        if (worker == null) {
             throw new InvalidJobException(jobId, -1, workerId);
+        }
         return worker;
     }
 
@@ -401,8 +406,9 @@ public class MantisStageMetadataImpl implements IMantisStageMetadata {
     @Override
     public JobWorker getWorkerByWorkerNumber(int workerNumber) throws InvalidJobException {
         JobWorker worker = workerByNumberMetadataSet.get(workerNumber);
-        if (worker == null)
+        if (worker == null) {
             throw new InvalidJobException(jobId, -1, workerNumber);
+        }
         return worker;
     }
 
@@ -584,8 +590,9 @@ public class MantisStageMetadataImpl implements IMantisStageMetadata {
     public boolean isAllWorkerStarted() {
 
         for (JobWorker w : workerByIndexMetadataSet.values()) {
-            if (!w.getMetadata().getState().equals(WorkerState.Started))
+            if (!w.getMetadata().getState().equals(WorkerState.Started)) {
                 return false;
+            }
         }
         return true;
     }
@@ -614,8 +621,9 @@ public class MantisStageMetadataImpl implements IMantisStageMetadata {
     public int getNumStartedWorkers() {
         int startedCount = 0;
         for (JobWorker w : workerByIndexMetadataSet.values()) {
-            if (w.getMetadata().getState().equals(WorkerState.Started))
+            if (w.getMetadata().getState().equals(WorkerState.Started)) {
                 startedCount++;
+            }
         }
         return startedCount;
     }

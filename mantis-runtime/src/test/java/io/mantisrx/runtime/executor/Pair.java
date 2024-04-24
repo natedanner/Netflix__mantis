@@ -23,8 +23,8 @@ import io.mantisrx.shaded.com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Pair {
 
-    private String key;
-    private Integer value;
+    private final String key;
+    private final Integer value;
 
     @JsonCreator
     @JsonIgnoreProperties(ignoreUnknown = true)

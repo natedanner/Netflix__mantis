@@ -88,7 +88,7 @@ public class TcpServerListener<T extends ServerMetricsEvent<?>> extends ServerMe
     }
 
     public static TcpServerListener<ServerMetricsEvent<ServerMetricsEvent.EventType>> newListener(String monitorId) {
-        return new TcpServerListener<ServerMetricsEvent<ServerMetricsEvent.EventType>>(monitorId);
+        return new TcpServerListener<>(monitorId);
     }
 
     @Override

@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AdminMasterRouteTest extends RouteTestBase {
-    private final static Logger logger = LoggerFactory.getLogger(AdminMasterRouteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminMasterRouteTest.class);
     private static Thread t;
     private static final int ADMIN_MASTER_PORT = 8205;
     private static final MasterDescription fakeMasterDesc = new MasterDescription(

@@ -50,7 +50,7 @@ public class EventFilter implements Func1<Map<String, List<String>>, Func1<Strin
                 filter = new SourceEventFilter(terms);
             } else if (parameters.containsKey(MantisSourceJobConstants.SUBSCRIPTION_ID_PARAM_NAME)) {
                 String subId = parameters.get(MantisSourceJobConstants.SUBSCRIPTION_ID_PARAM_NAME).get(0);
-                List<String> terms = new ArrayList<String>();
+                List<String> terms = new ArrayList<>();
                 terms.add(clientId + "_" + subId);
                 filter = new SourceEventFilter(terms);
             }

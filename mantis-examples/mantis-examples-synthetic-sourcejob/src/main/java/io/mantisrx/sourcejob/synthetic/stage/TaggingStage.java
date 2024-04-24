@@ -61,7 +61,7 @@ public class TaggingStage  implements ScalarComputation<String, TaggedData> {
     public Observable<TaggedData> call(Context context, Observable<String> dataO) {
         final JsonSerializer jsonSerializer = new JsonSerializer();
         return dataO
-                .map((event) -> {
+                .map(event -> {
                     try {
                         return jsonSerializer.toMap(event);
                     } catch (Exception e) {

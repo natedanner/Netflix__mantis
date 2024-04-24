@@ -60,11 +60,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import mantis.io.reactivex.netty.RxNetty;
 import mantis.io.reactivex.netty.channel.ObservableConnection;
 import mantis.io.reactivex.netty.pipeline.PipelineConfigurators;
+import mantis.io.reactivex.netty.protocol.http.AbstractHttpContentHolder;
 import mantis.io.reactivex.netty.protocol.http.client.HttpClient;
 import mantis.io.reactivex.netty.protocol.http.client.HttpClientRequest;
 import mantis.io.reactivex.netty.protocol.http.client.HttpClientResponse;
@@ -119,7 +121,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
     }
 
     final String DEFAULT_RESPONSE = "NO_RESPONSE_FROM_MASTER";
-    private final long GET_TIMEOUT_SECS = 30;
+    private static final long GET_TIMEOUT_SECS = 30;
     private final Observable<Endpoint> masterEndpoint;
     private final int subscribeAttemptsToMaster;
     private final Func1<Observable<? extends Throwable>, Observable<?>> retryLogic = attempts -> attempts
@@ -138,7 +140,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
                 logger.warn("On Complete received! : repeating conx after sleeping for " + delay + " secs");
                 return Observable.timer(delay, TimeUnit.SECONDS);
             });
-    private MasterMonitor masterMonitor;
+    private final MasterMonitor masterMonitor;
 
     /**
      *
@@ -147,7 +149,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
     public MantisMasterClientApi(MasterMonitor masterMonitor) {
         this.masterMonitor = masterMonitor;
         masterEndpoint = masterMonitor.getMasterObservable()
-                .filter(masterDescription -> masterDescription != null)
+                .filter(Objects::nonNull)
                 .map(description -> {
                     logger.info("New Mantis Master notification, host: " + description.getHostname() + "," +
                             " swapping out client API connection to new master.");
@@ -332,7 +334,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
 
     public Observable<JobSubmitResponse> submitJob(final String submitJobRequestJson) {
         return masterMonitor.getMasterObservable()
-                .filter(masterDescription -> masterDescription != null)
+                .filter(Objects::nonNull)
                 .switchMap((Func1<MasterDescription, Observable<JobSubmitResponse>>) masterDescription -> {
                     String uri = "http://" + masterDescription.getHostname() + ":" +
                             masterDescription.getApiPort() + API_JOB_SUBMIT_PATH;
@@ -376,7 +378,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
      */
     public Observable<Void> killJob(final String jobId, final String user, final String reason) {
         return masterMonitor.getMasterObservable()
-                .filter(md -> md != null)
+                .filter(Objects::nonNull)
                 .switchMap((Func1<MasterDescription, Observable<Void>>) md -> {
                     Map<String, String> content = new HashMap<>();
                     content.put("JobId", jobId);
@@ -410,7 +412,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
                                              final String reason) {
         return masterMonitor
                 .getMasterObservable()
-                .filter(md -> md != null)
+                .filter(Objects::nonNull)
                 .take(1)
                 .flatMap((Func1<MasterDescription, Observable<Boolean>>) md -> {
                     final StageScaleRequest stageScaleRequest = new StageScaleRequest(jobId, stageNum, numWorkers, reason);
@@ -438,7 +440,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
     public Observable<Boolean> resubmitJobWorker(final String jobId, final String user, final int workerNum,
                                                  final String reason) {
         return masterMonitor.getMasterObservable()
-                .filter(md -> md != null)
+                .filter(Objects::nonNull)
                 .take(1)
                 .flatMap((Func1<MasterDescription, Observable<Boolean>>) md -> {
                     final ResubmitJobWorkerRequest resubmitJobWorkerRequest = new ResubmitJobWorkerRequest(jobId,
@@ -466,7 +468,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
                                 .withContent(postContent),
                         new HttpClient.HttpClientConfig.Builder()
                                 .build())
-                .map(b -> b.getStatus());
+                .map(HttpClientResponse::getStatus);
     }
 
     private Observable<String> getPostResponse(String uri, String postContent) {
@@ -477,7 +479,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
                                 .withContent(postContent),
                         new HttpClient.HttpClientConfig.Builder()
                                 .build())
-                .flatMap((Func1<HttpClientResponse<ByteBuf>, Observable<ByteBuf>>) b -> b.getContent())
+                .flatMap((Func1<HttpClientResponse<ByteBuf>, Observable<ByteBuf>>) AbstractHttpContentHolder::getContent)
                 .map(o -> o.toString(Charset.defaultCharset()));
     }
 
@@ -489,7 +491,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
 
     public Observable<Boolean> namedJobExists(final String jobName) {
         return masterMonitor.getMasterObservable()
-                .filter(md -> md != null)
+                .filter(Objects::nonNull)
                 .switchMap((Func1<MasterDescription, Observable<Boolean>>) masterDescription -> {
                     String uri = API_JOB_NAME_LIST + "/" + jobName;
                     logger.info("Calling GET on " + uri);
@@ -518,7 +520,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
      */
     public Observable<Integer> getSinkStageNum(final String jobId) {
         return masterMonitor.getMasterObservable()
-                .filter(masterDescription -> masterDescription != null)
+                .filter(Objects::nonNull)
                 .switchMap(masterDescription -> {
                     String uri = API_JOBS_LIST_PATH + "/" + jobId;
                     logger.info("Calling GET on " + uri);
@@ -556,11 +558,12 @@ public class MantisMasterClientApi implements MantisMasterGateway {
     // returns json array of job metadata
     public Observable<String> getJobsOfNamedJob(final String jobName, final MantisJobState.MetaState state) {
         return masterMonitor.getMasterObservable()
-                .filter(masterDescription -> masterDescription != null)
+                .filter(Objects::nonNull)
                 .switchMap(masterDescription -> {
                     String uri = API_JOBS_LIST_MATCHING_PATH + "/" + jobName;
-                    if (state != null)
+                    if (state != null) {
                         uri = uri + "?jobState=" + state;
+                    }
                     logger.info("Calling GET on " + uri);
                     return HttpUtility.getGetResponse(masterDescription.getHostname(),
                             masterDescription.getApiPort(), uri)
@@ -582,7 +585,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
      */
     public Observable<Boolean> jobIdExists(final String jobId) {
         return masterMonitor.getMasterObservable()
-                .filter(masterDescription -> masterDescription != null)
+                .filter(Objects::nonNull)
                 .switchMap(masterDescription -> {
                     String uri = API_JOBS_LIST_PATH + "/" + jobId;
                     logger.info("Calling GET on " + uri);
@@ -683,13 +686,13 @@ public class MantisMasterClientApi implements MantisMasterGateway {
      */
     public Observable<String> getJobStatusObservable(final String jobId) {
         return masterMonitor.getMasterObservable()
-                .filter((md) -> md != null)
+                .filter(Objects::nonNull)
                 .retryWhen(retryLogic)
-                .switchMap((md) -> getRxnettyWebSocketClient(md.getHostname(), md.getConsolePort(),
+                .switchMap(md -> getRxnettyWebSocketClient(md.getHostname(), md.getConsolePort(),
                        "ws://" + md.getHostname() + ":" + md.getApiPort() + "/job/status/" + jobId)
                         .connect()
                         .flatMap((ObservableConnection<TextWebSocketFrame, TextWebSocketFrame> connection) -> connection.getInput()
-                                .map((TextWebSocketFrame webSocketFrame) -> webSocketFrame.text())))
+                                .map(TextWebSocketFrame::text)))
                 .onErrorResumeNext(Observable.empty());
     }
 
@@ -700,7 +703,7 @@ public class MantisMasterClientApi implements MantisMasterGateway {
      */
     public Observable<JobSchedulingInfo> schedulingChanges(final String jobId) {
         return masterMonitor.getMasterObservable()
-                .filter(masterDescription -> masterDescription != null)
+                .filter(Objects::nonNull)
                 .retryWhen(retryLogic)
                 .switchMap((Func1<MasterDescription,
                         Observable<JobSchedulingInfo>>) masterDescription -> getRxnettySseClient(
@@ -738,14 +741,15 @@ public class MantisMasterClientApi implements MantisMasterGateway {
      */
     public Observable<NamedJobInfo> namedJobInfo(final String jobName) {
         return masterMonitor.getMasterObservable()
-                .filter(masterDescription -> masterDescription != null)
+                .filter(Objects::nonNull)
                 .retryWhen(retryLogic)
                 .switchMap((Func1<MasterDescription, Observable<NamedJobInfo>>) masterDescription ->
                         getRxnettySseClient(masterDescription.getHostname(), masterDescription.getSchedInfoPort())
                         .submit(HttpClientRequest.createGet("/namedjobs/" + jobName + "?sendHB=true"))
                         .flatMap((Func1<HttpClientResponse<ServerSentEvent>, Observable<NamedJobInfo>>) response -> {
-                            if (!HttpResponseStatus.OK.equals(response.getStatus()))
+                            if (!HttpResponseStatus.OK.equals(response.getStatus())) {
                                 return Observable.error(new Exception(response.getStatus().reasonPhrase()));
+                            }
                             return response.getContent()
                                     .map(event -> {
                                         try {

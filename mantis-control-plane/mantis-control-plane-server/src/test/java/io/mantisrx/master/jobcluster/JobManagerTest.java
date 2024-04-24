@@ -92,7 +92,7 @@ public class JobManagerTest {
 
 		assertEquals(1, jm.acceptedJobsCount());
 
-        assertTrue(jm.getCompletedJobsList().size() == 0);
+        assertTrue(jm.getCompletedJobsList().isEmpty());
 
 		assertTrue(jm.markCompleted(jId1,empty(),JobState.Completed).isPresent());
 

@@ -34,9 +34,9 @@ public class FixedConnectionSet<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(FixedConnectionSet.class);
 
-    private EndpointInjector endpointInjector;
-    private Func1<Endpoint, Observable<T>> toObservableFunc;
-    private MergedObservable<T> mergedObservable;
+    private final EndpointInjector endpointInjector;
+    private final Func1<Endpoint, Observable<T>> toObservableFunc;
+    private final MergedObservable<T> mergedObservable;
 
     public FixedConnectionSet(int expectedTerminalCount, EndpointInjector endpointInjector,
                               Func1<Endpoint, Observable<T>> toObservableFunc) {
@@ -56,7 +56,7 @@ public class FixedConnectionSet<T> {
                         return RemoteObservable.connect(config.build()).getObservable();
                     }
                 };
-        return new FixedConnectionSet<GroupedObservable<K, V>>(expectedTerminalCount, endpointService, toObservableFunc);
+        return new FixedConnectionSet<>(expectedTerminalCount, endpointService, toObservableFunc);
     }
 
     public static <T> FixedConnectionSet<T> create(int expectedTerminalCount,
@@ -70,7 +70,7 @@ public class FixedConnectionSet<T> {
                         return RemoteObservable.connect(config.build()).getObservable();
                     }
                 };
-        return new FixedConnectionSet<T>(expectedTerminalCount, endpointService, toObservableFunc);
+        return new FixedConnectionSet<>(expectedTerminalCount, endpointService, toObservableFunc);
     }
 
     public Observable<Observable<T>> getObservables() {

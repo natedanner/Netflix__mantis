@@ -246,7 +246,7 @@ public class KafkaSource implements Source<KafkaAckable> {
         return Observable.create(syncOnSubscribe)
             .subscribeOn(Schedulers.newThread())
             .doOnUnsubscribe(() -> LOGGER.info("consumer {} stopped due to unsubscribe", mantisKafkaConsumerId))
-            .doOnError((t) -> {
+            .doOnError(t -> {
                 LOGGER.error("consumer {} stopped due to error", mantisKafkaConsumerId, t);
                 consumerMetrics.incrementErrorCount();
             })
@@ -308,7 +308,7 @@ public class KafkaSource implements Source<KafkaAckable> {
 
     private void startAckProcessor() {
         LOGGER.info("Acknowledgement processor started");
-        ackSubjectSubscription = ackSubject.subscribe((KafkaDataNotification notification) -> processAckNotification(notification));
+        ackSubjectSubscription = ackSubject.subscribe(this::processAckNotification);
     }
 
     private void stopAckProcessor() {

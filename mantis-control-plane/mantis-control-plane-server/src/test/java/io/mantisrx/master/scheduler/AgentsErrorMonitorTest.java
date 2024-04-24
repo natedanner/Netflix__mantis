@@ -120,12 +120,12 @@ public class AgentsErrorMonitorTest {
     @Test
     public void basicTest() {
 
-        long too_old_millis = 4000;
-        int error_check_window_count = 3;
-        long error_check_window_millis = 2000;
+        long tooOldMillis = 4000;
+        int errorCheckWindowCount = 3;
+        long errorCheckWindowMillis = 2000;
         long disableDuration = 1000;
         long t1 = 1000;
-        ActorRef errorMonitorActor = system.actorOf(props(too_old_millis, error_check_window_count, error_check_window_millis,disableDuration));
+        ActorRef errorMonitorActor = system.actorOf(props(tooOldMillis, errorCheckWindowCount, errorCheckWindowMillis,disableDuration));
 
         MantisScheduler schedulerMock = mock(MantisScheduler.class);
         errorMonitorActor.tell(new AgentsErrorMonitorActor.InitializeAgentsErrorMonitor(schedulerMock), probe.getRef());
@@ -170,11 +170,11 @@ public class AgentsErrorMonitorTest {
 
         EnableHostAction enableHostAction = new EnableHostAction();
         DisableHostAction disableHostAction = new DisableHostAction();
-        long too_old_millis = 4000;
-        int error_check_window_count = 3;
-        long error_check_window_millis = 2000;
+        long tooOldMillis = 4000;
+        int errorCheckWindowCount = 3;
+        long errorCheckWindowMillis = 2000;
         long t1 = 1000;
-        ActorRef errorMonitorActor = system.actorOf(props(too_old_millis, error_check_window_count, error_check_window_millis, 1000));
+        ActorRef errorMonitorActor = system.actorOf(props(tooOldMillis, errorCheckWindowCount, errorCheckWindowMillis, 1000));
 
         MantisScheduler schedulerMock = mock(MantisScheduler.class);
         errorMonitorActor.tell(new AgentsErrorMonitorActor.InitializeAgentsErrorMonitor(schedulerMock), probe.getRef());
@@ -212,11 +212,11 @@ public class AgentsErrorMonitorTest {
 
         EnableHostAction enableHostAction = new EnableHostAction();
         DisableHostAction disableHostAction = new DisableHostAction();
-        long too_old_millis = 4000;
-        int error_check_window_count = 3;
-        long error_check_window_millis = 2000;
+        long tooOldMillis = 4000;
+        int errorCheckWindowCount = 3;
+        long errorCheckWindowMillis = 2000;
         long t1 = 1000;
-        ActorRef errorMonitorActor = system.actorOf(props( too_old_millis, error_check_window_count, error_check_window_millis, 1000));
+        ActorRef errorMonitorActor = system.actorOf(props( tooOldMillis, errorCheckWindowCount, errorCheckWindowMillis, 1000));
 
         MantisScheduler schedulerMock = mock(MantisScheduler.class);
         errorMonitorActor.tell(new AgentsErrorMonitorActor.InitializeAgentsErrorMonitor(schedulerMock), probe.getRef());
@@ -244,11 +244,11 @@ public class AgentsErrorMonitorTest {
 
         EnableHostAction enableHostAction = new EnableHostAction();
         DisableHostAction disableHostAction = new DisableHostAction();
-        long too_old_millis = 4000;
-        int error_check_window_count = 3;
-        long error_check_window_millis = 2000;
+        long tooOldMillis = 4000;
+        int errorCheckWindowCount = 3;
+        long errorCheckWindowMillis = 2000;
         long t1 = 1000;
-        ActorRef errorMonitorActor = system.actorOf(props(too_old_millis, error_check_window_count, error_check_window_millis, 1000));
+        ActorRef errorMonitorActor = system.actorOf(props(tooOldMillis, errorCheckWindowCount, errorCheckWindowMillis, 1000));
         MantisScheduler schedulerMock = mock(MantisScheduler.class);
         errorMonitorActor.tell(new AgentsErrorMonitorActor.InitializeAgentsErrorMonitor(schedulerMock), probe.getRef());
 

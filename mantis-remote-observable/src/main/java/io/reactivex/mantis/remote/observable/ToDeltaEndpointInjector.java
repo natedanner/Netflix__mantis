@@ -77,7 +77,7 @@ public class ToDeltaEndpointInjector implements EndpointInjector {
                 completeCheck.add(id);
             }
         }
-        List<EndpointChange> toComplete = new LinkedList<EndpointChange>();
+        List<EndpointChange> toComplete = new LinkedList<>();
         // check if need to complete any from current set: set difference
         for (Map.Entry<String, Endpoint> controlledEndpoint : previousSet.entrySet()) {
             if (!completeCheck.contains(controlledEndpoint.getKey())) {

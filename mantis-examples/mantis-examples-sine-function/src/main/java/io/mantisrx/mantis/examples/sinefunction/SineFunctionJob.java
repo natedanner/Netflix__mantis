@@ -65,18 +65,16 @@ public class SineFunctionJob extends MantisJobProvider<Point> {
             .withPredicate(new Predicate<>(
                     "filter=even, returns even x parameters; filter=odd, returns odd x parameters.",
                     parameters -> {
-                        Func1<Point, Boolean> filter = point -> {
-                            return true;
-                        };
+                        Func1<Point, Boolean> filter = point -> true;
                         if (parameters != null && parameters.containsKey("filter")) {
                             String filterBy = parameters.get("filter").get(0);
                             // create filter function based on parameter value
                             filter = point -> {
                                 // filter by evens or odds for x values
                                 if ("even".equalsIgnoreCase(filterBy)) {
-                                    return (point.getX() % 2 == 0);
+                                    return point.getX() % 2 == 0;
                                 } else if ("odd".equalsIgnoreCase(filterBy)) {
-                                    return (point.getX() % 2 != 0);
+                                    return point.getX() % 2 != 0;
                                 }
                                 return true; // if not even/odd
                             };
@@ -184,9 +182,8 @@ public class SineFunctionJob extends MantisJobProvider<Point> {
             // If you want to be informed of scaleup/scale down of the source stage of this job you can subscribe
             // to getTotalNumWorkersObservable like the following.
             Subscription subscription =
-                index.getTotalNumWorkersObservable().subscribeOn(Schedulers.io()).subscribe((workerCount) -> {
-                    System.out.println("Total worker count changed to -> " + workerCount);
-                });
+                index.getTotalNumWorkersObservable().subscribeOn(Schedulers.io()).subscribe(workerCount ->
+                    System.out.println("Total worker count changed to -> " + workerCount));
             final int period = (int)
                     context.getParameters().get(INTERVAL_SEC);
             final int max = (int)
@@ -213,7 +210,7 @@ public class SineFunctionJob extends MantisJobProvider<Point> {
                             })
                             .filter(x -> {
                                 double value = randomRateVariable.nextDouble();
-                                return (value <= randomRate);
+                                return value <= randomRate;
                             })
                         .doOnUnsubscribe(subscription::unsubscribe)
             );

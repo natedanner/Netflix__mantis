@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class NettyExceptionHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
     private final Map<String, String> responseHeaders = new HashMap<>();
-    private static Logger logger = LoggerFactory.getLogger(NettyExceptionHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyExceptionHandler.class);
 
     // MetricGroupId metricGroupId;
     // Counter invalidRequestCount;

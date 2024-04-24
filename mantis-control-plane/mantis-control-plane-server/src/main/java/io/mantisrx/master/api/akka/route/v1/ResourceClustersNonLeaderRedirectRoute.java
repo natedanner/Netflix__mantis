@@ -127,7 +127,7 @@ public class ResourceClustersNonLeaderRedirectRoute extends BaseRoute {
 
     @Override
     protected Route constructRoutes() {
-        Route result = pathPrefix(
+        return pathPrefix(
             RESOURCECLUSTERS_API_PREFIX,
             () -> concat(
                 // /
@@ -150,7 +150,7 @@ public class ResourceClustersNonLeaderRedirectRoute extends BaseRoute {
                 // /{}
                 path(
                     PathMatchers.segment(),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
 
                         // GET
                         get(() -> getResourceClusterInstanceRoute(clusterName)),
@@ -162,7 +162,7 @@ public class ResourceClustersNonLeaderRedirectRoute extends BaseRoute {
                 // /{}/scaleSku
                 path(
                     PathMatchers.segment().slash("scaleSku"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
 
                         // POST
                         post(() -> scaleClusterSku(clusterName))
@@ -171,19 +171,19 @@ public class ResourceClustersNonLeaderRedirectRoute extends BaseRoute {
                 // /{}/disableTaskExecutors
                 path(
                     PathMatchers.segment().slash("disableTaskExecutors"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         post(() -> disableTaskExecutors(getClusterID(clusterName)))))
                 ),
                 // /{}/setScalerStatus
                 path(
                     PathMatchers.segment().slash("setScalerStatus"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         post(() -> setScalerStatus(clusterName))))
                 ),
                 // /{}/upgrade
                 path(
                     PathMatchers.segment().slash("upgrade"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
 
                         // POST
                         post(() -> upgradeCluster(clusterName))
@@ -192,13 +192,13 @@ public class ResourceClustersNonLeaderRedirectRoute extends BaseRoute {
                 // /{}/getResourceOverview
                 path(
                     PathMatchers.segment().slash("getResourceOverview"),
-                    (clusterName) -> pathEndOrSingleSlash(
+                    clusterName -> pathEndOrSingleSlash(
                         () -> concat(get(() -> getResourceOverview(getClusterID(clusterName)))))
                 ),
                 // /{}/activeJobOverview?pageSize={}&startingIndex={}
                 path(
                     PathMatchers.segment().slash("activeJobOverview"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(get(() ->
+                    clusterName -> pathEndOrSingleSlash(() -> concat(get(() ->
                         parameterOptional("startingIndex", startingIndex ->
                             parameterOptional("pageSize", pageSize ->
                                 getActiveJobOverview(getClusterID(clusterName), startingIndex,
@@ -207,31 +207,31 @@ public class ResourceClustersNonLeaderRedirectRoute extends BaseRoute {
                 // /{}/getRegisteredTaskExecutors
                 path(
                     PathMatchers.segment().slash("getRegisteredTaskExecutors"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         get(() -> mkTaskExecutorsRoute(getClusterID(clusterName), (rc, req) -> rc.getRegisteredTaskExecutors(req.getAttributes())))))
                 ),
                 // /{}/getBusyTaskExecutors
                 path(
                     PathMatchers.segment().slash("getBusyTaskExecutors"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         get(() -> mkTaskExecutorsRoute(getClusterID(clusterName), (rc, req) -> rc.getBusyTaskExecutors(req.getAttributes())))))
                 ),
                 // /{}/getAvailableTaskExecutors
                 path(
                     PathMatchers.segment().slash("getAvailableTaskExecutors"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         get(() -> mkTaskExecutorsRoute(getClusterID(clusterName), (rc, req) -> rc.getAvailableTaskExecutors(req.getAttributes())))))
                 ),
                 // /{}/getUnregisteredTaskExecutors
                 path(
                     PathMatchers.segment().slash("getUnregisteredTaskExecutors"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         get(() -> mkTaskExecutorsRoute(getClusterID(clusterName), (rc, req) -> rc.getUnregisteredTaskExecutors(req.getAttributes())))))
                 ),
                 // /{}/scaleRule
                 path(
                     PathMatchers.segment().slash("scaleRule"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
 
                         // POST
                         post(() -> createSingleScaleRule(clusterName))
@@ -240,7 +240,7 @@ public class ResourceClustersNonLeaderRedirectRoute extends BaseRoute {
                 // /{}/scaleRules
                 path(
                     PathMatchers.segment().slash("scaleRules"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         // GET
                         get(() -> getScaleRules(clusterName)),
 
@@ -251,7 +251,7 @@ public class ResourceClustersNonLeaderRedirectRoute extends BaseRoute {
                 // /{}/cacheJobArtifacts
                 path(
                     PathMatchers.segment().slash("cacheJobArtifacts"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         // GET
                         get(() -> withFuture(gateway.getClusterFor(getClusterID(clusterName))
                             .getJobArtifactsToCache())),
@@ -267,18 +267,16 @@ public class ResourceClustersNonLeaderRedirectRoute extends BaseRoute {
                 // /api/v1/resourceClusters/{}/taskExecutors/{}/getTaskExecutorState
                 pathPrefix(
                     PathMatchers.segment().slash("taskExecutors"),
-                    (clusterName) -> concat(
+                    clusterName -> concat(
                         path(
                             PathMatchers.segment().slash("getTaskExecutorState"),
-                            (taskExecutorId) ->
+                            taskExecutorId ->
                                 pathEndOrSingleSlash(() -> concat(
                                     get(() -> getTaskExecutorState(getClusterID(clusterName),
                                         getTaskExecutorID(taskExecutorId))))))
                     )
                 )
             ));
-
-        return result;
     }
 
     private Route listClusters() {
@@ -392,16 +390,14 @@ public class ResourceClustersNonLeaderRedirectRoute extends BaseRoute {
         log.info("GET /api/v1/resourceClusters called");
         return parameterMap(param ->
             alwaysCache(routeResultCache, getRequestUriKeyer, () -> extractUri(
-                uri -> {
-                    return completeAsync(
+                uri -> completeAsync(
                         this.resourceClusterRouteHandler.get(
                             ListResourceClusterRequest.builder().build()),
                         resp -> completeOK(
                             resp,
                             Jackson.marshaller()),
                         Endpoints.RESOURCE_CLUSTERS,
-                        HttpRequestMetrics.HttpVerb.GET);
-                })));
+                        HttpRequestMetrics.HttpVerb.GET))));
     }
 
     private Route deleteResourceClusterInstanceRoute(String clusterId) {

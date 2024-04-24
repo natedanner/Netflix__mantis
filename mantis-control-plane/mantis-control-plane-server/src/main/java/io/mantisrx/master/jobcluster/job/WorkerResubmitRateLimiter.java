@@ -58,8 +58,9 @@ import org.slf4j.LoggerFactory;
 
         Preconditions.checkArg(expireResubmitDelaySecs > 0, "Expire "
                 + "Resubmit Delay cannot be 0 or less");
-        if (workerResubmitIntervalSecs == null || workerResubmitIntervalSecs.isEmpty())
+        if (workerResubmitIntervalSecs == null || workerResubmitIntervalSecs.isEmpty()) {
             workerResubmitIntervalSecs = DEFAULT_WORKER_RESUBMIT_INTERVAL_SECS_STR;
+        }
         StringTokenizer tokenizer = new StringTokenizer(workerResubmitIntervalSecs, ":");
         if (tokenizer.countTokens() == 0) {
             this.resubmitIntervalSecs = new long[2];
@@ -101,8 +102,9 @@ import org.slf4j.LoggerFactory;
         Iterator<ResubmitRecord> it = resubmitRecords.values().iterator();
         while (it.hasNext()) {
             ResubmitRecord record = it.next();
-            if (record.getResubmitAt() - record.getDelayedBy() < (currentTime - this.expireResubmitDelaySecs * 1000))
+            if (record.getResubmitAt() - record.getDelayedBy() < (currentTime - this.expireResubmitDelaySecs * 1000)) {
                 it.remove();
+            }
         }
     }
 
@@ -118,12 +120,15 @@ import org.slf4j.LoggerFactory;
         if (resubmitRecord != null) {
             long prevDelay = resubmitRecord.getDelayedBy();
             int index = 0;
-            for (; index < resubmitIntervalSecs.length; index++)
-                if (prevDelay <= resubmitIntervalSecs[index])
+            for (; index < resubmitIntervalSecs.length; index++) {
+                if (prevDelay <= resubmitIntervalSecs[index]) {
                     break;
+                }
+            }
             index++;
-            if (index >= resubmitIntervalSecs.length)
+            if (index >= resubmitIntervalSecs.length) {
                 index = resubmitIntervalSecs.length - 1;
+            }
             delay = resubmitIntervalSecs[index];
         }
         return delay;
@@ -181,8 +186,7 @@ import org.slf4j.LoggerFactory;
      */
     List<ResubmitRecord> getResubmitRecords() {
         Map<String, ResubmitRecord> copy = new HashMap<>(resubmitRecords.size());
-        List<ResubmitRecord> resubmitRecordList = resubmitRecords.values().stream().collect(Collectors.toList());
-        return resubmitRecordList;
+        return resubmitRecords.values().stream().collect(Collectors.toList());
     }
 
     long getExpireResubmitDelaySecs() {

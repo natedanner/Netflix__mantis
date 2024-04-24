@@ -22,8 +22,8 @@ import rx.Observer;
 
 public class RemoteRxConnection<T> {
 
-    private Observable<T> observable;
-    private RxMetrics metrics;
+    private final Observable<T> observable;
+    private final RxMetrics metrics;
     private Observer<Integer> closeTrigger;
 
     public RemoteRxConnection(Observable<T> observable,

@@ -51,7 +51,7 @@ import rx.subscriptions.Subscriptions;
 public final class BufferUntilSubscriber<T> extends Subject<T, T> {
 
     @SuppressWarnings("rawtypes")
-    final static Observer EMPTY_OBSERVER = new Observer() {
+    static final Observer EMPTY_OBSERVER = new Observer() {
 
         @Override
         public void onCompleted() {
@@ -83,8 +83,8 @@ public final class BufferUntilSubscriber<T> extends Subject<T, T> {
      * @return the instance
      */
     public static <T> BufferUntilSubscriber<T> create() {
-        State<T> state = new State<T>();
-        return new BufferUntilSubscriber<T>(state);
+        State<T> state = new State<>();
+        return new BufferUntilSubscriber<>(state);
     }
 
     private void emit(Object v) {
@@ -148,7 +148,7 @@ public final class BufferUntilSubscriber<T> extends Subject<T, T> {
         private static final long serialVersionUID = 8026705089538090368L;
 
         final Object guard = new Object();
-        final ConcurrentLinkedQueue<Object> buffer = new ConcurrentLinkedQueue<Object>();
+        final ConcurrentLinkedQueue<Object> buffer = new ConcurrentLinkedQueue<>();
         /* protected by guard */
         boolean emitting;
 

@@ -57,9 +57,9 @@ public class QueryMap {
                        boolean validateQueryAsGroovy) {
         checkNotNull("subscriptionId", subId);
         checkNotNull("query", query);
-        Map<String, String> addParams = (additionalParams == null) ? emptyMap : additionalParams;
+        Map<String, String> addParams = additionalParams == null ? emptyMap : additionalParams;
 
-        subscriptionMap.computeIfAbsent(subId, (s) -> new MantisServerSubscriptionWrapper(addMantisPrefix(subId), query, addParams)).incrementAndGetRefCount();
+        subscriptionMap.computeIfAbsent(subId, s -> new MantisServerSubscriptionWrapper(addMantisPrefix(subId), query, addParams)).incrementAndGetRefCount();
     }
 
     boolean deregisterQuery(String subId, String query) {
@@ -91,7 +91,7 @@ public class QueryMap {
     }
 
     public static class Builder {
-        String prefix = null;
+        String prefix;
 
         Builder() {
         }

@@ -22,6 +22,7 @@ import io.mantisrx.common.metrics.Metrics;
 import io.reactivx.mantis.operators.DisableBackPressureOperator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -41,7 +42,7 @@ public final class ObservableTrigger {
 
     private static final Logger logger = LoggerFactory.getLogger(ObservableTrigger.class);
 
-    private static Scheduler timeoutScheduler = Schedulers.from(Executors.newFixedThreadPool(5));
+    private static final Scheduler timeoutScheduler = Schedulers.from(Executors.newFixedThreadPool(5));
 
     private ObservableTrigger() {}
 
@@ -63,7 +64,7 @@ public final class ObservableTrigger {
         Action1<MonitoredQueue<T>> doOnStart = queue -> {
             Subscription oldSub = subRef.getAndSet(
                 sharedO
-                    .filter((T t1) -> t1 != null)
+                    .filter(Objects::nonNull)
                     .doOnSubscribe(() -> {
                         logger.info("Subscription is ACTIVE for observable trigger with name: " + name);
                         subscriptionActive.increment();
@@ -73,7 +74,7 @@ public final class ObservableTrigger {
                         subscriptionActive.decrement();
                     })
                     .subscribe(
-                        (T data) -> queue.write(data),
+                        queue::write,
                         (Throwable e) -> {
                             logger.warn("Observable used to push data errored, on server with name: " + name, e);
                             if (doOnError != null) {
@@ -119,7 +120,7 @@ public final class ObservableTrigger {
 
         Action1<MonitoredQueue<T>> doOnStart = queue -> subRef.set(
                 o
-                        .filter((T t1) -> t1 != null)
+                        .filter(Objects::nonNull)
                         .doOnSubscribe(() -> {
                             logger.info("Subscription is ACTIVE for observable trigger with name: " + name);
                             subscriptionActive.increment();
@@ -129,7 +130,7 @@ public final class ObservableTrigger {
                             subscriptionActive.decrement();
                         })
                         .subscribe(
-                            (T data) -> queue.write(data),
+                            queue::write,
                             (Throwable e) -> {
                                 logger.warn("Observable used to push data errored, on server with name: " + name, e);
                                 if (doOnError != null) {
@@ -267,10 +268,10 @@ public final class ObservableTrigger {
                     .map((MantisGroup<K, V> data) -> {
                         final byte[] keyBytes = keyEncoder.call(data.getKeyValue());
                         final long keyBytesHashed = hashFunction.computeHash(keyBytes);
-                        return (new KeyValuePair<K, V>(keyBytesHashed, keyBytes, data.getValue()));
+                        return new KeyValuePair<K, V>(keyBytesHashed, keyBytes, data.getValue());
                     })
                     .subscribe(
-                        (KeyValuePair<K, V> data) -> queue.write(data),
+                        queue::write,
                         (Throwable e) -> {
                             logger.warn("Observable used to push data errored, on server with name: " + name, e);
                             if (doOnError != null) {

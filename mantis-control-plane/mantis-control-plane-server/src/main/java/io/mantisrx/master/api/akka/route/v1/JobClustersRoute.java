@@ -95,7 +95,7 @@ public class JobClustersRoute extends BaseRoute {
                         // api/v1/jobClusters/{}
                         path(
                                 PathMatchers.segment(),
-                                (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                                clusterName -> pathEndOrSingleSlash(() -> concat(
 
                                         // GET
                                         get(() -> getJobClusterInstanceRoute(clusterName)),
@@ -111,7 +111,7 @@ public class JobClustersRoute extends BaseRoute {
                         // api/v1/jobClusters/{}/latestJobDiscoveryInfo
                         path(
                             PathMatchers.segment().slash("latestJobDiscoveryInfo"),
-                            (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                            clusterName -> pathEndOrSingleSlash(() -> concat(
 
                                 // GET
                                 get(() -> getLatestJobDiscoveryInfo(clusterName))
@@ -120,7 +120,7 @@ public class JobClustersRoute extends BaseRoute {
                         // api/v1/jobClusters/{}/actions/updateArtifact
                         path(
                                 PathMatchers.segment().slash("actions").slash("updateArtifact"),
-                                (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                                clusterName -> pathEndOrSingleSlash(() -> concat(
 
                                         // POST
                                         post(() -> updateClusterArtifactRoute(clusterName))
@@ -129,7 +129,7 @@ public class JobClustersRoute extends BaseRoute {
                         // api/v1/jobClusters/{}/actions/updateSchedulingInfo
                         path(
                             PathMatchers.segment().slash("actions").slash("updateSchedulingInfo"),
-                            (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                            clusterName -> pathEndOrSingleSlash(() -> concat(
 
                                 // POST
                                 post(() -> updateClusterSchedulingInfo(clusterName))
@@ -139,7 +139,7 @@ public class JobClustersRoute extends BaseRoute {
                         // api/v1/jobClusters/{}/actions/updateSla
                         pathPrefix(
                                 PathMatchers.segment().slash("actions").slash("updateSla"),
-                                (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                                clusterName -> pathEndOrSingleSlash(() -> concat(
 
                                         // POST
                                         post(() -> updateClusterSlaRoute(clusterName))
@@ -151,7 +151,7 @@ public class JobClustersRoute extends BaseRoute {
                                 PathMatchers.segment()
                                             .slash("actions")
                                             .slash("updateMigrationStrategy"),
-                                (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                                clusterName -> pathEndOrSingleSlash(() -> concat(
 
                                         // POST
                                         post(() -> updateMigrationStrategyRoute(clusterName))
@@ -161,7 +161,7 @@ public class JobClustersRoute extends BaseRoute {
                         // api/v1/jobClusters/{}/actions/updateLabel
                         pathPrefix(
                                 PathMatchers.segment().slash("actions").slash("updateLabel"),
-                                (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                                clusterName -> pathEndOrSingleSlash(() -> concat(
 
                                         // POST
                                         post(() -> updateJobClusterLabelRoute(clusterName))
@@ -171,7 +171,7 @@ public class JobClustersRoute extends BaseRoute {
                         // api/v1/jobClusters/{}/actions/enableCluster
                         pathPrefix(
                                 PathMatchers.segment().slash("actions").slash("enableCluster"),
-                                (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                                clusterName -> pathEndOrSingleSlash(() -> concat(
 
                                         // POST
                                         post(() -> updateJobClusterStateEnableRoute(clusterName))
@@ -181,7 +181,7 @@ public class JobClustersRoute extends BaseRoute {
                         // api/v1/jobClusters/{}/actions/disableCluster
                         pathPrefix(
                                 PathMatchers.segment().slash("actions").slash("disableCluster"),
-                                (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                                clusterName -> pathEndOrSingleSlash(() -> concat(
 
                                         // POST
                                         post(() -> updateJobClusterStateDisableRoute(clusterName))
@@ -279,7 +279,7 @@ public class JobClustersRoute extends BaseRoute {
     private Route getLatestJobDiscoveryInfo(String clusterName) {
         logger.trace("GET /api/v1/jobClusters/{}/latestJobDiscoveryInfo called", clusterName);
 
-        return parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_FIELDS, (fields) ->
+        return parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_FIELDS, fields ->
             cache(routeResultCache, getRequestUriKeyer, () ->
                 extractUri(uri -> {
                     logger.debug("GET latest job discovery info for {}", clusterName);
@@ -301,7 +301,7 @@ public class JobClustersRoute extends BaseRoute {
     private Route getJobClusterInstanceRoute(String clusterName) {
         logger.info("GET /api/v1/jobClusters/{} called", clusterName);
 
-        return parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_FIELDS, (fields) ->
+        return parameterOptional(StringUnmarshallers.STRING, ParamName.PROJECTION_FIELDS, fields ->
                 completeAsync(
                         jobClusterRouteHandler.getJobClusterDetails(new GetJobClusterRequest(
                                 clusterName)),

@@ -25,11 +25,11 @@ import rx.functions.Action0;
 
 public abstract class BaseService implements Service {
 
-    private static AtomicInteger SERVICES_COUNTER = new AtomicInteger(0);
+    private static AtomicInteger servicesCounter = new AtomicInteger(0);
     private final boolean awaitsActiveMode;
     private final ActiveMode activeMode = new ActiveMode();
     private final int myServiceCount;
-    private BaseService predecessor = null;
+    private BaseService predecessor;
     protected BaseService() {
         this(false);
     }
@@ -39,7 +39,7 @@ public abstract class BaseService implements Service {
         if (!this.awaitsActiveMode) {
             activeMode.isInited.set(true);
         }
-        myServiceCount = SERVICES_COUNTER.getAndIncrement();
+        myServiceCount = servicesCounter.getAndIncrement();
     }
 
     @Override

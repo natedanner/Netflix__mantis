@@ -38,8 +38,8 @@ public class NettySourceHttpServer implements SourceHttpServer {
     private final NioEventLoopGroup bossGroup;
 
     private Runnable nettyServerRunnable;
-    private volatile boolean isInitialized = false;
-    private volatile boolean isStarted = false;
+    private volatile boolean isInitialized;
+    private volatile boolean isStarted;
 
     public NettySourceHttpServer(Context context, int threadCount) {
         this.bossGroup = new NioEventLoopGroup(threadCount);

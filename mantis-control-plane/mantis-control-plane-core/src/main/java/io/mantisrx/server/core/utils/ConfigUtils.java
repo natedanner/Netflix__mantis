@@ -70,7 +70,6 @@ public class ConfigUtils {
         if (values.length != 1) {
             throw new RuntimeException("invalid annotation on: " + method.getName());
         }
-        String propertyKey = values[0];
-        return propertyKey;
+        return values[0];
     }
 }

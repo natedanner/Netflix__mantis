@@ -18,7 +18,7 @@ package io.mantisrx.common.metrics;
 
 public abstract class GroupedCounter {
 
-    private String familyName;
+    private final String familyName;
 
     public GroupedCounter(String familyName, String... events) {
         this.familyName = familyName;

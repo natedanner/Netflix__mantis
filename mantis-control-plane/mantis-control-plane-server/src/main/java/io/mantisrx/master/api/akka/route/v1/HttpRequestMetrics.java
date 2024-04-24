@@ -24,7 +24,7 @@ import io.mantisrx.shaded.com.google.common.base.Preconditions;
 import io.mantisrx.shaded.com.google.common.collect.Sets;
 import java.util.Set;
 
-public class HttpRequestMetrics {
+public final class HttpRequestMetrics {
     public enum HttpVerb {
         GET,
         POST,
@@ -104,7 +104,7 @@ public class HttpRequestMetrics {
     }
 
     private final Registry registry;
-    private static String METRIC_GROUP_ID = "apiv1";
+    private static final String METRIC_GROUP_ID = "apiv1";
     private static HttpRequestMetrics instance;
 
     private HttpRequestMetrics() {

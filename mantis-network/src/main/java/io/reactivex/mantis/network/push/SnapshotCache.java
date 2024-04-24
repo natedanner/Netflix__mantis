@@ -19,8 +19,8 @@ package io.reactivex.mantis.network.push;
 
 public class SnapshotCache<T> {
 
-    private T cache;
-    private long timestamp;
+    private final T cache;
+    private final long timestamp;
 
     public SnapshotCache(T cache) {
         this.cache = cache;

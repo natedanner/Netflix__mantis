@@ -57,7 +57,7 @@ public class WorkerPublisherRemoteObservable<T> implements WorkerPublisher<T> {
     private final int serverPort;
     private RemoteRxServer server;
     private final MantisPropertiesLoader propService;
-    private String jobName;
+    private final String jobName;
 
     public WorkerPublisherRemoteObservable(int serverPort,
                                            String name, Observable<Integer> minConnectionsToSubscribe,

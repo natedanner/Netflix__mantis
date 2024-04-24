@@ -143,8 +143,8 @@ public class StreamManager {
     private List<String> sanitizeStreamSubjects(final List<String> subjects) {
         return subjects.stream()
                 .map(s -> {
-                    if (s.toLowerCase().equals("observable") ||
-                            s.toLowerCase().equals("stream")) {
+                    if ("observable".equals(s.toLowerCase()) ||
+                            "stream".equals(s.toLowerCase())) {
                         // Translate the legacy default stream names to map to the default stream.
                         return StreamType.DEFAULT_EVENT_STREAM;
                     } else {

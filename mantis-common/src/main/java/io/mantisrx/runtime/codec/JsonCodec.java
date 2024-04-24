@@ -25,9 +25,9 @@ import java.io.IOException;
 
 public class JsonCodec<T extends JsonType> implements Codec<T> {
 
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
-    private Class<T> clazz;
+    private final Class<T> clazz;
 
     /**
      * Use {@link JacksonCodecs}

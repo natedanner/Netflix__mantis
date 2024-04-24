@@ -24,7 +24,7 @@ import java.util.Properties;
 public class DefaultMantisPropertiesLoader implements MantisPropertiesLoader {
 
     protected Properties props;
-    private Map<String, String> env;
+    private final Map<String, String> env;
 
     public DefaultMantisPropertiesLoader(Properties props) {
         this.props = props;

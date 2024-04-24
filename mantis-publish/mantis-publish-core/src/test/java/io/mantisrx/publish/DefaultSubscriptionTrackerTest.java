@@ -247,9 +247,8 @@ public class DefaultSubscriptionTrackerTest {
         verify(mockStreamManager, times(2)).removeStreamSubscription(captor2.capture());
         List<String> subsAdded2 = captor2.getAllValues();
         assertEquals(majoritySubs.getSubscriptionList().size(), subsAdded2.size());
-        majoritySubs.getSubscriptionList().forEach(sub -> {
-            assertTrue(subsAdded2.contains(sub.getSubscriptionId()));
-        });
+        majoritySubs.getSubscriptionList().forEach(sub ->
+            assertTrue(subsAdded2.contains(sub.getSubscriptionId())));
     }
 
     @Disabled("broken test; somewhere from git commit: de88e88ba8b..a64e8d1ad68")
@@ -318,9 +317,8 @@ public class DefaultSubscriptionTrackerTest {
         verify(mockStreamManager, times(2)).removeStreamSubscription(captor2.capture());
         List<String> subsAdded2 = captor2.getAllValues();
         assertEquals(majoritySubs.getSubscriptionList().size(), subsAdded2.size());
-        majoritySubs.getSubscriptionList().forEach(sub -> {
-            assertTrue(subsAdded2.contains(sub.getSubscriptionId()));
-        });
+        majoritySubs.getSubscriptionList().forEach(sub ->
+            assertTrue(subsAdded2.contains(sub.getSubscriptionId())));
     }
 
     @Test

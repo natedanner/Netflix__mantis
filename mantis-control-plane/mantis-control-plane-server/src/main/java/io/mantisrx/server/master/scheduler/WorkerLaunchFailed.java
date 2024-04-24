@@ -55,8 +55,12 @@ public class WorkerLaunchFailed implements WorkerEvent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WorkerLaunchFailed that = (WorkerLaunchFailed) o;
         return stageNum == that.stageNum &&
                 eventTimeMs == that.eventTimeMs &&

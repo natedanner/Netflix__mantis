@@ -71,7 +71,7 @@ public class ResourceClustersLeaderExclusiveRoute extends BaseRoute {
                 // /{}/actions/registerTaskExecutor
                 path(
                     PathMatchers.segment().slash("actions").slash("registerTaskExecutor"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         // POST
                         post(() -> registerTaskExecutor(getClusterID(clusterName)))
                     ))
@@ -80,7 +80,7 @@ public class ResourceClustersLeaderExclusiveRoute extends BaseRoute {
                 // /{}/actions/heartBeatFromTaskExecutor
                 path(
                     PathMatchers.segment().slash("actions").slash("heartBeatFromTaskExecutor"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         // POST
                         post(() -> heartbeatFromTaskExecutor(getClusterID(clusterName)))
                     ))
@@ -89,7 +89,7 @@ public class ResourceClustersLeaderExclusiveRoute extends BaseRoute {
                 // /{}/actions/notifyTaskExecutorStatusChange
                 path(
                     PathMatchers.segment().slash("actions").slash("notifyTaskExecutorStatusChange"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         // POST
                         post(() -> notifyTaskExecutorStatusChange(getClusterID(clusterName)))
                     ))
@@ -98,7 +98,7 @@ public class ResourceClustersLeaderExclusiveRoute extends BaseRoute {
                 // /{}/actions/disconnectTaskExecutor
                 path(
                     PathMatchers.segment().slash("actions").slash("disconnectTaskExecutor"),
-                    (clusterName) -> pathEndOrSingleSlash(() -> concat(
+                    clusterName -> pathEndOrSingleSlash(() -> concat(
                         // POST
                         post(() -> disconnectTaskExecutor(getClusterID(clusterName)))
                     ))

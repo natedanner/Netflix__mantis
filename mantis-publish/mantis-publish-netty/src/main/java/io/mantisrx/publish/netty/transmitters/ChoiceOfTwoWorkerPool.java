@@ -75,8 +75,8 @@ class ChoiceOfTwoWorkerPool {
     private final Set<MantisWorker> blacklist;
     private final EventChannel eventChannel;
 
-    private AtomicLong lastFetchMs;
-    private AtomicLong lastBlacklistRefreshMs;
+    private final AtomicLong lastFetchMs;
+    private final AtomicLong lastBlacklistRefreshMs;
 
     ChoiceOfTwoWorkerPool(MrePublishConfiguration config, Registry registry, EventChannel eventChannel) {
         this.registry = registry;

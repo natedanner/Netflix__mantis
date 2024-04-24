@@ -29,7 +29,7 @@ import rx.functions.Action1;
 public abstract class MetricsPublisher {
 
     protected Map<String, String> commonTags = new HashMap<>();
-    private Properties properties;
+    private final Properties properties;
     private Subscription subscription;
 
     public MetricsPublisher(Properties properties) {
@@ -56,7 +56,7 @@ public abstract class MetricsPublisher {
     }
 
     public void start(int pollMetricsRegistryFrequencyInSeconds) {
-        start(pollMetricsRegistryFrequencyInSeconds, new HashMap<String, String>());
+        start(pollMetricsRegistryFrequencyInSeconds, new HashMap<>());
     }
 
     public void shutdown() {

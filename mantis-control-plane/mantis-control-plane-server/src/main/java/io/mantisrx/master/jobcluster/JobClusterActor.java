@@ -207,9 +207,9 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         return Props.create(JobClusterActor.class, name, jobStore, mantisSchedulerFactory, eventPublisher, costsCalculator);
     }
 
-    private Receive initializedBehavior;
+    private final Receive initializedBehavior;
 
-    private Receive disabledBehavior;
+    private final Receive disabledBehavior;
 
     private final String name;
     private final MantisJobStore jobStore;
@@ -221,7 +221,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
     private final MantisSchedulerFactory mantisSchedulerFactory;
     private final LifecycleEventPublisher eventPublisher;
 
-    private BehaviorSubject<JobId> jobIdSubmissionSubject;
+    private final BehaviorSubject<JobId> jobIdSubmissionSubject;
     private final JobDefinitionResolver jobDefinitionResolver = new JobDefinitionResolver();
 
 
@@ -410,25 +410,25 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
             // UNEXPECTED MESSAGES BEGIN //
 
             // from user job submit request
-            .match(SubmitJobRequest.class, (x) -> getSender().tell(new SubmitJobResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty() ), getSelf()))
-            .match(GetJobDefinitionUpdatedFromJobActorResponse.class, (x) -> getSender().tell(new SubmitJobResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty() ), getSelf()))
-            .match(ResubmitWorkerRequest.class, (x) -> getSender().tell(new ResubmitWorkerResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
-            .match(JobProto.JobInitialized.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(JobStartedEvent.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(ScaleStageRequest.class, (x) -> getSender().tell(new ScaleStageResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), 0), getSelf()))
-            .match(KillJobRequest.class, (x) -> x.requestor.tell(new KillJobResponse(x.requestId, CLIENT_ERROR, JobState.Noop, genUnexpectedMsg(x.toString(), this.name, state), x.jobId, x.user), getSelf()))
-            .match(GetJobDetailsRequest.class, (x) -> getSender().tell(new GetJobDetailsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
-            .match(GetJobSchedInfoRequest.class, (x) -> getSender().tell(new GetJobSchedInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
-            .match(GetLatestJobDiscoveryInfoRequest.class, (x) -> getSender().tell(new GetLatestJobDiscoveryInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
-            .match(GetLastSubmittedJobIdStreamRequest.class, (x) -> getSender().tell(new GetLastSubmittedJobIdStreamResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
-            .match(ListJobIdsRequest.class, (x) -> getSender().tell(new ListJobIdsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), new ArrayList()), getSelf()))
-            .match(ListJobsRequest.class, (x) -> getSender().tell(new ListJobsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), new ArrayList()), getSelf()))
-            .match(ListWorkersRequest.class, (x) -> getSender().tell(new ListWorkersResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), new ArrayList()), getSelf()))
-            .match(JobClusterProto.EnforceSLARequest.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(JobClusterProto.TriggerCronRequest.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(DisableJobClusterRequest.class, (x) -> getSender().tell(new DisableJobClusterResponse(x.requestId, SUCCESS,"Cluster is already disabled"), getSelf()))
+            .match(SubmitJobRequest.class, x -> getSender().tell(new SubmitJobResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty() ), getSelf()))
+            .match(GetJobDefinitionUpdatedFromJobActorResponse.class, x -> getSender().tell(new SubmitJobResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty() ), getSelf()))
+            .match(ResubmitWorkerRequest.class, x -> getSender().tell(new ResubmitWorkerResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(JobProto.JobInitialized.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(JobStartedEvent.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(ScaleStageRequest.class, x -> getSender().tell(new ScaleStageResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), 0), getSelf()))
+            .match(KillJobRequest.class, x -> x.requestor.tell(new KillJobResponse(x.requestId, CLIENT_ERROR, JobState.Noop, genUnexpectedMsg(x.toString(), this.name, state), x.jobId, x.user), getSelf()))
+            .match(GetJobDetailsRequest.class, x -> getSender().tell(new GetJobDetailsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
+            .match(GetJobSchedInfoRequest.class, x -> getSender().tell(new GetJobSchedInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
+            .match(GetLatestJobDiscoveryInfoRequest.class, x -> getSender().tell(new GetLatestJobDiscoveryInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
+            .match(GetLastSubmittedJobIdStreamRequest.class, x -> getSender().tell(new GetLastSubmittedJobIdStreamResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
+            .match(ListJobIdsRequest.class, x -> getSender().tell(new ListJobIdsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), new ArrayList()), getSelf()))
+            .match(ListJobsRequest.class, x -> getSender().tell(new ListJobsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), new ArrayList()), getSelf()))
+            .match(ListWorkersRequest.class, x -> getSender().tell(new ListWorkersResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), new ArrayList()), getSelf()))
+            .match(JobClusterProto.EnforceSLARequest.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(JobClusterProto.TriggerCronRequest.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(DisableJobClusterRequest.class, x -> getSender().tell(new DisableJobClusterResponse(x.requestId, SUCCESS,"Cluster is already disabled"), getSelf()))
             .match(Terminated.class, this::onTerminated)
-            .match(JobClusterProto.InitializeJobClusterRequest.class, (x) -> getSender().tell(new JobClustersManagerInitializeResponse(x.requestId, SUCCESS,"Cluster is already initialized"), getSelf()))
+            .match(JobClusterProto.InitializeJobClusterRequest.class, x -> getSender().tell(new JobClustersManagerInitializeResponse(x.requestId, SUCCESS,"Cluster is already initialized"), getSelf()))
 
             // UNEXPECTED MESSAGES END //
             .matchAny(x -> logger.warn("unexpected message '{}' received by JobCluster actor {} in Disabled State", x, this.name))
@@ -491,38 +491,38 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
             // EXPECTED MESSAGES END //
 
             // UNEXPECTED MESSAGES BEGIN //
-            .match(UpdateJobClusterRequest.class, (x) -> getSender().tell(new UpdateJobClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
-            .match(UpdateJobClusterLabelsRequest.class, (x) -> getSender().tell(new UpdateJobClusterLabelsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
-            .match(UpdateJobClusterSLARequest.class, (x) -> getSender().tell(new UpdateJobClusterSLAResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
-            .match(UpdateJobClusterArtifactRequest.class, (x) -> getSender().tell(new UpdateJobClusterArtifactResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
-            .match(UpdateSchedulingInfo.class, (x) -> getSender().tell(new UpdateSchedulingInfoResponse(x.getRequestId(), CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
-            .match(UpdateJobClusterWorkerMigrationStrategyRequest.class, (x) -> getSender().tell(new UpdateJobClusterWorkerMigrationStrategyResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
-            .match(GetJobClusterRequest.class, (x) -> getSender().tell(new GetJobClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty() ), getSelf()))
-            .match(JobClusterProto.DeleteJobClusterRequest.class, (x) -> getSender().tell(new DeleteJobClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
-            .match(ListArchivedWorkersRequest.class, (x) -> getSender().tell(new ListArchivedWorkersResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), Lists.newArrayList()), getSelf()))
-            .match(ListCompletedJobsInClusterRequest.class, (x) -> getSender().tell(new ListCompletedJobsInClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), Lists.newArrayList()), getSelf()))
-            .match(JobClusterProto.KillJobResponse.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(GetJobDetailsRequest.class, (x) -> getSender().tell(new GetJobDetailsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
-            .match(WorkerEvent.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(JobClusterProto.ExpireOldJobsRequest.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(EnableJobClusterRequest.class, (x) -> getSender().tell(new EnableJobClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
-            .match(SubmitJobRequest.class, (x) -> getSender().tell(new SubmitJobResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty() ), getSelf()))
-            .match(GetJobDefinitionUpdatedFromJobActorResponse.class, (x) -> getSender().tell(new SubmitJobResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty() ), getSelf()))
-            .match(ResubmitWorkerRequest.class, (x) -> getSender().tell(new ResubmitWorkerResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
-            .match(JobProto.JobInitialized.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(JobStartedEvent.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(ScaleStageRequest.class, (x) -> getSender().tell(new ScaleStageResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), 0), getSelf()))
-            .match(KillJobRequest.class, (x) -> getSender().tell(new KillJobResponse(x.requestId, CLIENT_ERROR, JobState.Noop, genUnexpectedMsg(x.toString(), this.name, state), x.jobId, x.user), getSelf()))
-            .match(GetJobSchedInfoRequest.class, (x) -> getSender().tell(new GetJobSchedInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
-            .match(GetLatestJobDiscoveryInfoRequest.class, (x) -> getSender().tell(new GetLatestJobDiscoveryInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
-            .match(GetLastSubmittedJobIdStreamRequest.class, (x) -> getSender().tell(new GetLastSubmittedJobIdStreamResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
-            .match(ListJobIdsRequest.class, (x) -> getSender().tell(new ListJobIdsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), Lists.newArrayList()), getSelf()))
-            .match(ListJobsRequest.class, (x) -> getSender().tell(new ListJobsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), Lists.newArrayList()), getSelf()))
-            .match(ListWorkersRequest.class, (x) -> getSender().tell(new ListWorkersResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), Lists.newArrayList()), getSelf()))
-            .match(JobClusterProto.EnforceSLARequest.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(JobClusterProto.ExpireOldJobsRequest.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(JobClusterProto.TriggerCronRequest.class, (x) -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
-            .match(DisableJobClusterRequest.class, (x) -> getSender().tell(new DisableJobClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(UpdateJobClusterRequest.class, x -> getSender().tell(new UpdateJobClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(UpdateJobClusterLabelsRequest.class, x -> getSender().tell(new UpdateJobClusterLabelsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(UpdateJobClusterSLARequest.class, x -> getSender().tell(new UpdateJobClusterSLAResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(UpdateJobClusterArtifactRequest.class, x -> getSender().tell(new UpdateJobClusterArtifactResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(UpdateSchedulingInfo.class, x -> getSender().tell(new UpdateSchedulingInfoResponse(x.getRequestId(), CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(UpdateJobClusterWorkerMigrationStrategyRequest.class, x -> getSender().tell(new UpdateJobClusterWorkerMigrationStrategyResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(GetJobClusterRequest.class, x -> getSender().tell(new GetJobClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty() ), getSelf()))
+            .match(JobClusterProto.DeleteJobClusterRequest.class, x -> getSender().tell(new DeleteJobClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(ListArchivedWorkersRequest.class, x -> getSender().tell(new ListArchivedWorkersResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), Lists.newArrayList()), getSelf()))
+            .match(ListCompletedJobsInClusterRequest.class, x -> getSender().tell(new ListCompletedJobsInClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), Lists.newArrayList()), getSelf()))
+            .match(JobClusterProto.KillJobResponse.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(GetJobDetailsRequest.class, x -> getSender().tell(new GetJobDetailsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
+            .match(WorkerEvent.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(JobClusterProto.ExpireOldJobsRequest.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(EnableJobClusterRequest.class, x -> getSender().tell(new EnableJobClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(SubmitJobRequest.class, x -> getSender().tell(new SubmitJobResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty() ), getSelf()))
+            .match(GetJobDefinitionUpdatedFromJobActorResponse.class, x -> getSender().tell(new SubmitJobResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty() ), getSelf()))
+            .match(ResubmitWorkerRequest.class, x -> getSender().tell(new ResubmitWorkerResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
+            .match(JobProto.JobInitialized.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(JobStartedEvent.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(ScaleStageRequest.class, x -> getSender().tell(new ScaleStageResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), 0), getSelf()))
+            .match(KillJobRequest.class, x -> getSender().tell(new KillJobResponse(x.requestId, CLIENT_ERROR, JobState.Noop, genUnexpectedMsg(x.toString(), this.name, state), x.jobId, x.user), getSelf()))
+            .match(GetJobSchedInfoRequest.class, x -> getSender().tell(new GetJobSchedInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
+            .match(GetLatestJobDiscoveryInfoRequest.class, x -> getSender().tell(new GetLatestJobDiscoveryInfoResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
+            .match(GetLastSubmittedJobIdStreamRequest.class, x -> getSender().tell(new GetLastSubmittedJobIdStreamResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), empty()), getSelf()))
+            .match(ListJobIdsRequest.class, x -> getSender().tell(new ListJobIdsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), Lists.newArrayList()), getSelf()))
+            .match(ListJobsRequest.class, x -> getSender().tell(new ListJobsResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), Lists.newArrayList()), getSelf()))
+            .match(ListWorkersRequest.class, x -> getSender().tell(new ListWorkersResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state), Lists.newArrayList()), getSelf()))
+            .match(JobClusterProto.EnforceSLARequest.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(JobClusterProto.ExpireOldJobsRequest.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(JobClusterProto.TriggerCronRequest.class, x -> logger.warn(genUnexpectedMsg(x.toString(), this.name, state)))
+            .match(DisableJobClusterRequest.class, x -> getSender().tell(new DisableJobClusterResponse(x.requestId, CLIENT_ERROR, genUnexpectedMsg(x.toString(), this.name, state)), getSelf()))
 
             .match(Terminated.class, this::onTerminated)
 
@@ -585,7 +585,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
                 .match(UpdateSchedulingInfo.class, this::onJobClusterUpdateSchedulingInfo)
                 .match(UpdateJobClusterWorkerMigrationStrategyRequest.class,
                         this::onJobClusterUpdateWorkerMigrationConfig)
-                .match(EnableJobClusterRequest.class, (x) -> getSender().tell(
+                .match(EnableJobClusterRequest.class, x -> getSender().tell(
                         new EnableJobClusterResponse(x.requestId, SUCCESS, genUnexpectedMsg(x.toString(),
                                 this.name, state)), getSelf()))
                 .match(GetJobClusterRequest.class, this::onJobClusterGet)
@@ -615,7 +615,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
                 .match(ScaleStageRequest.class, this::onScaleStage)
                  // EXPECTED MESSAGES END //
                  // EXPECTED MESSAGES BEGIN //
-                .match(JobClusterProto.InitializeJobClusterRequest.class,(x) -> getSender().tell(
+                .match(JobClusterProto.InitializeJobClusterRequest.class,x -> getSender().tell(
                         new JobClustersManagerInitializeResponse(x.requestId, SUCCESS,
                                 "Cluster is already initialized"), getSelf()))
                 // UNEXPECTED MESSAGES END //
@@ -826,7 +826,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
          }
 
          Observable.from(jobList)
-                 .flatMap((jobMeta) -> {
+                 .flatMap(jobMeta -> {
                      if(JobState.isTerminalState(jobMeta.getState())) {
                          jobManager.persistToCompletedJobAndArchiveJobTables(jobMeta);
                          return Observable.empty();
@@ -841,16 +841,15 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
                      }
                  })
                  //
-                 .flatMap((jobMeta) -> jobManager.bootstrapJob((MantisJobMetadataImpl)jobMeta, this.jobClusterMetadata))
+                 .flatMap(jobMeta -> jobManager.bootstrapJob((MantisJobMetadataImpl)jobMeta, this.jobClusterMetadata))
 
-                 .subscribe((jobInited) -> {
-                            logger.info("Job Id {} initialized with code {}", jobInited.jobId, jobInited.responseCode);
-                        },
-                         (error) -> logger.warn("Exception initializing jobs {}", error.getMessage())
+                 .subscribe(jobInited ->
+                            logger.info("Job Id {} initialized with code {}", jobInited.jobId, jobInited.responseCode),
+                         error -> logger.warn("Exception initializing jobs {}", error.getMessage())
                          ,() -> {
                             // Push the last jobId
 
-                             if(initReq.jobList.size() > 0) {
+                             if(!initReq.jobList.isEmpty()) {
                                  JobId lastJobId = new JobId(this.name, initReq.lastJobNumber);
                                  this.jobIdSubmissionSubject.onNext(lastJobId);
                              }
@@ -1030,14 +1029,14 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
     private List<JobIdInfo> getFilteredNonTerminalJobIdList(ListJobCriteria request, Set<JobId> prefilteredJobIdSet) {
         if(logger.isTraceEnabled()) { logger.trace("Enter JobClusterActor:getFilteredNonTerminalJobIdList {}", request); }
 
-        if((request.getJobState().isPresent() && request.getJobState().get().equals(JobState.MetaState.Terminal))) {
+        if(request.getJobState().isPresent() && request.getJobState().get().equals(JobState.MetaState.Terminal)) {
             if(logger.isTraceEnabled()) { logger.trace("Exit JobClusterActor:getFilteredNonTerminalJobIdList with empty"); }
             return Collections.emptyList();
         }
         List<JobInfo> jobInfoList;
         if(!prefilteredJobIdSet.isEmpty()) {
-            jobInfoList = prefilteredJobIdSet.stream().map((jId) -> jobManager.getJobInfoForNonTerminalJob(jId))
-                    .filter((jInfoOp) -> jInfoOp.isPresent()).map((jInfoOp) -> jInfoOp.get()).collect(Collectors.toList());
+            jobInfoList = prefilteredJobIdSet.stream().map(jId -> jobManager.getJobInfoForNonTerminalJob(jId))
+                    .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
         } else {
             jobInfoList = jobManager.getAllNonTerminalJobsList();
         }
@@ -1053,7 +1052,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
                         .withUser(jInfo.user)
                         .withVersion(jInfo.jobDefinition.getVersion())
                         .build())
-                .collect(Collectors.toList());;
+                .collect(Collectors.toList());
 
         if(logger.isTraceEnabled()) { logger.trace("Exit JobClusterActor:getFilteredNonTerminalJobIdList {}", jIdList.size()); }
         return jIdList;
@@ -1062,7 +1061,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
     private List<JobIdInfo> getFilteredTerminalJobIdList(ListJobCriteria request, Set<JobId> prefilteredJobIdSet) {
         if(logger.isTraceEnabled()) { logger.trace("Enter JobClusterActor:getFilteredTerminalJobIdList {}", request); }
 
-        if((request.getJobState().isPresent() && !request.getJobState().get().equals(JobState.MetaState.Terminal))) {
+        if(request.getJobState().isPresent() && !request.getJobState().get().equals(JobState.MetaState.Terminal)) {
             if(logger.isTraceEnabled()) { logger.trace("Exit JobClusterActor:getFilteredTerminalJobIdList with empty"); }
             return Collections.emptyList();
         } else if(!request.getJobState().isPresent() && (request.getActiveOnly().isPresent() && request.getActiveOnly().get())) {
@@ -1071,7 +1070,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         }
         List<CompletedJob> completedJobsList;
         if(!prefilteredJobIdSet.isEmpty()) {
-            completedJobsList = prefilteredJobIdSet.stream().map((jId) -> jobManager.getCompletedJob(jId)).filter((cjOp) -> cjOp.isPresent()).map((cjop) -> cjop.get()).collect(Collectors.toList());
+            completedJobsList = prefilteredJobIdSet.stream().map(jobManager::getCompletedJob).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
         } else {
             completedJobsList = jobManager.getCompletedJobsList();
         }
@@ -1099,7 +1098,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         if(logger.isTraceEnabled()) { logger.trace("Entering JobClusterActor:getFilteredNonTerminalJobList"); }
         Duration timeout = Duration.ofMillis(500);
 
-        if((request.getJobState().isPresent() && request.getJobState().get().equals(JobState.MetaState.Terminal))) {
+        if(request.getJobState().isPresent() && request.getJobState().get().equals(JobState.MetaState.Terminal)) {
 
             if(logger.isTraceEnabled()) { logger.trace("Exit JobClusterActor:getFilteredNonTerminalJobList with empty"); }
             return Observable.empty();
@@ -1107,8 +1106,8 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         List<JobInfo> jobInfoList;
         //
         if(!prefilteredJobIdSet.isEmpty()) {
-            jobInfoList = prefilteredJobIdSet.stream().map((jId) -> jobManager.getJobInfoForNonTerminalJob(jId))
-                    .filter((jInfoOp) -> jInfoOp.isPresent()).map((jInfoOp) -> jInfoOp.get()).collect(Collectors.toList());
+            jobInfoList = prefilteredJobIdSet.stream().map(jId -> jobManager.getJobInfoForNonTerminalJob(jId))
+                    .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
         } else {
             // no prefiltering applied start with complete set of non terminal jobs
             jobInfoList = jobManager.getAllNonTerminalJobsList();
@@ -1117,7 +1116,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         List<JobInfo> shortenedList =  jobInfoList.subList(0, Math.min(jobInfoList.size(), request.getLimit().orElse(DEFAULT_ACTIVE_JOB_LIMIT)));
         if(logger.isDebugEnabled()) { logger.debug("List of non terminal jobs {}", jobInfoList); }
         return Observable.from(shortenedList)
-                .flatMap((jInfo) -> {
+                .flatMap(jInfo -> {
                     GetJobDetailsRequest req = new GetJobDetailsRequest("system", jInfo.jobId);
                     CompletionStage<GetJobDetailsResponse> respCS = ask(jInfo.jobActor, req, timeout)
                         .thenApply(GetJobDetailsResponse.class::cast);
@@ -1127,9 +1126,9 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
                                     return Observable.empty();
                                 });
                 })
-                .filter((resp) -> resp != null && resp.getJobMetadata().isPresent())
-                .map((resp) -> resp.getJobMetadata().get())
-                .map((metaData) -> new MantisJobMetadataView(metaData, request.getStageNumberList(),
+                .filter(resp -> resp != null && resp.getJobMetadata().isPresent())
+                .map(resp -> resp.getJobMetadata().get())
+                .map(metaData -> new MantisJobMetadataView(metaData, request.getStageNumberList(),
                         request.getWorkerIndexList(), request.getWorkerNumberList(), request.getWorkerStateList(),false));
 
 
@@ -1153,7 +1152,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
     private Observable<MantisJobMetadataView> getFilteredTerminalJobList(ListJobCriteria request, Set<JobId> jobIdSet) {
         if(logger.isTraceEnabled()) { logger.trace("JobClusterActor:getFilteredTerminalJobList"); }
 
-        if((request.getJobState().isPresent() && !request.getJobState().get().equals(JobState.MetaState.Terminal))) {
+        if(request.getJobState().isPresent() && !request.getJobState().get().equals(JobState.MetaState.Terminal)) {
             if(logger.isTraceEnabled()) { logger.trace("Exit JobClusterActor:getFilteredTerminalJobList with empty"); }
             return Observable.empty();
         } else if(!request.getJobState().isPresent() && (request.getActiveOnly().isPresent() && request.getActiveOnly().get())) {
@@ -1162,8 +1161,8 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         }
         List<CompletedJob> jobInfoList;
         if(!jobIdSet.isEmpty()) {
-            jobInfoList = jobIdSet.stream().map((jId) -> jobManager.getCompletedJob(jId))
-                    .filter((compJobOp) -> compJobOp.isPresent()).map((compJobOp) -> compJobOp.get()).collect(Collectors.toList());
+            jobInfoList = jobIdSet.stream().map(jobManager::getCompletedJob)
+                    .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
         } else {
             jobInfoList = jobManager.getCompletedJobsList();
         }
@@ -1172,7 +1171,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
 
         return Observable.from(shortenedList)
                 // terminatedAt comes from completed Job hence the different structure
-                .flatMap((cJob) -> {
+                .flatMap(cJob -> {
                     try {
                         if(logger.isDebugEnabled()) { logger.debug("Fetching details for completed job {}", cJob); }
 
@@ -1596,8 +1595,9 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
             if(jobInfo.isPresent()) {
                 cleanUpOnJobSubmitFailure(jobInfo.get().jobId);
                 // if this is not a cron submission inform the caller
-                if(jobInited.requestor != null)
+                if (jobInited.requestor != null) {
                     jobInited.requestor.tell(new SubmitJobResponse(jobInited.requestId, jobInited.responseCode, "Job " + jobInited.jobId + " submission failed", ofNullable(jobInited.jobId)), getSelf());
+                }
             } else {
                 logger.warn("No such job found {}", jobInited.jobId);
             }
@@ -1683,7 +1683,6 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
 
                 }
             }
-            ;
         }
 
         if(hardConstraints != null ) {
@@ -1694,7 +1693,6 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
 
                 }
             }
-            ;
         }
 
 
@@ -1809,7 +1807,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
                         } else {
                             try {
                                 // first check if response has job meta for last job
-                                Optional<IMantisJobMetadata> cJob = (resp.jobMetadata);
+                                Optional<IMantisJobMetadata> cJob = resp.jobMetadata;
 
                                 if (cJob == null || !cJob.isPresent()) {
                                     // else check archived jobs
@@ -2106,7 +2104,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         if(jobClusterMetadata.getJobClusterDefinition().getSLA().getCronPolicy() != null) {
 
             if(jobClusterMetadata.getJobClusterDefinition().getSLA().getCronPolicy() == CronPolicy.KEEP_NEW ||
-                    this.jobManager.getAllNonTerminalJobsList().size() == 0) {
+                    this.jobManager.getAllNonTerminalJobsList().isEmpty()) {
                 getSelf().tell(new SubmitJobRequest(name, MANTIS_MASTER_USER, empty(), false), getSelf());
             } else {
 
@@ -2141,8 +2139,9 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
                     .build();
 
             updateAndSaveJobCluster(jobCluster);
-            if(cronManager != null)
+            if (cronManager != null) {
                 cronManager.destroyCron();
+            }
             this.cronManager = new CronManager(name, getSelf(), newSla);
 
             sender.tell(new UpdateJobClusterSLAResponse(slaRequest.requestId, SUCCESS, name + " SLA updated"), getSelf());
@@ -2486,11 +2485,11 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
              long submittedAt = -1;
              long initializeInitiatedAt = -1;
              long initializedAt = -1;
-             JobId jobId = null;
-             ActorRef jobActor = null;
-             JobState state = null;
+             JobId jobId;
+             ActorRef jobActor;
+             JobState state;
              String user = "";
-             JobDefinition jobDefinition = null;
+             JobDefinition jobDefinition;
 
              Builder withSubmittedAt(long submittedAt) {
                  this.submittedAt = submittedAt;
@@ -2568,7 +2567,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
      * @author njoshi
      *
      */
-    final static class JobManager {
+    static final class JobManager {
         private final Logger logger = LoggerFactory.getLogger(JobManager.class);
 
         private final String name;
@@ -2656,7 +2655,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
                 logger.warn("Unexpected job state {}", jobInfo.state);
             }
             long masterInitTimeoutSecs = ConfigurationProvider.getConfig().getMasterInitTimeoutSecs();
-            long timeout = ((masterInitTimeoutSecs - 60)) > 0 ? (masterInitTimeoutSecs - 60) : masterInitTimeoutSecs;
+            long timeout = (masterInitTimeoutSecs - 60) > 0 ? (masterInitTimeoutSecs - 60) : masterInitTimeoutSecs;
             Duration t = Duration.ofSeconds(timeout);
 
             // mark it as pending actor init
@@ -2669,7 +2668,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
                         logger.warn("caught exception {}", ex.getMessage(), ex);
                         return Observable.just(new JobProto.JobInitialized(1, SERVER_ERROR, "Timeout initializing Job " + jobInfo.jobId + " exception -> " + ex.getMessage(), jobInfo.jobId, ActorRef.noSender()));
                     })
-                    .map((jobInited) -> {
+                    .map(jobInited -> {
                         // once init response received remove from pending init map.
                         markJobInitialized(jobInited.jobId, System.currentTimeMillis());
 
@@ -2765,7 +2764,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         }
 
         List<JobInfo> getPendingInitializationJobsPriorToCutoff(long ts) {
-            return this.pendingInitializationJobsMap.values().stream().filter((jInfo) -> {
+            return this.pendingInitializationJobsMap.values().stream().filter(jInfo -> {
                 if (jInfo.initializedAt == -1 && jInfo.initializeInitiatedAt < ts) {
                     return true;
                 }
@@ -3002,7 +3001,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         }
 
         Optional<JobInfo> getJobInfoByUniqueId(final String uniqueId) {
-            return this.getAllNonTerminalJobsList().stream().filter((jobInfo) -> {
+            return this.getAllNonTerminalJobsList().stream().filter(jobInfo -> {
                 String unq = jobInfo.jobDefinition.getJobSla().getUserProvidedType();
                 return unq != null && !unq.isEmpty() && unq.equals(uniqueId);
             }).findFirst();
@@ -3012,21 +3011,21 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         private List<JobInfo> getJobActorsStuckInInit(long now, long allowedDelay) {
             return getPendingInitializationJobsPriorToCutoff(now - allowedDelay)
                     .stream()
-                    .peek((jobInfo) -> logger.warn("Job {} waiting for initialization since {}", jobInfo.jobId, jobInfo.initializeInitiatedAt))
+                    .peek(jobInfo -> logger.warn("Job {} waiting for initialization since {}", jobInfo.jobId, jobInfo.initializeInitiatedAt))
                     .collect(Collectors.toList());
         }
 
         private List<JobInfo> getJobsStuckInAccepted(long now, long allowedDelay) {
             return getAcceptedJobsList().stream()
                     .filter((jobInfo -> jobInfo.submittedAt < now - allowedDelay))
-                    .peek((jobInfo) -> logger.warn("Job {} stuck in accepted since {}", jobInfo.jobId, Instant.ofEpochMilli(jobInfo.submittedAt)))
+                    .peek(jobInfo -> logger.warn("Job {} stuck in accepted since {}", jobInfo.jobId, Instant.ofEpochMilli(jobInfo.submittedAt)))
                     .collect(Collectors.toList());
         }
 
         private List<JobInfo> getJobsStuckInTerminating(long now, long allowedDelay) {
             return getTerminatingJobsList().stream()
                     .filter((jobInfo -> jobInfo.terminationInitiatedAt < now - allowedDelay))
-                    .peek((jobInfo) -> logger.warn("Job {} stuck in terminating since {}", jobInfo.jobId, Instant.ofEpochMilli(jobInfo.terminationInitiatedAt)))
+                    .peek(jobInfo -> logger.warn("Job {} stuck in terminating since {}", jobInfo.jobId, Instant.ofEpochMilli(jobInfo.terminationInitiatedAt)))
                     .collect(Collectors.toList());
         }
 
@@ -3057,7 +3056,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
      *
      */
 
-    final static class LabelCache {
+    static final class LabelCache {
         final Map<Label, Set<JobId>> labelJobIdMap = new HashMap<>();
         final Map<JobId, List<Label>> jobIdToLabelMap = new HashMap<>();
         private final Logger logger = LoggerFactory.getLogger(LabelCache.class);
@@ -3140,7 +3139,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
 
 
             }
-            Set<JobId> resu = (isAnd) ? getSetIntersection(matchingSubsets) : getSetUnion(matchingSubsets);
+            Set<JobId> resu = isAnd ? getSetIntersection(matchingSubsets) : getSetUnion(matchingSubsets);
             if(logger.isTraceEnabled()) { logger.trace("Exiting getJobidsMatchingLabels " + resu); }
             return resu;
 
@@ -3155,7 +3154,9 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         private Set<JobId> getSetUnion(List<Set<JobId>> listOfSets) {
             if(logger.isTraceEnabled()) { logger.trace("In getSetUnion " + listOfSets); }
             Set<JobId> unionSet = new HashSet<>();
-            if(listOfSets == null || listOfSets.isEmpty()) return unionSet;
+            if (listOfSets == null || listOfSets.isEmpty()) {
+                return unionSet;
+            }
             int i=0;
             unionSet = listOfSets.get(i);
             i++;
@@ -3178,7 +3179,9 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         private Set<JobId> getSetIntersection(List<Set<JobId>> listOfSets) {
             if(logger.isTraceEnabled()) { logger.trace("In getSetIntersection " + listOfSets); }
             Set<JobId> intersectionSet = new HashSet<>();
-            if(listOfSets == null || listOfSets.isEmpty()) return intersectionSet;
+            if (listOfSets == null || listOfSets.isEmpty()) {
+                return intersectionSet;
+            }
             int i=0;
             intersectionSet = listOfSets.get(i);
             i++;
@@ -3396,7 +3399,7 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
             }
             this.terminalSortedJobSet.addAll(completedJobsList);
 
-            completedJobsList.forEach((compJob) -> {
+            completedJobsList.forEach(compJob -> {
                 Optional<JobId> jId=  JobId.fromId(compJob.getJobId());
                 if(jId.isPresent()) {
                     completedJobs.put(jId.get(), compJob);
@@ -3431,9 +3434,9 @@ public class JobClusterActor extends AbstractActorWithTimers implements IJobClus
         private final ActorRef clusterActor;
         private String triggerId;
         private final String jobClusterName;
-        private String triggerGroup = null;
+        private String triggerGroup;
         private CronTrigger<ActorRef> scheduledTrigger;
-        private boolean isCronActive = false;
+        private boolean isCronActive;
         CronManager(String jobClusterName, ActorRef clusterActor, SLA sla) throws Exception {
             this.jobClusterName = jobClusterName;
             cronSpec = sla.getCronSpec();

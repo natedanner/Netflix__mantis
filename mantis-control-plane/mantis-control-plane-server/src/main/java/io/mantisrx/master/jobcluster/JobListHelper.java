@@ -98,7 +98,7 @@ public class JobListHelper {
 
             if(highestJobNumber != -1) {
                 if(logger.isDebugEnabled()) { logger.debug("Highest completed job number: {}", highestJobNumber); }
-                return (JobId.fromId(completedJobWithHighestJobNumber.getJobId()));
+                return JobId.fromId(completedJobWithHighestJobNumber.getJobId());
             }
 
         }

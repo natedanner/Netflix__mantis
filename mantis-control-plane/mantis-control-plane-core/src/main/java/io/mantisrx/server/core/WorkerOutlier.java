@@ -36,13 +36,14 @@ public class WorkerOutlier {
     private final Observer<DataPoint> observer = new SerializedObserver<>(subject);
     private final long cooldownSecs;
     private final Action1<Integer> outlierTrigger;
-    private long lastTriggeredAt = 0L;
-    private long minDataPoints = 16;
-    private long maxDataPoints = 20;
+    private long lastTriggeredAt;
+    private final long minDataPoints = 16;
+    private final long maxDataPoints = 20;
     public WorkerOutlier(long cooldownSecs, Action1<Integer> outlierTrigger) {
         this.cooldownSecs = cooldownSecs;
-        if (outlierTrigger == null)
+        if (outlierTrigger == null) {
             throw new NullPointerException("outlierTrigger is null");
+        }
         this.outlierTrigger = outlierTrigger;
         start();
     }
@@ -69,8 +70,9 @@ public class WorkerOutlier {
                             booleans = new ArrayList<>();
                             isOutlierMap.put(dataPoint.index, booleans);
                         }
-                        if (booleans.size() >= maxDataPoints) // for now hard code to 20 items
+                        if (booleans.size() >= maxDataPoints) { // for now hard code to 20 items
                             booleans.remove(0);
+                        }
                         booleans.add(dataPoint.value > simpleStats.getOutlierThreshold());
                         if ((System.currentTimeMillis() - lastTriggeredAt) > cooldownSecs * 1000) {
                             if (booleans.size() > minDataPoints) {
@@ -78,8 +80,9 @@ public class WorkerOutlier {
                                 int outlierCnt = 0;
                                 for (boolean b : booleans) {
                                     total++;
-                                    if (b)
+                                    if (b) {
                                         outlierCnt++;
+                                    }
                                 }
                                 if (outlierCnt > (Math.round((double) total * 0.7))) { // again, hardcode for now
                                     outlierTrigger.call(dataPoint.index);
@@ -101,7 +104,7 @@ public class WorkerOutlier {
         observer.onCompleted();
     }
 
-    private static class DataPoint {
+    private static final class DataPoint {
 
         private final int index;
         private final double value;

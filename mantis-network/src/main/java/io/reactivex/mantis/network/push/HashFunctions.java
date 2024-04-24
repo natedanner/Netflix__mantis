@@ -20,7 +20,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 
-public class HashFunctions {
+public final class HashFunctions {
 
     private HashFunctions() {}
 

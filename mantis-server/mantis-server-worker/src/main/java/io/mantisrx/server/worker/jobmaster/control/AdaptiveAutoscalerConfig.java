@@ -98,43 +98,62 @@ public class AdaptiveAutoscalerConfig {
     }
 
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof AdaptiveAutoscalerConfig)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof AdaptiveAutoscalerConfig)) {
+            return false;
+        }
         final AdaptiveAutoscalerConfig other = (AdaptiveAutoscalerConfig) o;
         final Object this$metric = this.getMetric();
         final Object other$metric = other.getMetric();
-        if (this$metric == null ? other$metric != null : !this$metric.equals(other$metric)) return false;
-        if (Double.compare(this.getSetPoint(), other.getSetPoint()) != 0) return false;
-        if (this.isInvert() != other.isInvert()) return false;
-        if (Double.compare(this.getRope(), other.getRope()) != 0) return false;
-        if (Double.compare(this.getKp(), other.getKp()) != 0) return false;
-        if (Double.compare(this.getKi(), other.getKi()) != 0) return false;
-        if (Double.compare(this.getKd(), other.getKd()) != 0) return false;
-        if (Double.compare(this.getMinScale(), other.getMinScale()) != 0) return false;
-        if (Double.compare(this.getMaxScale(), other.getMaxScale()) != 0) return false;
-        return true;
+        if (this$metric == null ? other$metric != null : !this$metric.equals(other$metric)) {
+            return false;
+        }
+        if (Double.compare(this.getSetPoint(), other.getSetPoint()) != 0) {
+            return false;
+        }
+        if (this.isInvert() != other.isInvert()) {
+            return false;
+        }
+        if (Double.compare(this.getRope(), other.getRope()) != 0) {
+            return false;
+        }
+        if (Double.compare(this.getKp(), other.getKp()) != 0) {
+            return false;
+        }
+        if (Double.compare(this.getKi(), other.getKi()) != 0) {
+            return false;
+        }
+        if (Double.compare(this.getKd(), other.getKd()) != 0) {
+            return false;
+        }
+        if (Double.compare(this.getMinScale(), other.getMinScale()) != 0) {
+            return false;
+        }
+        return !(Double.compare(this.getMaxScale(), other.getMaxScale()) != 0);
     }
 
     public int hashCode() {
-        final int PRIME = 59;
+        final int prime = 59;
         int result = 1;
         final Object $metric = this.getMetric();
-        result = result * PRIME + ($metric == null ? 43 : $metric.hashCode());
+        result = result * prime + ($metric == null ? 43 : $metric.hashCode());
         final long $setPoint = Double.doubleToLongBits(this.getSetPoint());
-        result = result * PRIME + (int) ($setPoint >>> 32 ^ $setPoint);
-        result = result * PRIME + (this.isInvert() ? 79 : 97);
+        result = result * prime + (int) ($setPoint >>> 32 ^ $setPoint);
+        result = result * prime + (this.isInvert() ? 79 : 97);
         final long $rope = Double.doubleToLongBits(this.getRope());
-        result = result * PRIME + (int) ($rope >>> 32 ^ $rope);
+        result = result * prime + (int) ($rope >>> 32 ^ $rope);
         final long $kp = Double.doubleToLongBits(this.getKp());
-        result = result * PRIME + (int) ($kp >>> 32 ^ $kp);
+        result = result * prime + (int) ($kp >>> 32 ^ $kp);
         final long $ki = Double.doubleToLongBits(this.getKi());
-        result = result * PRIME + (int) ($ki >>> 32 ^ $ki);
+        result = result * prime + (int) ($ki >>> 32 ^ $ki);
         final long $kd = Double.doubleToLongBits(this.getKd());
-        result = result * PRIME + (int) ($kd >>> 32 ^ $kd);
+        result = result * prime + (int) ($kd >>> 32 ^ $kd);
         final long $minScale = Double.doubleToLongBits(this.getMinScale());
-        result = result * PRIME + (int) ($minScale >>> 32 ^ $minScale);
+        result = result * prime + (int) ($minScale >>> 32 ^ $minScale);
         final long $maxScale = Double.doubleToLongBits(this.getMaxScale());
-        result = result * PRIME + (int) ($maxScale >>> 32 ^ $maxScale);
+        result = result * prime + (int) ($maxScale >>> 32 ^ $maxScale);
         return result;
     }
 

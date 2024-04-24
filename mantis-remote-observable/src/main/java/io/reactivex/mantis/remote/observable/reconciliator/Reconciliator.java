@@ -45,17 +45,17 @@ public class Reconciliator<T> {
     private static final Logger logger = LoggerFactory.getLogger(Reconciliator.class);
 
     private static final AtomicBoolean startedReconciliation = new AtomicBoolean(false);
-    private String name;
+    private final String name;
     private Subscription subscription;
 
-    private DynamicConnectionSet<T> connectionSet;
-    private PublishSubject<Set<Endpoint>> currentExpectedSet = PublishSubject.create();
-    private EndpointInjector injector;
-    private PublishSubject<EndpointChange> reconciledChanges = PublishSubject.create();
-    private Metrics metrics;
-    private Counter reconciliationCheck;
-    private Gauge running;
-    private Gauge expectedSetSize;
+    private final DynamicConnectionSet<T> connectionSet;
+    private final PublishSubject<Set<Endpoint>> currentExpectedSet = PublishSubject.create();
+    private final EndpointInjector injector;
+    private final PublishSubject<EndpointChange> reconciledChanges = PublishSubject.create();
+    private final Metrics metrics;
+    private final Counter reconciliationCheck;
+    private final Gauge running;
+    private final Gauge expectedSetSize;
 
     Reconciliator(Builder<T> builder) {
         this.name = builder.name;
@@ -79,16 +79,15 @@ public class Reconciliator<T> {
 
     private Observable<EndpointChange> deltas() {
 
-        final Map<String, Endpoint> sideEffectState = new HashMap<String, Endpoint>();
+        final Map<String, Endpoint> sideEffectState = new HashMap<>();
         final PublishSubject<Integer> stopReconciliator = PublishSubject.create();
 
         return
                 Observable.merge(
                         reconciledChanges
                                 .takeUntil(stopReconciliator)
-                                .doOnCompleted(() -> {
-                                    logger.info("onComplete triggered for reconciledChanges");
-                                })
+                                .doOnCompleted(() ->
+                                    logger.info("onComplete triggered for reconciledChanges"))
                                 .doOnError(e -> logger.error("caught exception for reconciledChanges {}", e.getMessage(), e))
                         ,
                         injector
@@ -162,7 +161,7 @@ public class Reconciliator<T> {
                                                 // reconcile adds
                                                 Set<Endpoint> expectedDiff = new HashSet<Endpoint>(expected);
                                                 expectedDiff.removeAll(actual);
-                                                if (expectedDiff.size() > 0) {
+                                                if (!expectedDiff.isEmpty()) {
                                                     for (Endpoint endpoint : expectedDiff) {
                                                         logger.info("Connection missing from expected set, adding missing connection: " + endpoint);
                                                         reconciledChanges.onNext(new EndpointChange(Type.add, endpoint));
@@ -171,7 +170,7 @@ public class Reconciliator<T> {
                                                 // reconile removes
                                                 Set<Endpoint> actualDiff = new HashSet<Endpoint>(actual);
                                                 actualDiff.removeAll(expected);
-                                                if (actualDiff.size() > 0) {
+                                                if (!actualDiff.isEmpty()) {
                                                     for (Endpoint endpoint : actualDiff) {
                                                         logger.info("Unexpected connection in active set, removing connection: " + endpoint);
                                                         reconciledChanges.onNext(new EndpointChange(Type.complete, endpoint));
@@ -243,7 +242,7 @@ public class Reconciliator<T> {
         }
 
         public Reconciliator<T> build() {
-            return new Reconciliator<T>(this);
+            return new Reconciliator<>(this);
         }
     }
 }

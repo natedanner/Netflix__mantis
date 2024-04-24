@@ -26,8 +26,8 @@ public abstract class ExponentialBackoffAbstractScheduledService extends Abstrac
     private final long initialDelayMillis;
     private final long maxDelayMillis;
 
-    private int retryCount = 0;
-    private long nextRunTime = 0;
+    private int retryCount;
+    private long nextRunTime;
 
     protected ExponentialBackoffAbstractScheduledService(long initialDelayMillis,
         long maxDelayMillis) {

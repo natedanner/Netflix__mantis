@@ -40,17 +40,17 @@ public class Metrics {
     private static final Logger logger = LoggerFactory.getLogger(Metrics.class);
 
     private final Builder builder;
-    private MetricGroupId metricGroup;
-    private Map<MetricId, Counter> counters = new HashMap<>();
-    private Map<MetricId, Gauge> gauges = new HashMap<>();
-    private Map<MetricId, Timer> timers = new HashMap<>();
+    private final MetricGroupId metricGroup;
+    private final Map<MetricId, Counter> counters = new HashMap<>();
+    private final Map<MetricId, Gauge> gauges = new HashMap<>();
+    private final Map<MetricId, Timer> timers = new HashMap<>();
 
     public Metrics(Builder builder) {
         this.builder = builder;
         this.metricGroup = builder.metricGroup;
 
         // create spectator counters
-        if (builder.counterIds != null && builder.counterIds.size() > 0) {
+        if (builder.counterIds != null && !builder.counterIds.isEmpty()) {
             for (MetricId id : builder.counterIds) {
                 logger.debug("creating spectator counter for {}", id);
                 counters.put(id, new CounterImpl(id, builder.registry));
@@ -58,21 +58,21 @@ public class Metrics {
         }
 
         // create gauges
-        if (builder.callbackGauges != null && builder.callbackGauges.size() > 0) {
+        if (builder.callbackGauges != null && !builder.callbackGauges.isEmpty()) {
             for (Gauge gauge : builder.callbackGauges) {
                 gauges.put(gauge.id(), gauge);
             }
         }
 
         // create spectator gauges
-        if (builder.gaugeIds != null && builder.gaugeIds.size() > 0) {
+        if (builder.gaugeIds != null && !builder.gaugeIds.isEmpty()) {
             for (MetricId gaugeId : builder.gaugeIds) {
                 logger.debug("creating spectator gauge for {}", gaugeId);
                 gauges.put(gaugeId, new GaugeImpl(gaugeId, builder.registry));
             }
         }
 
-        if (builder.timerIds != null && builder.timerIds.size() > 0) {
+        if (builder.timerIds != null && !builder.timerIds.isEmpty()) {
             for (MetricId id : builder.timerIds) {
                 logger.debug("creating spectator timer for {}", id);
                 timers.put(id, new TimerImpl(id, builder.registry));

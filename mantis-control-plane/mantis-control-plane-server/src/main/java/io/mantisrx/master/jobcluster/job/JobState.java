@@ -120,8 +120,9 @@ public enum JobState {
      */
     public boolean isValidStateChgTo(JobState newState) {
         for (JobState validState : VALID_CHANGES.get(this))
-            if (validState == newState)
+            if (validState == newState) {
                 return true;
+            }
         return false;
     }
 
@@ -173,13 +174,8 @@ public enum JobState {
      * @return
      */
     public static boolean isRunningState(JobState state) {
-        switch (state) {
-        case Launched:
 
-            return true;
-        default:
-            return false;
-        }
+        return state == JobState.Launched;
     }
 
     /**
@@ -190,12 +186,7 @@ public enum JobState {
      * @return
      */
     public static boolean isAcceptedState(JobState state) {
-        switch (state) {
-            case Accepted:
 
-            return true;
-        default:
-            return false;
-        }
+        return state == JobState.Accepted;
     }
 }

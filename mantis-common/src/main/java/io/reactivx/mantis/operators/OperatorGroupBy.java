@@ -51,7 +51,7 @@ import rx.subjects.Subject;
  */
 public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R>, T> {
 
-    private final static Func1<Object, Object> IDENTITY = new Func1<Object, Object>() {
+    private static final Func1<Object, Object> IDENTITY = new Func1<Object, Object>() {
         @Override
         public Object call(Object t) {
             return t;
@@ -92,7 +92,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
         final Func1<? super T, ? extends K> keySelector;
         final Func1<? super T, ? extends R> elementSelector;
         final Subscriber<? super GroupedObservable<K, R>> child;
-        private final ConcurrentHashMap<K, GroupState<K, T>> groups = new ConcurrentHashMap<K, GroupState<K, T>>();
+        private final ConcurrentHashMap<K, GroupState<K, T>> groups = new ConcurrentHashMap<>();
         volatile int completionEmitted;
         volatile int terminated;
         volatile long requested;
@@ -172,7 +172,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
         }
 
         private GroupState<K, T> createNewGroup(final K key) {
-            final GroupState<K, T> groupState = new GroupState<K, T>();
+            final GroupState<K, T> groupState = new GroupState<>();
 
             GroupedObservable<K, R> go = GroupedObservable.create(key, new OnSubscribe<R>() {
 
@@ -242,7 +242,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
             GroupState<K, T> removed;
             removed = groups.remove(key);
             if (removed != null) {
-                if (removed.buffer.size() > 0) {
+                if (!removed.buffer.isEmpty()) {
                     BUFFERED_COUNT.addAndGet(self, -removed.buffer.size());
                 }
                 completeInner();
@@ -292,7 +292,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
         }
 
         private void requestMoreIfNecessary() {
-            if (REQUESTED.get(this) < (MAX_QUEUE_SIZE) && terminated == 0) {
+            if (REQUESTED.get(this) < MAX_QUEUE_SIZE && terminated == 0) {
                 long requested = REQUESTED.get(this);
                 long toRequest = MAX_QUEUE_SIZE - REQUESTED.get(this) - BUFFERED_COUNT.get(this);
                 if (toRequest > 0 && REQUESTED.compareAndSet(this, requested, toRequest + requested)) {
@@ -340,7 +340,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
             private final Subject<T, T> s = BufferUntilSubscriber.create();
             private final AtomicLong requested = new AtomicLong();
             private final AtomicLong count = new AtomicLong();
-            private final Queue<Object> buffer = new ConcurrentLinkedQueue<Object>(); // TODO should this be lazily created?
+            private final Queue<Object> buffer = new ConcurrentLinkedQueue<>(); // TODO should this be lazily created?
 
             public Observable<T> getObservable() {
                 return s;

@@ -196,9 +196,8 @@ public class MantisJobMetadataImpl implements IMantisJobMetadata {
     public boolean addJobStageIfAbsent(IMantisStageMetadata msmd) {
     	if(logger.isTraceEnabled()) { logger.trace("Adding stage {} ", msmd); }
     	boolean result = stageMetadataMap.put(msmd.getStageNum(), msmd) == null;
-    	msmd.getAllWorkers().forEach((worker) -> {
-            workerNumberToStageMap.put(worker.getMetadata().getWorkerNumber(), msmd.getStageNum());
-        });
+    	msmd.getAllWorkers().forEach(worker ->
+            workerNumberToStageMap.put(worker.getMetadata().getWorkerNumber(), msmd.getStageNum()));
         return result;
     }
 
@@ -299,7 +298,9 @@ public class MantisJobMetadataImpl implements IMantisJobMetadata {
         // Resubmitted workers are expected to have a worker number greater than those they replace.
         int max=-1;
         for(int id: workerNumberToStageMap.keySet())
-            if(max < id)  max = id;
+            if (max < id) {
+                max = id;
+            }
         return max;
     }
 
@@ -367,8 +368,8 @@ public class MantisJobMetadataImpl implements IMantisJobMetadata {
 
         int nextWorkerNumberToUse = 1;
 
-        long heartbeatIntervalSecs = 0;
-        long workerTimeoutSecs = 0;
+        long heartbeatIntervalSecs;
+        long workerTimeoutSecs;
 
         Costs jobCosts;
 
@@ -476,8 +477,12 @@ public class MantisJobMetadataImpl implements IMantisJobMetadata {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MantisJobMetadataImpl that = (MantisJobMetadataImpl) o;
         return submittedAt == that.submittedAt &&
                 startedAt == that.startedAt &&

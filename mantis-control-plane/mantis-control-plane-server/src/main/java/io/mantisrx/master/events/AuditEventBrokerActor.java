@@ -47,7 +47,7 @@ public class AuditEventBrokerActor extends AbstractActor
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-            .match(LifecycleEventsProto.AuditEvent.class, auditEvent -> onAuditEvent(auditEvent))
+            .match(LifecycleEventsProto.AuditEvent.class, this::onAuditEvent)
             .build();
     }
 }

@@ -116,7 +116,7 @@ public class ClutchAutoScaler implements Observable.Transformer<JobAutoScaler.Ev
         Calendar now = Calendar.getInstance();
         int hour = now.get(Calendar.HOUR_OF_DAY);
         int minute = now.get(Calendar.MINUTE);
-        return ((hour * 60) + minute);
+        return (hour * 60) + minute;
     }
 
     /**
@@ -233,7 +233,7 @@ public class ClutchAutoScaler implements Observable.Transformer<JobAutoScaler.Ev
                 .doOnNext(x -> actionCache.put(System.currentTimeMillis(), x - targetScale.get()))
                 .doOnNext(targetScale::set)
                 .doOnNext(__ -> cooldownTimestamp.set(System.currentTimeMillis() + config.cooldownSeconds.getOrElse(0L) * 1000))
-                .map(x -> (Object) x);
+                .map(Object.class::cast);
     }
 
     private class ClutchController implements Observable.Transformer<JobAutoScaler.Event, ClutchControllerOutput> {

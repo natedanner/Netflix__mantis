@@ -56,7 +56,7 @@ public class MantisSchedulerFactoryImpl implements MantisSchedulerFactory {
             return
                 actorRefMap.computeIfAbsent(
                     clusterID,
-                    (cid) -> {
+                    cid -> {
                         log.info("Created scheduler actor for cluster: {}",
                             clusterIDOptional.get().getResourceID());
                         return new ResourceClusterAwareScheduler(actorSystem.actorOf(

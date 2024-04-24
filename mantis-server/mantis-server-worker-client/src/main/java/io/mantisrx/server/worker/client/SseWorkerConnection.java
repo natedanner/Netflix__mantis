@@ -75,14 +75,15 @@ public class SseWorkerConnection {
     private final AtomicBoolean isConnected = new AtomicBoolean(false);
     private final AtomicBoolean isReceivingData = new AtomicBoolean(false);
     HttpClient<ByteBuf, ServerSentEvent> client;
-    private boolean compressedBinaryInputEnabled = false;
-    private volatile boolean isShutdown = false;
+    private boolean compressedBinaryInputEnabled;
+    private volatile boolean isShutdown;
     private final Func1<Observable<? extends Throwable>, Observable<?>> retryLogic =
             new Func1<Observable<? extends Throwable>, Observable<?>>() {
                 @Override
                 public Observable<?> call(Observable<? extends Throwable> attempts) {
-                    if (!reconnectUponConnectionReset)
+                    if (!reconnectUponConnectionReset) {
                         return Observable.empty();
+                    }
                     return attempts
                             .zipWith(Observable.range(1, Integer.MAX_VALUE), new Func2<Throwable, Integer, Integer>() {
                                 @Override
@@ -104,7 +105,7 @@ public class SseWorkerConnection {
                             });
                 }
             };
-    private long lastDataDropValue = 0L;
+    private long lastDataDropValue;
     public SseWorkerConnection(final String connectionType,
                                final String hostname,
                                final Integer port,
@@ -175,8 +176,9 @@ public class SseWorkerConnection {
 
     public synchronized void close() throws Exception {
         logger.info("Closing sse connection to " + hostname + ":" + port);
-        if (isShutdown)
+        if (isShutdown) {
             return;
+        }
         shutdownSubject.onNext(true);
         shutdownSubject.onCompleted();
         isShutdown = true;
@@ -188,8 +190,9 @@ public class SseWorkerConnection {
     }
 
     public synchronized Observable<MantisServerSentEvent> call() {
-        if (isShutdown)
+        if (isShutdown) {
             return Observable.empty();
+        }
 
         client = this.<ByteBuf, ServerSentEvent>newHttpClientBuilder(hostname, port)
                 .pipelineConfigurator(PipelineConfigurators.<ByteBuf>clientSseConfigurator())
@@ -221,17 +224,19 @@ public class SseWorkerConnection {
         return
                 client.submit(HttpClientRequest.createGet(uri))
                         .takeUntil(shutdownSubject)
-                        .takeWhile((serverSentEventHttpClientResponse) -> !isShutdown)
+                        .takeWhile(serverSentEventHttpClientResponse -> !isShutdown)
                         .filter((HttpClientResponse<ServerSentEvent> response) -> {
-                            if (!response.getStatus().reasonPhrase().equals("OK"))
+                            if (!"OK".equals(response.getStatus().reasonPhrase())) {
                                 logger.warn(getName() + ":Trying to continue after unexpected response from sink: "
-                                        + response.getStatus().reasonPhrase());
-                            return response.getStatus().reasonPhrase().equals("OK");
+                                    + response.getStatus().reasonPhrase());
+                            }
+                            return "OK".equals(response.getStatus().reasonPhrase());
                         })
                         .flatMap((HttpClientResponse<ServerSentEvent> response) -> {
                             if (!isConnected.getAndSet(true)) {
-                                if (updateConxStatus != null)
+                                if (updateConxStatus != null) {
                                     updateConxStatus.call(true);
+                                }
                             }
                             return streamContent(response, updateDataRecvngStatus, dataRecvTimeoutSecs, delimiter);
                         })
@@ -249,14 +254,17 @@ public class SseWorkerConnection {
         // explicitly close the connection
         ((MantisHttpClientImpl<?, ?>)client).closeConn();
         if (isConnected.getAndSet(false)) {
-            if (updateConxStatus != null)
+            if (updateConxStatus != null) {
                 updateConxStatus.call(false);
+            }
         }
-        if (isReceivingData.compareAndSet(true, false))
-            if (updateDataRecvngStatus != null)
+        if (isReceivingData.compareAndSet(true, false)) {
+            if (updateDataRecvngStatus != null) {
                 synchronized (updateDataRecvngStatus) {
                     updateDataRecvngStatus.call(false);
                 }
+            }
+        }
     }
 
     protected Observable<MantisServerSentEvent> streamContent(HttpClientResponse<ServerSentEvent> response,
@@ -268,25 +276,28 @@ public class SseWorkerConnection {
                     .doOnNext((Long aLong) -> {
                         if (!isShutdown) {
                             if (hasDataDrop() || System.currentTimeMillis() > (lastDataReceived.get() + dataRecvTimeoutSecs * 1000)) {
-                                if (isReceivingData.compareAndSet(true, false))
+                                if (isReceivingData.compareAndSet(true, false)) {
                                     synchronized (updateDataRecvngStatus) {
                                         updateDataRecvngStatus.call(false);
                                     }
+                                }
                             } else {
-                                if (isConnected.get() && isReceivingData.compareAndSet(false, true))
+                                if (isConnected.get() && isReceivingData.compareAndSet(false, true)) {
                                     synchronized (updateDataRecvngStatus) {
                                         updateDataRecvngStatus.call(true);
                                     }
+                                }
                             }
                         }
                     })
                     .takeUntil(shutdownSubject)
-                    .takeWhile((o) -> !isShutdown)
+                    .takeWhile(o -> !isShutdown)
                     .doOnCompleted(() -> {
-                        if (isReceivingData.compareAndSet(true, false))
+                        if (isReceivingData.compareAndSet(true, false)) {
                             synchronized (updateDataRecvngStatus) {
                                 updateDataRecvngStatus.call(false);
                             }
+                        }
                     })
                     .subscribe();
         }
@@ -294,11 +305,13 @@ public class SseWorkerConnection {
                 .lift(new DropOperator<ServerSentEvent>(metricGroupId))
                 .flatMap((ServerSentEvent t1) -> {
                     lastDataReceived.set(System.currentTimeMillis());
-                    if (isConnected.get() && isReceivingData.compareAndSet(false, true))
-                        if (updateDataRecvngStatus != null)
+                    if (isConnected.get() && isReceivingData.compareAndSet(false, true)) {
+                        if (updateDataRecvngStatus != null) {
                             synchronized (updateDataRecvngStatus) {
                                 updateDataRecvngStatus.call(true);
                             }
+                        }
+                    }
 
                     if (t1.hasEventType() && t1.getEventTypeAsString().startsWith("error:")) {
                         return Observable.error(new SseException(ErrorType.Retryable, "Got error SSE event: " + t1.contentAsString()));
@@ -312,12 +325,12 @@ public class SseWorkerConnection {
                     }
                     return true;
                 })
-                .flatMapIterable((data) -> {
+                .flatMapIterable(data -> {
                     boolean useSnappy = true;
                     return CompressionUtils.decompressAndBase64Decode(data, compressedBinaryInputEnabled, useSnappy, delimiter);
                 }, 1)
                 .takeUntil(shutdownSubject)
-                .takeWhile((event) -> !isShutdown);
+                .takeWhile(event -> !isShutdown);
     }
 
     private boolean hasDataDrop() {
@@ -328,8 +341,9 @@ public class SseWorkerConnection {
             for (Metrics m : metrics) {
                 final Counter dropped = m.getCounter("" + DropOperator.Counters.dropped);
                 final Counter onNext = m.getCounter("" + DropOperator.Counters.onNext);
-                if (dropped != null)
+                if (dropped != null) {
                     totalDataDrop += dropped.value();
+                }
             }
         }
         if (totalDataDrop > lastDataDropValue) {
@@ -344,18 +358,19 @@ public class SseWorkerConnection {
         String slotId = System.getenv("WORKER_INDEX");
         String id = System.getenv("WORKER_NUMBER");
 
-        if (groupId != null && !groupId.isEmpty() && slotId != null && !slotId.isEmpty() && id != null && !id.isEmpty())
+        if (groupId != null && !groupId.isEmpty() && slotId != null && !slotId.isEmpty() && id != null && !id.isEmpty()) {
             return prefix + "groupId=" + groupId + "&slotId=" + slotId + "&id=" + id;
+        }
         return "";
     }
 
 
-    private static enum ErrorType {
+    private enum ErrorType {
         Retryable,
         Unknown
     }
 
-    private static class SseException extends RuntimeException {
+    private static final class SseException extends RuntimeException {
 
         private final ErrorType type;
 

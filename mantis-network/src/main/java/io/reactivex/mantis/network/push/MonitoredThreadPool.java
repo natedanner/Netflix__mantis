@@ -35,11 +35,11 @@ import org.slf4j.LoggerFactory;
 public class MonitoredThreadPool {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitoredThreadPool.class);
-    private String name;
-    private ThreadPoolExecutor threadPool;
-    private Metrics metrics;
-    private Counter rejectCount;
-    private Counter exceptions;
+    private final String name;
+    private final ThreadPoolExecutor threadPool;
+    private final Metrics metrics;
+    private final Counter rejectCount;
+    private final Counter exceptions;
 
     public MonitoredThreadPool(String name, final ThreadPoolExecutor threadPool) {
         this.name = name;
@@ -86,7 +86,7 @@ public class MonitoredThreadPool {
 
     public <T> Future<T> submit(final Callable<T> task) {
         // wrap with exception handling
-        Future<T> future = threadPool.submit(new Callable<T>() {
+        return threadPool.submit(new Callable<T>() {
             @Override
             public T call() throws Exception {
                 T returnValue = null;
@@ -99,7 +99,6 @@ public class MonitoredThreadPool {
                 return returnValue;
             }
         });
-        return future;
     }
 
     public void execute(final Runnable task) {

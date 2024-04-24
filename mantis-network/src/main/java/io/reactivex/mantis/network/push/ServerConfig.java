@@ -24,18 +24,18 @@ import rx.functions.Func1;
 
 public class ServerConfig<T> {
 
-    private String name;
-    private int port;
+    private final String name;
+    private final int port;
     private int numQueueConsumers = 1; // number of threads chunking queue
     private int bufferCapacity = 100; // max queue size
     private int writeRetryCount = 2; // num retries before fail to write
     private int maxChunkSize = 25;  // max items to read from queue, for a single chunk
     private int maxChunkTimeMSec = 100; // max time to read from queue, for a single chunk
     private int maxNotWritableTimeSec = -1; // max time the channel can stay not writable, <= 0 means unlimited
-    private ChunkProcessor<T> chunkProcessor; // logic to process chunk
-    private MetricsRegistry metricsRegistry; // registry used to store metrics
-    private Func1<Map<String, List<String>>, Func1<T, Boolean>> predicate;
-    private boolean useSpscQueue = false;
+    private final ChunkProcessor<T> chunkProcessor; // logic to process chunk
+    private final MetricsRegistry metricsRegistry; // registry used to store metrics
+    private final Func1<Map<String, List<String>>, Func1<T, Boolean>> predicate;
+    private final boolean useSpscQueue;
 
     public ServerConfig(Builder<T> builder) {
         this.name = builder.name;
@@ -113,7 +113,7 @@ public class ServerConfig<T> {
         private ChunkProcessor<T> chunkProcessor; // logic to process chunk
         private MetricsRegistry metricsRegistry; // registry used to store metrics
         private Func1<Map<String, List<String>>, Func1<T, Boolean>> predicate;
-        private boolean useSpscQueue = false;
+        private boolean useSpscQueue;
 
         public Builder<T> predicate(Func1<Map<String, List<String>>, Func1<T, Boolean>> predicate) {
             this.predicate = predicate;

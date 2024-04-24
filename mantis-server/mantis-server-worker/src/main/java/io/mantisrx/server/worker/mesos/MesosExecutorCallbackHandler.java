@@ -41,7 +41,7 @@ import rx.subjects.PublishSubject;
 public class MesosExecutorCallbackHandler implements Executor {
 
     private static final Logger logger = LoggerFactory.getLogger(MesosExecutorCallbackHandler.class);
-    private Observer<WrappedExecuteStageRequest> executeStageRequestObserver;
+    private final Observer<WrappedExecuteStageRequest> executeStageRequestObserver;
     private final JsonSerializer serializer = new JsonSerializer();
 
     public MesosExecutorCallbackHandler(Observer<WrappedExecuteStageRequest> executeStageRequestObserver) {
@@ -128,9 +128,10 @@ public class MesosExecutorCallbackHandler implements Executor {
                     @Override
                     public void onNext(List<Boolean> booleans) {
                         logger.info("onNext called for request failure handler with items: " +
-                                ((booleans == null) ? "-1" : booleans.size()));
-                        if ((booleans == null) || booleans.isEmpty())
+                                (booleans == null ? "-1" : booleans.size()));
+                        if ((booleans == null) || booleans.isEmpty()) {
                             errorHandler.call();
+                        }
                     }
                 });
     }

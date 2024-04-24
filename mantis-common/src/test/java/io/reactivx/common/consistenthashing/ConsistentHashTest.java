@@ -36,35 +36,35 @@ public class ConsistentHashTest {
     public void oneNodeTest() {
         Endpoint n1 = new Endpoint("host1", 7001);
 
-        List<Endpoint> nodes = new ArrayList<Endpoint>();
+        List<Endpoint> nodes = new ArrayList<>();
         nodes.add(n1);
 
         ConsistentHash<Endpoint> ch =
-                new ConsistentHash<Endpoint>(HashFunctions.ketama(), new EndpointConfiguration(), nodes);
+                new ConsistentHash<>(HashFunctions.ketama(), new EndpointConfiguration(), nodes);
         int hostHitCountNode1 = 0;
         int nonHitCount = 0;
 
-        int MSG_COUNT = 100000;
-        for (int i = 0; i < MSG_COUNT; i++) {
+        int msgCount = 100000;
+        for (int i = 0; i < msgCount; i++) {
 
             Endpoint sn = ch.get(("msg:" + i).getBytes());
-            if (sn.getHost().equals("host1")) {
+            if ("host1".equals(sn.getHost())) {
                 hostHitCountNode1++;
             } else {
                 nonHitCount++;
             }
         }
         assertTrue(nonHitCount == 0);
-        assertEquals(MSG_COUNT, hostHitCountNode1);
+        assertEquals(msgCount, hostHitCountNode1);
     }
 
     @Test
     public void emptyNodeThrowsTest() {
-        List<Endpoint> nodes = new ArrayList<Endpoint>();
+        List<Endpoint> nodes = new ArrayList<>();
         try {
 
             ConsistentHash<Endpoint> ch =
-                    new ConsistentHash<Endpoint>(HashFunctions.ketama(), new EndpointConfiguration(), nodes);
+                    new ConsistentHash<>(HashFunctions.ketama(), new EndpointConfiguration(), nodes);
             fail();
 
         } catch (Exception e) {
@@ -76,35 +76,35 @@ public class ConsistentHashTest {
     public void twoNodeTest() {
         Endpoint n1 = new Endpoint("host1", 7001);
         Endpoint n2 = new Endpoint("host2", 7001);
-        List<Endpoint> nodes = new ArrayList<Endpoint>();
+        List<Endpoint> nodes = new ArrayList<>();
         nodes.add(n1);
         nodes.add(n2);
 
         ConsistentHash<Endpoint> ch =
-                new ConsistentHash<Endpoint>(HashFunctions.ketama(), new EndpointConfiguration(), nodes);
+                new ConsistentHash<>(HashFunctions.ketama(), new EndpointConfiguration(), nodes);
         int hostHitCountNode1 = 0;
         int hostHitCountNode2 = 0;
         int nonHitCount = 0;
 
-        int MSG_COUNT = 100000;
-        for (int i = 0; i < MSG_COUNT; i++) {
+        int msgCount = 100000;
+        for (int i = 0; i < msgCount; i++) {
 
             Endpoint sn = ch.get(("msg:" + i).getBytes());
-            if (sn.getHost().equals("host1")) {
+            if ("host1".equals(sn.getHost())) {
                 hostHitCountNode1++;
-            } else if (sn.getHost().equals("host2")) {
+            } else if ("host2".equals(sn.getHost())) {
                 hostHitCountNode2++;
             } else {
                 nonHitCount++;
             }
         }
 
-        double host1HitPercentage = (double) hostHitCountNode1 / (double) MSG_COUNT;
+        double host1HitPercentage = (double) hostHitCountNode1 / (double) msgCount;
         System.out.println("host1 hit % " + host1HitPercentage);
         assertTrue(host1HitPercentage > 0.48 && host1HitPercentage < 0.52);
 
         assertTrue(nonHitCount == 0);
-        assertEquals(MSG_COUNT, hostHitCountNode1 + hostHitCountNode2);
+        assertEquals(msgCount, hostHitCountNode1 + hostHitCountNode2);
     }
 
 

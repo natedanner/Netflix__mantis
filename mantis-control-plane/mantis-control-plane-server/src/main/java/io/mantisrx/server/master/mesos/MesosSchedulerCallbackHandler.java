@@ -67,12 +67,12 @@ public class MesosSchedulerCallbackHandler implements Scheduler {
     private final Counter numReconcileTasks;
     private final Counter numInvalidOffers;
     private final Counter numOfferTooSmall;
-    private Observer<String> vmLeaseRescindedObserver;
-    private JobMessageRouter jobMessageRouter;
-    private volatile ScheduledFuture reconcilerFuture = null;
-    private AtomicLong lastOfferReceivedAt = new AtomicLong(System.currentTimeMillis());
-    private AtomicLong lastValidOfferReceivedAt = new AtomicLong(System.currentTimeMillis());
-    private long reconciliationTrial = 0;
+    private final Observer<String> vmLeaseRescindedObserver;
+    private final JobMessageRouter jobMessageRouter;
+    private volatile ScheduledFuture reconcilerFuture;
+    private final AtomicLong lastOfferReceivedAt = new AtomicLong(System.currentTimeMillis());
+    private final AtomicLong lastValidOfferReceivedAt = new AtomicLong(System.currentTimeMillis());
+    private long reconciliationTrial;
 
     public MesosSchedulerCallbackHandler(
             final Action1<List<VirtualMachineLease>> addVMLeaseAction,
@@ -198,11 +198,13 @@ public class MesosSchedulerCallbackHandler implements Scheduler {
     //    }
 
     private boolean isIn(String value, List<String> list) {
-        if (value == null || value.isEmpty() || list == null || list.isEmpty())
+        if (value == null || value.isEmpty() || list == null || list.isEmpty()) {
             return false;
+        }
         for (String s : list)
-            if (value.equals(s))
+            if (value.equals(s)) {
                 return true;
+            }
         return false;
     }
 
@@ -254,8 +256,9 @@ public class MesosSchedulerCallbackHandler implements Scheduler {
 
     private synchronized void initializeNewDriver(final SchedulerDriver driver) {
         vmLeaseRescindedObserver.onNext("ALL");
-        if (reconcilerFuture != null)
+        if (reconcilerFuture != null) {
             reconcilerFuture.cancel(true);
+        }
         reconcilerFuture = new ScheduledThreadPoolExecutor(1).scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
@@ -266,10 +269,11 @@ public class MesosSchedulerCallbackHandler implements Scheduler {
 
     private void reconcileTasks(final SchedulerDriver driver) {
         try {
-            if (reconciliationTrial++ % 2 == 0)
+            if (reconciliationTrial++ % 2 == 0) {
                 reconcileTasksKnownToUs(driver);
-            else
+            } else {
                 reconcileAllMesosTasks(driver);
+            }
         } catch (Exception e) {
             // we don't want to throw errors lest periodically scheduled reconciliation be cancelled
             logger.error("Unexpected error (continuing): " + e.getMessage(), e);

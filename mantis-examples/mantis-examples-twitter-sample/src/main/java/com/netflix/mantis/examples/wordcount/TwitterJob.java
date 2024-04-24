@@ -65,24 +65,24 @@ public class TwitterJob extends MantisJobProvider<String> {
                             }
                         })
                         // filter out english tweets
-                        .filter((eventMap) -> {
+                        .filter(eventMap -> {
                             if(eventMap.containsKey("lang") && eventMap.containsKey("text")) {
                                 String lang = (String)eventMap.get("lang");
                                 return "en".equalsIgnoreCase(lang);
                             }
                             return false;
-                        }).map((eventMap) -> (String)eventMap.get("text"))
+                        }).map(eventMap -> (String)eventMap.get("text"))
                         // tokenize the tweets into words
-                        .flatMap((text) -> Observable.from(tokenize(text)))
+                        .flatMap(text -> Observable.from(tokenize(text)))
                         // On a hopping window of 10 seconds
                         .window(10, TimeUnit.SECONDS)
-                        .flatMap((wordCountPairObservable) -> wordCountPairObservable
+                        .flatMap(wordCountPairObservable -> wordCountPairObservable
                                 // count how many times a word appears
                                 .groupBy(WordCountPair::getWord)
-                                .flatMap((groupO) -> groupO.reduce(0, (cnt, wordCntPair) -> cnt + 1)
-                                        .map((cnt) -> new WordCountPair(groupO.getKey(), cnt))))
+                                .flatMap(groupO -> groupO.reduce(0, (cnt, wordCntPair) -> cnt + 1)
+                                        .map(cnt -> new WordCountPair(groupO.getKey(), cnt))))
                                 .map(WordCountPair::toString)
-                                .doOnNext((cnt) -> log.info(cnt))
+                                .doOnNext(cnt -> log.info(cnt))
                         , StageConfigs.scalarToScalarConfig())
                 // Reuse built in sink that eagerly subscribes and delivers data over SSE
                 .sink(Sinks.eagerSubscribe(Sinks.sse((String data) -> data)))

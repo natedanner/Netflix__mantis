@@ -48,13 +48,13 @@ public class RequestProcessor implements RequestHandler<ByteBuf, ByteBuf> {
 
     static {
 
-        List<String> smallStreamListLocal = new ArrayList<String>();
+        List<String> smallStreamListLocal = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             smallStreamListLocal.add("line " + i);
         }
         smallStreamContent = Collections.unmodifiableList(smallStreamListLocal);
 
-        List<String> largeStreamListLocal = new ArrayList<String>();
+        List<String> largeStreamListLocal = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             largeStreamListLocal.add("line " + i);
         }

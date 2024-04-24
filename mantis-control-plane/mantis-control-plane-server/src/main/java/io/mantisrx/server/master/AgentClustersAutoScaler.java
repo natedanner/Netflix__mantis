@@ -24,7 +24,7 @@ import rx.Observer;
 import rx.functions.Func0;
 
 
-public class AgentClustersAutoScaler {
+public final class AgentClustersAutoScaler {
 
     private static final AtomicBoolean initialized = new AtomicBoolean(false);
     private static AgentClustersAutoScaler autoScaler;
@@ -36,15 +36,17 @@ public class AgentClustersAutoScaler {
         this.autoScaleActionObserver = autoScaleActionObserver;
     }
 
-    public synchronized static void initialize(Func0<Set<AutoScaleRule>> rulesGetter, Observer<AutoScaleAction> autoScaleActionObserver) {
-        if (!initialized.compareAndSet(false, true))
+    public static synchronized void initialize(Func0<Set<AutoScaleRule>> rulesGetter, Observer<AutoScaleAction> autoScaleActionObserver) {
+        if (!initialized.compareAndSet(false, true)) {
             throw new IllegalStateException(AgentClustersAutoScaler.class.getName() + " already initialized");
+        }
         autoScaler = new AgentClustersAutoScaler(rulesGetter, autoScaleActionObserver);
     }
 
     public static AgentClustersAutoScaler get() throws IllegalStateException {
-        if (!initialized.get())
+        if (!initialized.get()) {
             throw new IllegalStateException(AgentClustersAutoScaler.class.getName() + " not initialized");
+        }
         return autoScaler;
     }
 

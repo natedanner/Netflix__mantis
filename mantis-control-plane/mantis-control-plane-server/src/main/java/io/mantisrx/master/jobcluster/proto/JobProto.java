@@ -83,7 +83,7 @@ public class JobProto {
 	}
 
 	public static final class CheckHeartBeat {
-		Instant n = null;
+		Instant n;
 		public CheckHeartBeat() {
 
 		}
@@ -111,7 +111,7 @@ public class JobProto {
 	public static final class MigrateDisabledVmWorkersRequest {
 		public final Instant time;
 		public MigrateDisabledVmWorkersRequest(Instant time) {
-			this.time = time;;
+			this.time = time;
 		}
 		public MigrateDisabledVmWorkersRequest() {
 			this(Instant.now());

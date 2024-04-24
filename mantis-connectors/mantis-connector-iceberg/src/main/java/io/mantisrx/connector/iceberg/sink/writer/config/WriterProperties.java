@@ -21,7 +21,7 @@ import org.apache.iceberg.FileFormat;
 /**
  * Property key names and default values for an Iceberg Committer.
  */
-public class WriterProperties {
+public final class WriterProperties {
 
     private WriterProperties() {
     }

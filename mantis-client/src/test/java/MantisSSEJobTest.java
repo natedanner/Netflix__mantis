@@ -19,6 +19,7 @@ import static org.junit.Assert.fail;
 import io.mantisrx.client.MantisClient;
 import io.mantisrx.client.MantisSSEJob;
 import io.mantisrx.client.SinkConnectionsStatus;
+import io.mantisrx.common.MantisServerSentEvent;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -44,12 +45,12 @@ public class MantisSSEJobTest {
         CountDownLatch latch = new CountDownLatch(5);
         MantisClient mClient = new MantisClient(zkProps);
         mClient.jobClusterDiscoveryInfoStream("SineFnTest")
-                .map((schedInfo) -> {
+                .map(schedInfo -> {
                     latch.countDown();
                     return String.valueOf(schedInfo);
                 })
                 .doOnError(e -> logger.error("caught error", e))
-                .subscribe((sc) -> logger.info("got {}", sc));
+                .subscribe(sc -> logger.info("got {}", sc));
 
         latch.await(5, TimeUnit.MINUTES);
     }
@@ -91,19 +92,12 @@ public class MantisSSEJobTest {
                 .buildJobConnector();
 
         job.connectAndGet()
-                .flatMap((t) -> {
-                    return t.map((mmsse) -> {
-                        return mmsse.getEventAsString();
-                    });
-                })
+                .flatMap(t -> t.map(MantisServerSentEvent::getEventAsString))
                 .take(5)
-                .doOnNext((d) -> {
-                    latch.countDown();
-                })
-                .toBlocking().subscribe((data) -> {
-            System.out.println("Got data -> " + data);
-        });
-        ;
+                .doOnNext(d ->
+                    latch.countDown())
+                .toBlocking().subscribe(data ->
+            System.out.println("Got data -> " + data));
         try {
             latch.await(10, TimeUnit.SECONDS);
             connectionStatusReceived.await(10, TimeUnit.SECONDS);
@@ -153,19 +147,12 @@ public class MantisSSEJobTest {
                 .buildJobSubmitter();
 
         job.submitAndGet()
-                .flatMap((t) -> {
-                    return t.map((mmsse) -> {
-                        return mmsse.getEventAsString();
-                    });
-                })
+                .flatMap(t -> t.map(MantisServerSentEvent::getEventAsString))
                 .take(2)
-                .doOnNext((d) -> {
-                    latch.countDown();
-                })
-                .toBlocking().subscribe((data) -> {
-            System.out.println("Got data -> " + data);
-        });
-        ;
+                .doOnNext(d ->
+                    latch.countDown())
+                .toBlocking().subscribe(data ->
+            System.out.println("Got data -> " + data));
         try {
             latch.await(20, TimeUnit.SECONDS);
             connectionStatusReceived.await(10, TimeUnit.SECONDS);

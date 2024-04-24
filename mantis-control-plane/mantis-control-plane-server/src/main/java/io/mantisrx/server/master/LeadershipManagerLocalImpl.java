@@ -26,7 +26,7 @@ public class LeadershipManagerLocalImpl implements ILeadershipManager {
     private static final Logger logger = LoggerFactory.getLogger(LeadershipManagerLocalImpl.class);
     private final MasterDescription masterDescription;
     private volatile boolean isLeader = true;
-    private volatile boolean isReady = false;
+    private volatile boolean isReady;
 
     public LeadershipManagerLocalImpl(MasterDescription masterDescription) {
         this.masterDescription = masterDescription;

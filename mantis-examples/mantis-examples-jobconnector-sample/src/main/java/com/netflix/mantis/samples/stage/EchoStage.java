@@ -37,7 +37,7 @@ public class EchoStage implements ScalarComputation<MantisServerSentEvent, Strin
     public Observable<String> call(Context context, Observable<MantisServerSentEvent> eventsO) {
         return eventsO
                 .map(MantisServerSentEvent::getEventAsString)
-                .map((event) -> {
+                .map(event -> {
                     log.info("Received: {}", event);
                     return event;
                 });

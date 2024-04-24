@@ -24,7 +24,7 @@ import rx.subjects.PublishSubject;
 
 /** mechanism for listening for diagnostic messages.  You can record a message, and callers can subscribe to the observable to take action on the messages.
  * This is a simple singleton pattern class */
-public class DiagnosticPlugin {
+public final class DiagnosticPlugin {
 
     private static final Logger logger = LoggerFactory.getLogger(DiagnosticPlugin.class);
 

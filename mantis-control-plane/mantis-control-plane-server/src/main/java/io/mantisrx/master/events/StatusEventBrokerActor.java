@@ -71,8 +71,12 @@ public class StatusEventBrokerActor extends AbstractActor
 
         @Override
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             final JobStatusRequest that = (JobStatusRequest) o;
             return Objects.equals(jobId, that.jobId);
         }
@@ -94,7 +98,7 @@ public class StatusEventBrokerActor extends AbstractActor
     private void onJobStatusRequest(final JobStatusRequest jsr) {
         logger.debug("got request {}", jsr);
         ActorRef sender = sender();
-        jobIdToActorMap.computeIfAbsent(jsr.jobId, (jobId) -> new HashSet<>());
+        jobIdToActorMap.computeIfAbsent(jsr.jobId, jobId -> new HashSet<>());
         jobIdToActorMap.get(jsr.jobId).add(sender);
         actorToJobIdMap.put(sender, jsr.jobId);
         getContext().watch(sender);
@@ -121,7 +125,7 @@ public class StatusEventBrokerActor extends AbstractActor
 
         // add Status to job event history
         jobIdToStatusEventsBuf
-            .computeIfAbsent(jobId, (j) -> EvictingQueue.create(MAX_STATUS_HISTORY_PER_JOB))
+            .computeIfAbsent(jobId, j -> EvictingQueue.create(MAX_STATUS_HISTORY_PER_JOB))
             .add(status);
 
         cleanupIfTerminalState(se);
@@ -151,9 +155,9 @@ public class StatusEventBrokerActor extends AbstractActor
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-            .match(JobStatusRequest.class, jsr -> onJobStatusRequest(jsr))
-            .match(LifecycleEventsProto.StatusEvent.class, js -> onStatusEvent(js))
-            .match(Terminated.class, t -> onTerminated(t))
+            .match(JobStatusRequest.class, this::onJobStatusRequest)
+            .match(LifecycleEventsProto.StatusEvent.class, this::onStatusEvent)
+            .match(Terminated.class, this::onTerminated)
             .build();
     }
 }

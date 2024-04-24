@@ -64,11 +64,11 @@ public class ClutchRpsPIDConfig extends ClutchPIDConfig {
                               Option<Double> scaleUpMultiplier,
                               Option<Double> scaleDownMultiplier) {
         super(setPoint, rope == null ? DEFAULT.getRope() : rope, kp, kd);
-        this.setPointPercentile = setPointPercentile.getOrElse(() -> DEFAULT.getSetPointPercentile());
-        this.scaleUpAbovePct = scaleUpAbovePct.getOrElse(() -> DEFAULT.getScaleUpAbovePct());
-        this.scaleDownBelowPct = scaleDownBelowPct.getOrElse(() -> DEFAULT.getScaleDownBelowPct());
-        this.scaleUpMultiplier = scaleUpMultiplier.getOrElse(() -> DEFAULT.getScaleUpMultiplier());
-        this.scaleDownMultiplier = scaleDownMultiplier.getOrElse(() -> DEFAULT.getScaleDownMultiplier());
+        this.setPointPercentile = setPointPercentile.getOrElse(DEFAULT::getSetPointPercentile);
+        this.scaleUpAbovePct = scaleUpAbovePct.getOrElse(DEFAULT::getScaleUpAbovePct);
+        this.scaleDownBelowPct = scaleDownBelowPct.getOrElse(DEFAULT::getScaleDownBelowPct);
+        this.scaleUpMultiplier = scaleUpMultiplier.getOrElse(DEFAULT::getScaleUpMultiplier);
+        this.scaleDownMultiplier = scaleDownMultiplier.getOrElse(DEFAULT::getScaleDownMultiplier);
 
     }
 
@@ -93,33 +93,46 @@ public class ClutchRpsPIDConfig extends ClutchPIDConfig {
     }
 
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof ClutchRpsPIDConfig)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof ClutchRpsPIDConfig)) {
+            return false;
+        }
         final ClutchRpsPIDConfig other = (ClutchRpsPIDConfig) o;
 
-        if (!super.equals(o)) return false;
+        if (!super.equals(o)) {
+            return false;
+        }
 
-        if (Double.compare(this.getSetPointPercentile(), other.getSetPointPercentile()) != 0) return false;
-        if (Double.compare(this.getScaleUpAbovePct(), other.getScaleUpAbovePct()) != 0) return false;
-        if (Double.compare(this.getScaleDownBelowPct(), other.getScaleDownBelowPct()) != 0) return false;
-        if (Double.compare(this.getScaleUpMultiplier(), other.getScaleUpMultiplier()) != 0) return false;
-        if (Double.compare(this.getScaleDownMultiplier(), other.getScaleDownMultiplier()) != 0) return false;
-        return true;
+        if (Double.compare(this.getSetPointPercentile(), other.getSetPointPercentile()) != 0) {
+            return false;
+        }
+        if (Double.compare(this.getScaleUpAbovePct(), other.getScaleUpAbovePct()) != 0) {
+            return false;
+        }
+        if (Double.compare(this.getScaleDownBelowPct(), other.getScaleDownBelowPct()) != 0) {
+            return false;
+        }
+        if (Double.compare(this.getScaleUpMultiplier(), other.getScaleUpMultiplier()) != 0) {
+            return false;
+        }
+        return !(Double.compare(this.getScaleDownMultiplier(), other.getScaleDownMultiplier()) != 0);
     }
 
     public int hashCode() {
-        final int PRIME = 59;
+        final int prime = 59;
         int result = super.hashCode();
         final long $setPointPercentile = Double.doubleToLongBits(this.getSetPointPercentile());
-        result = result * PRIME + (int) ($setPointPercentile >>> 32 ^ $setPointPercentile);
+        result = result * prime + (int) ($setPointPercentile >>> 32 ^ $setPointPercentile);
         final long $scaleUpAbovePct = Double.doubleToLongBits(this.getScaleUpAbovePct());
-        result = result * PRIME + (int) ($scaleUpAbovePct >>> 32 ^ $scaleUpAbovePct);
+        result = result * prime + (int) ($scaleUpAbovePct >>> 32 ^ $scaleUpAbovePct);
         final long $scaleDownBelowPct = Double.doubleToLongBits(this.getScaleDownBelowPct());
-        result = result * PRIME + (int) ($scaleDownBelowPct >>> 32 ^ $scaleDownBelowPct);
+        result = result * prime + (int) ($scaleDownBelowPct >>> 32 ^ $scaleDownBelowPct);
         final long $scaleUpMultiplier = Double.doubleToLongBits(this.getScaleUpMultiplier());
-        result = result * PRIME + (int) ($scaleUpMultiplier >>> 32 ^ $scaleUpMultiplier);
+        result = result * prime + (int) ($scaleUpMultiplier >>> 32 ^ $scaleUpMultiplier);
         final long $scaleDownMultiplier = Double.doubleToLongBits(this.getScaleDownMultiplier());
-        result = result * PRIME + (int) ($scaleDownMultiplier >>> 32 ^ $scaleDownMultiplier);
+        result = result * prime + (int) ($scaleDownMultiplier >>> 32 ^ $scaleDownMultiplier);
         return result;
     }
 

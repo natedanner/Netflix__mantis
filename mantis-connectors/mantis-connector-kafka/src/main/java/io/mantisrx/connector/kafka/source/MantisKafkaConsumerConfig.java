@@ -161,7 +161,7 @@ public class MantisKafkaConsumerConfig extends ConsumerConfig {
     public Map<String, Object> getConsumerProperties() {
         return values().entrySet().stream()
             .filter(x -> x.getKey() != null && x.getValue() != null)
-            .collect(Collectors.toMap(x -> x.getKey(),
+            .collect(Collectors.toMap(Map.Entry::getKey,
                                       x -> (Object) x.getValue()));
     }
 }

@@ -33,10 +33,10 @@ import mantis.io.reactivex.netty.protocol.http.sse.ServerSentEvent;
 import rx.Observable;
 
 
-public class TestSseServerFactory {
+public final class TestSseServerFactory {
 
     private static final AtomicInteger port = new AtomicInteger(30303);
-    private static List<HttpServer<String, ServerSentEvent>> servers = new ArrayList<>();
+    private static final List<HttpServer<String, ServerSentEvent>> servers = new ArrayList<>();
 
     private TestSseServerFactory() {}
 

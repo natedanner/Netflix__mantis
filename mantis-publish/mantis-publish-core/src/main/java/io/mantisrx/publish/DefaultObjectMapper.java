@@ -27,7 +27,7 @@ public class DefaultObjectMapper {
             .registerModule(new Jdk8Module())
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    public static final ObjectMapper getInstance() {
+    public static ObjectMapper getInstance() {
         return mapper;
     }
 }

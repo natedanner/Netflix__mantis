@@ -87,7 +87,7 @@ public abstract class AbstractSubscriptionTracker implements SubscriptionTracker
 		// Add newSubscriptions not present in previousSubscriptions
 		currentSubscriptions.stream()
 			.filter(c -> !previousSubscriptions.stream()
-					.map(ps -> ps.getSubscriptionId())
+					.map(Subscription::getSubscriptionId)
 					.collect(Collectors.toSet())
 					.contains(c.getSubscriptionId()))
 			.forEach(newSub -> {
@@ -104,8 +104,8 @@ public abstract class AbstractSubscriptionTracker implements SubscriptionTracker
 				}
 			});
 
-		Set<String> idsToKeep = currentSubscriptions.stream().map(x -> x.getSubscriptionId()).collect(Collectors.toSet());
-		idsToKeep.addAll(extension.stream().map(x -> x.getSubscriptionId()).collect(Collectors.toSet()));
+		Set<String> idsToKeep = currentSubscriptions.stream().map(MantisServerSubscription::getSubscriptionId).collect(Collectors.toSet());
+		idsToKeep.addAll(extension.stream().map(MantisServerSubscription::getSubscriptionId).collect(Collectors.toSet()));
 
 		// Remove previousSubscriptions not present in currentSubscriptions and not present
 		// in the extension list
@@ -158,8 +158,7 @@ public abstract class AbstractSubscriptionTracker implements SubscriptionTracker
 	}
 
 
-
-	private ConcurrentHashMap<String, SubscriptionCacheEntry> subsciptionCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, SubscriptionCacheEntry> subsciptionCache = new ConcurrentHashMap<>();
 	private class SubscriptionCacheEntry {
 		public final long timestamp;
 		public final String sourceJob;

@@ -59,8 +59,12 @@ public class MantisServerSubscription {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         final MantisServerSubscription that = (MantisServerSubscription) o;
         return Objects.equals(query, that.query) &&
                 Objects.equals(subscriptionId, that.subscriptionId) &&

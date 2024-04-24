@@ -156,15 +156,13 @@ public class WorkerExecutionOperationsNetworkStageTest {
     @Test
     public void deferTest() throws InterruptedException {
 
-        Subscription subscribe1 = getObs4().subscribeOn(Schedulers.io()).subscribe((t) -> {
-            System.out.println("In 1 -> " + t);
-        });
+        Subscription subscribe1 = getObs4().subscribeOn(Schedulers.io()).subscribe(t ->
+            System.out.println("In 1 -> " + t));
 
         Thread.sleep(5000);
 
-        Subscription subscribe2 = getObs4().subscribeOn(Schedulers.io()).subscribe((t) -> {
-            System.out.println("In 2 -> " + t);
-        });
+        Subscription subscribe2 = getObs4().subscribeOn(Schedulers.io()).subscribe(t ->
+            System.out.println("In 2 -> " + t));
 
 
         Thread.sleep(5000);
@@ -174,39 +172,30 @@ public class WorkerExecutionOperationsNetworkStageTest {
         subscribe2.unsubscribe();
 
         Thread.sleep(5000);
-        Subscription subscribe3 = getObs4().subscribeOn(Schedulers.io()).subscribe((t) -> {
-            System.out.println("In 3 -> " + t);
-        });
+        Subscription subscribe3 = getObs4().subscribeOn(Schedulers.io()).subscribe(t ->
+            System.out.println("In 3 -> " + t));
         Thread.sleep(5000);
         subscribe3.unsubscribe();
         Thread.sleep(10000);
     }
 
     Observable<Long> getObs() {
-        Observable<Long> oLong = Observable.defer(() -> {
-            return Observable.interval(1, TimeUnit.SECONDS).doOnNext((e) -> {
+        return Observable.defer(() -> Observable.interval(1, TimeUnit.SECONDS).doOnNext(e -> {
                 System.out.println("Minted " + e);
-            }).share();
-        }).doOnSubscribe(() -> {
-            System.out.println("Subscribed111" + System.currentTimeMillis());
-        }).doOnUnsubscribe(() -> {
-            System.out.println("UnSubscribed111" + System.currentTimeMillis());
-        });
-        return oLong;
+            }).share()).doOnSubscribe(() ->
+            System.out.println("Subscribed111" + System.currentTimeMillis())).doOnUnsubscribe(() ->
+            System.out.println("UnSubscribed111" + System.currentTimeMillis()));
     }
 
     Observable<Long> getObs2() {
 
         return Observable.interval(1, TimeUnit.SECONDS)
-                .doOnNext((e) -> {
-                    System.out.println("Minted " + e);
-                })
+                .doOnNext(e ->
+                    System.out.println("Minted " + e))
                 .share()
-                .doOnSubscribe(() -> {
-                    System.out.println("Subscribed111" + System.currentTimeMillis());
-                }).doOnUnsubscribe(() -> {
-                    System.out.println("UnSubscribed111" + System.currentTimeMillis());
-                })
+                .doOnSubscribe(() ->
+                    System.out.println("Subscribed111" + System.currentTimeMillis())).doOnUnsubscribe(() ->
+                    System.out.println("UnSubscribed111" + System.currentTimeMillis()))
 
                 ;
 
@@ -214,28 +203,20 @@ public class WorkerExecutionOperationsNetworkStageTest {
 
     Observable<Long> getObs3() {
 
-        return Observable.range(1, 100).doOnNext((e) -> {
-            System.out.println("Minted " + e);
-        }).map((i) -> {
-            return new Long(i);
-        }).share()
-                .doOnSubscribe(() -> {
-                    System.out.println("Subscribed111" + System.currentTimeMillis());
-                }).doOnUnsubscribe(() -> {
-                    System.out.println("UnSubscribed111" + System.currentTimeMillis());
-                });
+        return Observable.range(1, 100).doOnNext(e ->
+            System.out.println("Minted " + e)).map(i -> Long.valueOf(i)).share()
+                .doOnSubscribe(() ->
+                    System.out.println("Subscribed111" + System.currentTimeMillis())).doOnUnsubscribe(() ->
+                    System.out.println("UnSubscribed111" + System.currentTimeMillis()));
 
     }
 
     Observable<Long> getObs4() {
         BehaviorSubject<Long> o = BehaviorSubject.create();
-        Observable.interval(1, TimeUnit.SECONDS).doOnNext((e) -> {
-            System.out.println("Minted " + e);
-        }).doOnSubscribe(() -> {
-            System.out.println("Subscribed111" + System.currentTimeMillis());
-        }).doOnUnsubscribe(() -> {
-            System.out.println("UnSubscribed111" + System.currentTimeMillis());
-        })
+        Observable.interval(1, TimeUnit.SECONDS).doOnNext(e ->
+            System.out.println("Minted " + e)).doOnSubscribe(() ->
+            System.out.println("Subscribed111" + System.currentTimeMillis())).doOnUnsubscribe(() ->
+            System.out.println("UnSubscribed111" + System.currentTimeMillis()))
                 .subscribe(o);
 
         return o;

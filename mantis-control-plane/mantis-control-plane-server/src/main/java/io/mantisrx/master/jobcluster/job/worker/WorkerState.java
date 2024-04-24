@@ -141,8 +141,9 @@ public enum WorkerState {
      */
     public static boolean isValidStateChgTo(WorkerState currentState, WorkerState newState) {
         for (WorkerState validState : STATE_TRANSITION_MAP.get(currentState))
-            if (validState == newState)
+            if (validState == newState) {
                 return true;
+            }
         return false;
     }
 
@@ -169,12 +170,7 @@ public enum WorkerState {
      * @return
      */
     public static boolean isErrorState(WorkerState state) {
-        switch (state) {
-        case Failed:
-            return true;
-        default:
-            return false;
-        }
+        return state == WorkerState.Failed;
     }
 
 

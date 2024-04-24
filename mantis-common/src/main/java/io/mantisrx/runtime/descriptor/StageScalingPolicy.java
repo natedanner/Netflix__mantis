@@ -113,38 +113,50 @@ public class StageScalingPolicy implements Serializable {
         result = prime * result + max;
         result = prime * result + min;
         result = prime * result + stage;
-        result = prime * result + ((strategies == null) ? 0 : strategies.hashCode());
+        result = prime * result + (strategies == null ? 0 : strategies.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         StageScalingPolicy other = (StageScalingPolicy) obj;
-        if (coolDownSecs != other.coolDownSecs)
+        if (coolDownSecs != other.coolDownSecs) {
             return false;
-        if (decrement != other.decrement)
+        }
+        if (decrement != other.decrement) {
             return false;
-        if (enabled != other.enabled)
+        }
+        if (enabled != other.enabled) {
             return false;
-        if (increment != other.increment)
+        }
+        if (increment != other.increment) {
             return false;
-        if (max != other.max)
+        }
+        if (max != other.max) {
             return false;
-        if (min != other.min)
+        }
+        if (min != other.min) {
             return false;
-        if (stage != other.stage)
+        }
+        if (stage != other.stage) {
             return false;
+        }
         if (strategies == null) {
-            if (other.strategies != null)
+            if (other.strategies != null) {
                 return false;
-        } else if (!strategies.equals(other.strategies))
+            }
+        } else if (!strategies.equals(other.strategies)) {
             return false;
+        }
         return true;
     }
 

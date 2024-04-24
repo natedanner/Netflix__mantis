@@ -56,53 +56,41 @@ public class ResourceClusterRouteHandlerAkkaImpl implements ResourceClusterRoute
 
     @Override
     public CompletionStage<ListResourceClustersResponse> get(ListResourceClusterRequest request) {
-        CompletionStage<ListResourceClustersResponse> response =
-                ask(this.resourceClustersHostManagerActor, request, timeout)
+        return ask(this.resourceClustersHostManagerActor, request, timeout)
                         .thenApply(ListResourceClustersResponse.class::cast);
-        return response;
     }
 
     @Override
     public CompletionStage<GetResourceClusterResponse> create(
             ProvisionResourceClusterRequest request) {
-        CompletionStage<GetResourceClusterResponse> response =
-                ask(this.resourceClustersHostManagerActor, request, timeout)
+        return ask(this.resourceClustersHostManagerActor, request, timeout)
                         .thenApply(GetResourceClusterResponse.class::cast);
-        return response;
     }
 
     @Override
     public CompletionStage<DeleteResourceClusterResponse> delete(ClusterID clusterId) {
-        CompletionStage<DeleteResourceClusterResponse> response =
-            ask(this.resourceClustersHostManagerActor,
+        return ask(this.resourceClustersHostManagerActor,
                 DeleteResourceClusterRequest.builder().clusterId(clusterId).build(),
                 timeout)
                     .thenApply(DeleteResourceClusterResponse.class::cast);
-        return response;
     }
 
     @Override
     public CompletionStage<GetResourceClusterResponse> get(GetResourceClusterSpecRequest request) {
-        CompletionStage<GetResourceClusterResponse> response =
-                ask(this.resourceClustersHostManagerActor, request, timeout)
+        return ask(this.resourceClustersHostManagerActor, request, timeout)
                         .thenApply(GetResourceClusterResponse.class::cast);
-        return response;
     }
 
     @Override
     public CompletionStage<ScaleResourceResponse> scale(ScaleResourceRequest request) {
-        CompletionStage<ScaleResourceResponse> response =
-                ask(this.resourceClustersHostManagerActor, request, this.longOperationTimeout)
+        return ask(this.resourceClustersHostManagerActor, request, this.longOperationTimeout)
                         .thenApply(ScaleResourceResponse.class::cast);
-        return response;
     }
 
     @Override
     public CompletionStage<UpgradeClusterContainersResponse> upgrade(UpgradeClusterContainersRequest request) {
-        CompletionStage<UpgradeClusterContainersResponse> response =
-            ask(this.resourceClustersHostManagerActor, request, this.longOperationTimeout)
+        return ask(this.resourceClustersHostManagerActor, request, this.longOperationTimeout)
                 .thenApply(UpgradeClusterContainersResponse.class::cast);
-        return response;
     }
 
     @Override

@@ -19,9 +19,9 @@ package io.mantisrx.server.master.client.diagnostic.plugin;
 import java.util.Map;
 
 /** struct for recording messages */
-public class DiagnosticMessage {
+public final class DiagnosticMessage {
 
-    public static class Builder {
+    public static final class Builder {
         private final DiagnosticMessageType messageType;
         private Throwable error;
         private String description;

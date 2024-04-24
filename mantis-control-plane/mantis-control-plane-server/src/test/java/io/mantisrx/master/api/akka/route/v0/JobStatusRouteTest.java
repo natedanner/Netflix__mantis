@@ -52,16 +52,16 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 public class JobStatusRouteTest {
-    private final static Logger logger = LoggerFactory.getLogger(JobStatusRouteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobStatusRouteTest.class);
     private final ActorMaterializer materializer = ActorMaterializer.create(system);
     private final Http http = Http.get(system);
     private static Thread t;
     private static final int serverPort = 8207;
 
     private static CompletionStage<ServerBinding> binding;
-    private static ActorSystem system = ActorSystem.create("JobStatusRoute");
-    private static ActorRef agentsErrorMonitorActor = system.actorOf(AgentsErrorMonitorActor.props());
-    private static ActorRef statusEventBrokerActor = system.actorOf(StatusEventBrokerActor.props(agentsErrorMonitorActor));
+    private static final ActorSystem system = ActorSystem.create("JobStatusRoute");
+    private static final ActorRef agentsErrorMonitorActor = system.actorOf(AgentsErrorMonitorActor.props());
+    private static final ActorRef statusEventBrokerActor = system.actorOf(StatusEventBrokerActor.props(agentsErrorMonitorActor));
 
     @BeforeClass
     public static void setup() throws Exception {

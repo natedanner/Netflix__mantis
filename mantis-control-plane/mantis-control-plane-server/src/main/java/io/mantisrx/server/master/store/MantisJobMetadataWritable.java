@@ -120,7 +120,7 @@ public class MantisJobMetadataWritable implements MantisJobMetadata {
         this.stageMetadataMap = new ConcurrentHashMap<>();
         this.workerNumberToStageMap = new ConcurrentHashMap<>();
         if (parameters == null) {
-            this.parameters = new LinkedList<Parameter>();
+            this.parameters = new LinkedList<>();
         } else {
             this.parameters = parameters;
         }
@@ -149,8 +149,9 @@ public class MantisJobMetadataWritable implements MantisJobMetadata {
     }
 
     void setJobState(MantisJobState state) throws InvalidJobStateChangeException {
-        if (!this.state.isValidStateChgTo(state))
+        if (!this.state.isValidStateChgTo(state)) {
             throw new InvalidJobStateChangeException(jobId, this.state, state);
+        }
         this.state = state;
     }
 
@@ -197,8 +198,9 @@ public class MantisJobMetadataWritable implements MantisJobMetadata {
     @Override
     public MantisWorkerMetadata getWorkerByIndex(int stageNumber, int workerIndex) throws InvalidJobException {
         MantisStageMetadata stage = stageMetadataMap.get(stageNumber);
-        if (stage == null)
+        if (stage == null) {
             throw new InvalidJobException(jobId, stageNumber, workerIndex);
+        }
         return stage.getWorkerByIndex(workerIndex);
     }
 
@@ -206,11 +208,13 @@ public class MantisJobMetadataWritable implements MantisJobMetadata {
     @Override
     public MantisWorkerMetadata getWorkerByNumber(int workerNumber) throws InvalidJobException {
         Integer stageNumber = workerNumberToStageMap.get(workerNumber);
-        if (stageNumber == null)
+        if (stageNumber == null) {
             throw new InvalidJobException(jobId, -1, workerNumber);
+        }
         MantisStageMetadata stage = stageMetadataMap.get(stageNumber);
-        if (stage == null)
+        if (stage == null) {
             throw new InvalidJobException(jobId, stageNumber, workerNumber);
+        }
         return stage.getWorkerByWorkerNumber(workerNumber);
     }
 
@@ -220,7 +224,9 @@ public class MantisJobMetadataWritable implements MantisJobMetadata {
         // Resubmitted workers are expected to have a worker number greater than those they replace.
         int max = -1;
         for (int id : workerNumberToStageMap.keySet())
-            if (max < id) max = id;
+            if (max < id) {
+                max = id;
+            }
         return max;
     }
 

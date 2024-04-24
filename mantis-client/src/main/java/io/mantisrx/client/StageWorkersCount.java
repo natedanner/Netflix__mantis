@@ -99,17 +99,19 @@ public class StageWorkersCount {
                                     @Override
                                     public Integer call(JobSchedulingInfo jobSchedulingInfo) {
                                         final WorkerAssignments assignments = jobSchedulingInfo.getWorkerAssignments().get(stageNumber);
-                                        if (assignments == null)
+                                        if (assignments == null) {
                                             return -1;
-                                        else
+                                        } else {
                                             return assignments.getNumWorkers();
+                                        }
                                     }
                                 })
                                 .filter(new Func1<Integer, Boolean>() {
                                     @Override
                                     public Boolean call(Integer newCount) {
-                                        if (newCount == workerCount.get())
+                                        if (newCount == workerCount.get()) {
                                             return false;
+                                        }
                                         workerCount.set(newCount);
                                         return true;
                                     }

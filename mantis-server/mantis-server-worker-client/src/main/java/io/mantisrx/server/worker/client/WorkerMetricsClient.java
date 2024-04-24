@@ -117,7 +117,7 @@ public class WorkerMetricsClient {
                                                         Observer<WorkerConnectionsStatus> workerConnectionsStatusObserver, long dataRecvTimeoutSecs) {
         PublishSubject<MasterClientWrapper.JobNumWorkers> numWrkrsSubject = PublishSubject.create();
         clientWrapper.addNumWorkersObserver(numWrkrsSubject);
-        return new MetricsClientImpl<T>(jobId, workerConnectionFunc, getWorkerMetricsLocator(),
+        return new MetricsClientImpl<>(jobId, workerConnectionFunc, getWorkerMetricsLocator(),
                 numWrkrsSubject
                         .filter(new Func1<MasterClientWrapper.JobNumWorkers, Boolean>() {
                             @Override

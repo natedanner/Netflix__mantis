@@ -47,7 +47,7 @@ import rx.functions.Func1;
 
 
 @Slf4j
-public class ParameterUtils {
+public final class ParameterUtils {
 
     static final Map<String, ParameterDefinition<?>> systemParams = new ConcurrentHashMap<>();
 

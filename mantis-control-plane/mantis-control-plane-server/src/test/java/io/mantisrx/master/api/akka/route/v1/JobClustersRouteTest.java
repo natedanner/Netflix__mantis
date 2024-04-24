@@ -68,14 +68,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JobClustersRouteTest extends RouteTestBase {
-    private final static Logger logger = LoggerFactory.getLogger(JobClustersRouteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobClustersRouteTest.class);
 
     private static Thread t;
     private static final int SERVER_PORT = 8200;
     private static CompletionStage<ServerBinding> binding;
     private static File stateDirectory;
 
-    private static String TEST_CLUSTER_NAME = "sine-function";
+    private static final String TEST_CLUSTER_NAME = "sine-function";
 
     public JobClustersRouteTest() {
         super("JobClustersRouteTest", SERVER_PORT);
@@ -347,7 +347,7 @@ public class JobClustersRouteTest extends RouteTestBase {
                         ContentTypes.APPLICATION_JSON,
                         JobClusterPayloads.JOB_CLUSTER_QUICK_UPDATE_AND_SKIP_SUBMIT),
                 StatusCodes.BAD_REQUEST,
-                (m) -> {
+                m -> {
                     assert m.contains(
                             "Cluster name specified in request payload sine-function does " +
                             "not match with what specified in resource path NonExistent");

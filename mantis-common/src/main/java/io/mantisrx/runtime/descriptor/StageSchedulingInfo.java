@@ -114,54 +114,69 @@ public class StageSchedulingInfo implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((hardConstraints == null) ? 0 : hardConstraints.hashCode());
-        result = prime * result + ((machineDefinition == null) ? 0 : machineDefinition.hashCode());
+        result = prime * result + (hardConstraints == null ? 0 : hardConstraints.hashCode());
+        result = prime * result + (machineDefinition == null ? 0 : machineDefinition.hashCode());
         result = prime * result + numberOfInstances;
         result = prime * result + (scalable ? 1231 : 1237);
-        result = prime * result + ((scalingPolicy == null) ? 0 : scalingPolicy.hashCode());
-        result = prime * result + ((softConstraints == null) ? 0 : softConstraints.hashCode());
-        result = prime * result + ((containerAttributes == null) ? 0 : containerAttributes.hashCode());
+        result = prime * result + (scalingPolicy == null ? 0 : scalingPolicy.hashCode());
+        result = prime * result + (softConstraints == null ? 0 : softConstraints.hashCode());
+        result = prime * result + (containerAttributes == null ? 0 : containerAttributes.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         StageSchedulingInfo other = (StageSchedulingInfo) obj;
         if (hardConstraints == null) {
-            if (other.hardConstraints != null)
+            if (other.hardConstraints != null) {
                 return false;
-        } else if (!hardConstraints.equals(other.hardConstraints))
+            }
+        } else if (!hardConstraints.equals(other.hardConstraints)) {
             return false;
+        }
         if (machineDefinition == null) {
-            if (other.machineDefinition != null)
+            if (other.machineDefinition != null) {
                 return false;
-        } else if (!machineDefinition.equals(other.machineDefinition))
+            }
+        } else if (!machineDefinition.equals(other.machineDefinition)) {
             return false;
-        if (numberOfInstances != other.numberOfInstances)
+        }
+        if (numberOfInstances != other.numberOfInstances) {
             return false;
-        if (scalable != other.scalable)
+        }
+        if (scalable != other.scalable) {
             return false;
+        }
         if (scalingPolicy == null) {
-            if (other.scalingPolicy != null)
+            if (other.scalingPolicy != null) {
                 return false;
-        } else if (!scalingPolicy.equals(other.scalingPolicy))
+            }
+        } else if (!scalingPolicy.equals(other.scalingPolicy)) {
             return false;
+        }
         if (softConstraints == null) {
-            if (other.softConstraints != null)
+            if (other.softConstraints != null) {
                 return false;
-        } else if (!softConstraints.equals(other.softConstraints))
+            }
+        } else if (!softConstraints.equals(other.softConstraints)) {
             return false;
+        }
         if (containerAttributes == null) {
-            if (other.containerAttributes != null)
+            if (other.containerAttributes != null) {
                 return false;
-        } else if (!containerAttributes.equals(other.containerAttributes))
+            }
+        } else if (!containerAttributes.equals(other.containerAttributes)) {
             return false;
+        }
         return true;
     }
 

@@ -38,14 +38,14 @@ public class ConnectionManager<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectionManager.class);
 
-    private Map<String, ConnectionGroup<T>> managedConnections
-            = new LinkedHashMap<String, ConnectionGroup<T>>();
-    private MetricsRegistry metricsRegistry;
-    private AtomicReference<Gauge> activeConnectionsRef = new AtomicReference<>(null);
-    private Action0 doOnFirstConnection;
-    private Action0 doOnZeroConnections;
-    private Lock connectionState = new ReentrantLock();
-    private AtomicBoolean subscribed = new AtomicBoolean();
+    private final Map<String, ConnectionGroup<T>> managedConnections
+        = new LinkedHashMap<>();
+    private final MetricsRegistry metricsRegistry;
+    private final AtomicReference<Gauge> activeConnectionsRef = new AtomicReference<>(null);
+    private final Action0 doOnFirstConnection;
+    private final Action0 doOnZeroConnections;
+    private final Lock connectionState = new ReentrantLock();
+    private final AtomicBoolean subscribed = new AtomicBoolean();
 
     public ConnectionManager(MetricsRegistry metricsRegistry,
                              Action0 doOnFirstConnection, Action0 doOnZeroConnections) {
@@ -119,7 +119,7 @@ public class ConnectionManager<T> {
             String groupId = connection.getGroupId();
             ConnectionGroup<T> current = managedConnections.get(groupId);
             if (current == null) {
-                ConnectionGroup<T> newGroup = new ConnectionGroup<T>(groupId);
+                ConnectionGroup<T> newGroup = new ConnectionGroup<>(groupId);
                 current = managedConnections.putIfAbsent(groupId, newGroup);
                 if (current == null) {
                     current = newGroup;
@@ -183,7 +183,7 @@ public class ConnectionManager<T> {
     public Map<String, ConnectionGroup<T>> groups() {
         connectionState.lock();
         try {
-            return new HashMap<String, ConnectionGroup<T>>(managedConnections);
+            return new HashMap<>(managedConnections);
         } finally {
             connectionState.unlock();
         }

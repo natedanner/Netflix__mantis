@@ -26,12 +26,12 @@ import java.util.Map;
 
 public class RoundRobinRouter<T> {
 
-    private Map<String, WritableEndpoint<T>> endpoints = new HashMap<>();
-    private List<String> idList = new ArrayList<String>();
+    private final Map<String, WritableEndpoint<T>> endpoints = new HashMap<>();
+    private final List<String> idList = new ArrayList<>();
     private int currentListSize;
     private int count;
-    private Metrics metrics;
-    private Gauge activeConnections;
+    private final Metrics metrics;
+    private final Gauge activeConnections;
 
     public RoundRobinRouter() {
         metrics = new Metrics.Builder()

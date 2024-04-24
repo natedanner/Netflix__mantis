@@ -21,7 +21,7 @@ import io.reactivex.mantis.remote.observable.PortSelectorWithinRange;
 
 public class PortSelectorInRange implements PortSelector {
 
-    private PortSelectorWithinRange portSelector;
+    private final PortSelectorWithinRange portSelector;
 
     public PortSelectorInRange(int start, int end) {
         this.portSelector = new PortSelectorWithinRange(start, end);

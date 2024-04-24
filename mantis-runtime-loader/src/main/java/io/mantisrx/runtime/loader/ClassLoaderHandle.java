@@ -73,10 +73,7 @@ public interface ClassLoaderHandle extends Closeable {
 
     default UserCodeClassLoader createUserCodeClassloader(ExecuteStageRequest executeStageRequest) throws Exception {
         // triggers the download of all missing jar files from the job manager
-        final UserCodeClassLoader userCodeClassLoader =
-            this.getOrResolveClassLoader(ImmutableList.of(executeStageRequest.getJobJarUrl().toURI()),
+        return this.getOrResolveClassLoader(ImmutableList.of(executeStageRequest.getJobJarUrl().toURI()),
                 ImmutableList.of());
-
-        return userCodeClassLoader;
     }
 }

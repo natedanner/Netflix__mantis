@@ -105,7 +105,7 @@ public class TopicPartitionStateManager {
             // no messages, no acks needed
             return true;
         }
-        return partitionState.get(tp).unAckedOffsets.size() == 0;
+        return partitionState.get(tp).unAckedOffsets.isEmpty();
     }
 
     public Map<TopicPartition, OffsetAndMetadata> createCheckpoint(final Collection<TopicPartition> partitions) {

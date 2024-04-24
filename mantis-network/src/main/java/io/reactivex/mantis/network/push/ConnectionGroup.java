@@ -36,13 +36,13 @@ import rx.functions.Func0;
 public class ConnectionGroup<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectionGroup.class);
-    private String groupId;
-    private Map<String, AsyncConnection<T>> connections;
-    private Metrics metrics;
-    private MetricGroupId metricsGroup;
-    private Counter successfulWrites;
-    private Counter numSlotSwaps;
-    private Counter failedWrites;
+    private final String groupId;
+    private final Map<String, AsyncConnection<T>> connections;
+    private final Metrics metrics;
+    private final MetricGroupId metricsGroup;
+    private final Counter successfulWrites;
+    private final Counter numSlotSwaps;
+    private final Counter failedWrites;
 
     public ConnectionGroup(String groupId) {
         this.groupId = groupId;

@@ -89,8 +89,9 @@ public class Codecs {
             @Override
             public byte[] encode(final String value) {
                 final byte[] bytes = new byte[value.length()];
-                for (int i = 0; i < value.length(); i++)
+                for (int i = 0; i < value.length(); i++) {
                     bytes[i] = (byte) value.charAt(i);
+                }
                 return bytes;
             }
         };

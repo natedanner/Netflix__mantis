@@ -30,7 +30,7 @@ import rx.functions.Func1;
 
 public class ServeNestedObservable<T> extends ServeConfig<T, T> {
 
-    private Encoder<T> encoder;
+    private final Encoder<T> encoder;
 
     public ServeNestedObservable(Builder<T> builder) {
         super(builder.name, builder.slottingStrategy, builder.filterFunction,
@@ -125,7 +125,7 @@ public class ServeNestedObservable<T> extends ServeConfig<T, T> {
         }
 
         public ServeNestedObservable<T> build() {
-            return new ServeNestedObservable<T>(this);
+            return new ServeNestedObservable<>(this);
         }
     }
 }

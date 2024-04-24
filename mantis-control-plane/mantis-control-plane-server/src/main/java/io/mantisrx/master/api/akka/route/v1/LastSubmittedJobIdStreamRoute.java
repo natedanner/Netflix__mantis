@@ -64,7 +64,7 @@ public class LastSubmittedJobIdStreamRoute extends BaseRoute {
                 () -> concat(
                         path(
                                 segment("lastSubmittedJobIdStream").slash(PathMatchers.segment()),
-                                (clusterName) -> pathEndOrSingleSlash(
+                                clusterName -> pathEndOrSingleSlash(
                                         () -> get(() -> getLastSubmittedJobIdStreamRoute(clusterName)))
                         )
                 )
@@ -80,7 +80,7 @@ public class LastSubmittedJobIdStreamRoute extends BaseRoute {
 
     private Route getLastSubmittedJobIdStreamRoute(String clusterName) {
         return parameterOptional(StringUnmarshallers.BOOLEAN, ParamName.SEND_HEARTBEAT,
-                (sendHeartbeats) -> {
+                sendHeartbeats -> {
                     logger.info("GET /api/v1/lastSubmittedJobIdStream/{} called", clusterName);
 
                     CompletionStage<JobDiscoveryRouteProto.JobClusterInfoResponse> jobClusterInfoRespCS =

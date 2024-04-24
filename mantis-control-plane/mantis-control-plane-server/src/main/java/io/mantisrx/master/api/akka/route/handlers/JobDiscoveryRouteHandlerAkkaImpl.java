@@ -102,7 +102,7 @@ public class JobDiscoveryRouteHandlerAkkaImpl implements JobDiscoveryRouteHandle
             AtomicBoolean isJobCompleted = new AtomicBoolean(false);
             final String jobId = request.getJobId().getId();
             final JobSchedulingInfo completedJobSchedulingInfo = new JobSchedulingInfo(jobId, new HashMap<>());
-            CompletionStage<JobDiscoveryRouteProto.SchedInfoResponse> jobSchedInfoObsCS = response
+            return response
                 .thenApply(getJobSchedInfoResp -> {
                     Optional<BehaviorSubject<JobSchedulingInfo>> jobStatusSubjectO = getJobSchedInfoResp.getJobSchedInfoSubject();
                     if (getJobSchedInfoResp.responseCode.equals(BaseResponse.ResponseCode.SUCCESS) && jobStatusSubjectO.isPresent()) {
@@ -118,7 +118,7 @@ public class JobDiscoveryRouteHandlerAkkaImpl implements JobDiscoveryRouteHandle
                                     }
 
                                 })
-                                .takeWhile(x -> sendHeartbeats == true);
+                                .takeWhile(x -> sendHeartbeats);
 
                         // Job SchedulingInfo obs completes on job shutdown. Use the do On completed as a signal to inform the user that there are no workers to connect to.
                         // TODO For future a more explicit key in the payload saying the job is completed.
@@ -140,7 +140,6 @@ public class JobDiscoveryRouteHandlerAkkaImpl implements JobDiscoveryRouteHandle
                         );
                     }
                 });
-            return jobSchedInfoObsCS;
         } catch (Exception e) {
             logger.error("caught exception fetching sched info stream for {}", request.getJobId().getId(), e);
             schedInfoStreamErrors.increment();
@@ -172,7 +171,7 @@ public class JobDiscoveryRouteHandlerAkkaImpl implements JobDiscoveryRouteHandle
                         Observable<JobClusterInfo> heartbeats =
                             Observable.interval(5, serverIdleConnectionTimeout.getSeconds() - 1, TimeUnit.SECONDS)
                                 .map(x -> JOB_CLUSTER_INFO_HB_INSTANCE)
-                                .takeWhile(x -> sendHeartbeats == true);
+                                .takeWhile(x -> sendHeartbeats);
 
                         Observable<JobClusterInfo> jobClusterInfoWithHB = Observable.merge(jobClusterInfoObs, heartbeats);
                         return new JobDiscoveryRouteProto.JobClusterInfoResponse(

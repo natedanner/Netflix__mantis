@@ -39,9 +39,9 @@ public class VirualMachineWorkerServiceMesosImpl extends BaseService implements 
 
     private static final Logger logger = LoggerFactory.getLogger(VirualMachineWorkerServiceMesosImpl.class);
     private MesosExecutorDriver mesosDriver;
-    private ExecutorService executor;
-    private Observer<WrappedExecuteStageRequest> executeStageRequestObserver;
-    private Observable<VirtualMachineTaskStatus> vmTaskStatusObservable;
+    private final ExecutorService executor;
+    private final Observer<WrappedExecuteStageRequest> executeStageRequestObserver;
+    private final Observable<VirtualMachineTaskStatus> vmTaskStatusObservable;
 
     public VirualMachineWorkerServiceMesosImpl(Observer<WrappedExecuteStageRequest> executeStageRequestObserver,
                                                Observable<VirtualMachineTaskStatus> vmTaskStatusObservable) {

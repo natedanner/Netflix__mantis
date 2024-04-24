@@ -22,8 +22,8 @@ import java.util.Set;
 
 public class SlottedData<T> {
 
-    private Set<Endpoint> endpoints;
-    private T data;
+    private final Set<Endpoint> endpoints;
+    private final T data;
 
     public SlottedData(Set<Endpoint> endpoints, T data) {
         this.endpoints = endpoints;

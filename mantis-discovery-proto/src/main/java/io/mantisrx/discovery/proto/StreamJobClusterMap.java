@@ -56,8 +56,12 @@ public class StreamJobClusterMap {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         final StreamJobClusterMap that = (StreamJobClusterMap) o;
         return Objects.equals(appName, that.appName) &&
                 Objects.equals(mappings, that.mappings);

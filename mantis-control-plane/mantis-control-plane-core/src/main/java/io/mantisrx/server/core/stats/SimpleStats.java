@@ -42,33 +42,39 @@ public class SimpleStats {
     public static void main(String[] args) {
         SimpleStats simpleStats = new SimpleStats(5);
         simpleStats.add(4.0);
-        for (int i = 1; i < 4; i++)
+        for (int i = 1; i < 4; i++) {
             simpleStats.add(0.0);
+        }
         simpleStats.add(10.0);
         System.out.println(String.format("thresh=%8.2f", simpleStats.getOutlierThreshold()));
     }
 
     public void add(double d) {
-        if (dataPoints.size() == maxDataPoints)
+        if (dataPoints.size() == maxDataPoints) {
             dataPoints.remove(0);
+        }
         dataPoints.add(d);
     }
 
     public double getOutlierThreshold() {
-        if (dataPoints.size() <= 2)
+        if (dataPoints.size() <= 2) {
             return twoPointsResults();
+        }
         Double[] data = dataPoints.toArray(new Double[0]);
         Arrays.sort(data);
         // special case when the highest item is the major contributor of the total
         double total = 0.0;
         for (double d : data)
             total += d;
-        if (data[data.length - 1] / total > 0.75)
+        if (data[data.length - 1] / total > 0.75) {
             return data[data.length - 2];
-        if (dataPoints.size() == 3)
+        }
+        if (dataPoints.size() == 3) {
             return threePointsResults(data);
-        if (dataPoints.size() == 4)
+        }
+        if (dataPoints.size() == 4) {
             return fourPointsResults(data);
+        }
         double q1 = data[(int) Math.round((double) data.length / 4.0)];
         double q3 = data[(int) Math.floor((double) data.length * 3.0 / 4.0)];
         return getThresh(q1, q3);

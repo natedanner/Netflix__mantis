@@ -76,14 +76,16 @@ class DataDroppedPayloadSetter implements Closeable {
                 for (Metrics m : metrics) {
                     final Counter dropped = m.getCounter("" + DropOperator.Counters.dropped);
                     final Counter onNext = m.getCounter("" + DropOperator.Counters.onNext);
-                    if (dropped != null)
+                    if (dropped != null) {
                         totalDropped += dropped.value();
-                    else
+                    } else {
                         logger.warn("Unexpected to get null dropped counter for metric " + m.getMetricGroupId().id());
-                    if (onNext != null)
+                    }
+                    if (onNext != null) {
                         totalOnNext += onNext.value();
-                    else
+                    } else {
                         logger.warn("Unexpected to get null onNext counter for metric " + m.getMetricGroupId().id());
+                    }
                 }
                 final StatusPayloads.DataDropCounts dataDrop = new StatusPayloads.DataDropCounts(totalOnNext, totalDropped);
                 try {
@@ -93,8 +95,9 @@ class DataDroppedPayloadSetter implements Closeable {
                 }
                 dropCountGauge.set(dataDrop.getDroppedCount());
                 onNextCountGauge.set(dataDrop.getOnNextCount());
-            } else
+            } else {
                 logger.debug("Got no metrics from DropOperator");
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }

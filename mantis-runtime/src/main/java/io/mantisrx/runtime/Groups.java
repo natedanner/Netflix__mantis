@@ -23,7 +23,7 @@ import rx.functions.Func1;
 import rx.observables.GroupedObservable;
 
 
-public class Groups {
+public final class Groups {
 
     private Groups() {}
 

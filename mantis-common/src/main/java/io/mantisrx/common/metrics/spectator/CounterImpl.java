@@ -38,8 +38,9 @@ public class CounterImpl implements Counter {
 
     @Override
     public void increment(long x) {
-        if (x < 0)
+        if (x < 0) {
             throw new IllegalArgumentException("Can't add negative numbers");
+        }
         spectatorCounter.increment(x);
     }
 

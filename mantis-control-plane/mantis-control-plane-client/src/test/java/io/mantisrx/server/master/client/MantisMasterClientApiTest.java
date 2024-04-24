@@ -57,8 +57,8 @@ import rx.subjects.BehaviorSubject;
 public class MantisMasterClientApiTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MantisMasterClientApiTest.class);
-    private static AtomicInteger port = new AtomicInteger(8950);
-    private static List<HttpServer<String, String>> startedServers = new ArrayList<>();
+    private static final AtomicInteger port = new AtomicInteger(8950);
+    private static final List<HttpServer<String, String>> startedServers = new ArrayList<>();
 
     @AfterClass
     public static void cleanup() throws InterruptedException {
@@ -69,7 +69,7 @@ public class MantisMasterClientApiTest {
     }
 
     public HttpServer<String, String> createHttpServer(int port) {
-        final HttpServer<String, String> server = RxNetty.newHttpServerBuilder(
+        return RxNetty.newHttpServerBuilder(
                 port,
                 new RequestHandler<String, String>() {
                     @Override
@@ -81,7 +81,6 @@ public class MantisMasterClientApiTest {
                 .pipelineConfigurator(PipelineConfigurators.httpServerConfigurator())
                 .channelOption(ChannelOption.WRITE_BUFFER_WATER_MARK, WriteBufferWaterMark.DEFAULT)
                 .build();
-        return server;
     }
 
     @Test

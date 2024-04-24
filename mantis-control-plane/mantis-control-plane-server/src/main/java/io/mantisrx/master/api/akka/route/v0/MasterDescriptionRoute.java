@@ -71,8 +71,12 @@ public class MasterDescriptionRoute extends BaseRoute {
 
         @Override
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             final Configlet configlet = (Configlet) o;
             return Objects.equals(name, configlet.name) &&
                 Objects.equals(value, configlet.value);

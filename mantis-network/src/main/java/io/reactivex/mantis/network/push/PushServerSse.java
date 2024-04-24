@@ -62,14 +62,14 @@ public class PushServerSse<T, S> extends PushServer<T, ServerSentEvent> {
     public static final String CLIENT_ID_TAG_NAME = "clientId";
     public static final String SOCK_ADDR_TAG_NAME = "sockAddr";
 
-    private Func2<Map<String, List<String>>, S, Void> requestPreprocessor;
-    private Func2<Map<String, List<String>>, S, Void> requestPostprocessor;
+    private final Func2<Map<String, List<String>>, S, Void> requestPreprocessor;
+    private final Func2<Map<String, List<String>>, S, Void> requestPostprocessor;
     private final Func2<Map<String, List<String>>, S, Void> subscribeProcessor;
 
-    private S processorState;
-    private Func1<Map<String, List<String>>, Func1<T, Boolean>> predicate;
-    private boolean supportLegacyMetrics;
-    private MetricsRegistry metricsRegistry;
+    private final S processorState;
+    private final Func1<Map<String, List<String>>, Func1<T, Boolean>> predicate;
+    private final boolean supportLegacyMetrics;
+    private final MetricsRegistry metricsRegistry;
 
     public PushServerSse(PushTrigger<T> trigger, ServerConfig<T> config,
                          PublishSubject<String> serverSignals,
@@ -106,7 +106,7 @@ public class PushServerSse<T, S> extends PushServer<T, ServerSentEvent> {
     @Override
     public RxServer<?, ?> createServer() {
 
-        RxServer<HttpServerRequest<String>, HttpServerResponse<ServerSentEvent>> server = RxNetty.newHttpServerBuilder(port,
+        return RxNetty.newHttpServerBuilder(port,
                 new RequestHandler<String, ServerSentEvent>() {
                     @Override
                     public Observable<Void> handle(
@@ -315,7 +315,6 @@ public class PushServerSse<T, S> extends PushServer<T, ServerSentEvent> {
                 .channelOption(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(1024 * 1024, 5 * 1024 * 1024))
 
                 .build();
-        return server;
     }
 
 

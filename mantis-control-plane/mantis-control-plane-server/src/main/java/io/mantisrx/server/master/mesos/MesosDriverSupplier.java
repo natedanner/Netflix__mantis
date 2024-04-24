@@ -49,7 +49,7 @@ public class MesosDriverSupplier implements Supplier<MesosSchedulerDriver> {
     private final WorkerRegistry workerRegistry;
     private final AtomicReference<MesosSchedulerDriver> mesosDriverRef = new AtomicReference<>(null);
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
-    private volatile Action1<List<VirtualMachineLease>> addVMLeaseAction = null;
+    private volatile Action1<List<VirtualMachineLease>> addVMLeaseAction;
     private final AtomicInteger numAttemptsToInit = new AtomicInteger(0);
 
     public MesosDriverSupplier(final MasterConfiguration masterConfig,

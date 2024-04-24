@@ -179,10 +179,11 @@ public class MantisSourceJobConnector {
                     .subscribe();
             try {
                 boolean await = latch.await(300, TimeUnit.SECONDS);
-                if (await)
+                if (await) {
                     System.out.println("PASSED");
-                else
+                } else {
                     System.err.println("FAILED!");
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -35,17 +35,17 @@ public class ServerSlotManagerTest {
 
     @Test
     public void oneNodeTest() {
-        WritableEndpoint<Void> n1 = new WritableEndpoint<Void>("host1", 7001);
-        Map<String, List<String>> params = new HashMap<String, List<String>>();
+        WritableEndpoint<Void> n1 = new WritableEndpoint<>("host1", 7001);
+        Map<String, List<String>> params = new HashMap<>();
 
-        ServerSlotManager<Void> ssm = new ServerSlotManager<Void>(HashFunctions.ketama());
+        ServerSlotManager<Void> ssm = new ServerSlotManager<>(HashFunctions.ketama());
         SlotAssignmentManager<Void> sam = ssm.registerServer(n1, params);
 
         int hostHitCountNode1 = 0;
         int nonHitCount = 0;
 
-        int MSG_COUNT = 100000;
-        for (int i = 0; i < MSG_COUNT; i++) {
+        int msgCount = 100000;
+        for (int i = 0; i < msgCount; i++) {
 
             if (sam.filter(n1, ("msg:" + i).getBytes())) {
                 hostHitCountNode1++;
@@ -54,7 +54,7 @@ public class ServerSlotManagerTest {
             }
         }
         assertTrue(nonHitCount == 0);
-        assertEquals(MSG_COUNT, hostHitCountNode1);
+        assertEquals(msgCount, hostHitCountNode1);
 
         //cleanup
         ssm.deregisterServer(n1, params);
@@ -62,15 +62,15 @@ public class ServerSlotManagerTest {
 
     @Test
     public void twoNodeSameClientIdTest() {
-        WritableEndpoint<Void> n1 = new WritableEndpoint<Void>("host1", 7001);
-        WritableEndpoint<Void> n2 = new WritableEndpoint<Void>("host2", 7001);
+        WritableEndpoint<Void> n1 = new WritableEndpoint<>("host1", 7001);
+        WritableEndpoint<Void> n2 = new WritableEndpoint<>("host2", 7001);
 
-        Map<String, List<String>> params = new HashMap<String, List<String>>();
-        List<String> vals = new ArrayList<String>();
+        Map<String, List<String>> params = new HashMap<>();
+        List<String> vals = new ArrayList<>();
         vals.add("client1");
         params.put("clientId", vals);
 
-        ServerSlotManager<Void> ssm = new ServerSlotManager<Void>(HashFunctions.ketama());
+        ServerSlotManager<Void> ssm = new ServerSlotManager<>(HashFunctions.ketama());
         SlotAssignmentManager<Void> sm = ssm.registerServer(n1, params);
 
         SlotAssignmentManager<Void> sm2 = ssm.registerServer(n2, params);
@@ -82,8 +82,8 @@ public class ServerSlotManagerTest {
         int hostHitCountNode2 = 0;
         int nonHitCount = 0;
 
-        int MSG_COUNT = 1000000;
-        for (int i = 0; i < MSG_COUNT; i++) {
+        int msgCount = 1000000;
+        for (int i = 0; i < msgCount; i++) {
             String msg = "msg:" + i;
             if (sm.filter(n1, msg.getBytes())) {
                 hostHitCountNode1++;
@@ -94,12 +94,12 @@ public class ServerSlotManagerTest {
             }
         }
 
-        double host1HitPercentage = (double) hostHitCountNode1 / (double) MSG_COUNT;
+        double host1HitPercentage = (double) hostHitCountNode1 / (double) msgCount;
         System.out.println("host1 hit % " + host1HitPercentage);
         assertTrue(host1HitPercentage > 0.4 && host1HitPercentage < 0.6);
 
         assertTrue(nonHitCount == 0);
-        assertEquals(MSG_COUNT, hostHitCountNode1 + hostHitCountNode2);
+        assertEquals(msgCount, hostHitCountNode1 + hostHitCountNode2);
 
 
         ssm.deregisterServer(n1, params);
@@ -109,15 +109,15 @@ public class ServerSlotManagerTest {
 
     @Test
     public void threeNodeSameClientIdTest() {
-        WritableEndpoint<Void> n1 = new WritableEndpoint<Void>("host1", 7001);
-        WritableEndpoint<Void> n2 = new WritableEndpoint<Void>("host2", 7001);
+        WritableEndpoint<Void> n1 = new WritableEndpoint<>("host1", 7001);
+        WritableEndpoint<Void> n2 = new WritableEndpoint<>("host2", 7001);
 
-        Map<String, List<String>> params = new HashMap<String, List<String>>();
-        List<String> vals = new ArrayList<String>();
+        Map<String, List<String>> params = new HashMap<>();
+        List<String> vals = new ArrayList<>();
         vals.add("client1");
         params.put("clientId", vals);
 
-        ServerSlotManager<Void> ssm = new ServerSlotManager<Void>(HashFunctions.ketama());
+        ServerSlotManager<Void> ssm = new ServerSlotManager<>(HashFunctions.ketama());
 
         SlotAssignmentManager<Void> sm = ssm.registerServer(n1, params);
 
@@ -130,8 +130,8 @@ public class ServerSlotManagerTest {
         int hostHitCountNode2 = 0;
         int nonHitCount = 0;
 
-        int MSG_COUNT = 1000000;
-        for (int i = 0; i < MSG_COUNT; i++) {
+        int msgCount = 1000000;
+        for (int i = 0; i < msgCount; i++) {
             String msg = "msg:" + i;
             if (sm.filter(n1, msg.getBytes())) {
                 hostHitCountNode1++;
@@ -142,15 +142,15 @@ public class ServerSlotManagerTest {
             }
         }
 
-        double host1HitPercentage = (double) hostHitCountNode1 / (double) MSG_COUNT;
+        double host1HitPercentage = (double) hostHitCountNode1 / (double) msgCount;
         System.out.println("host1 hit % " + host1HitPercentage);
         assertTrue(host1HitPercentage > 0.4 && host1HitPercentage < 0.6);
 
         assertTrue(nonHitCount == 0);
-        assertEquals(MSG_COUNT, hostHitCountNode1 + hostHitCountNode2);
+        assertEquals(msgCount, hostHitCountNode1 + hostHitCountNode2);
 
 
-        WritableEndpoint<Void> n3 = new WritableEndpoint<Void>("host3", 7001);
+        WritableEndpoint<Void> n3 = new WritableEndpoint<>("host3", 7001);
         // add another node
         SlotAssignmentManager<Void> sm3 = ssm.registerServer(n3, params);
 
@@ -159,8 +159,8 @@ public class ServerSlotManagerTest {
         int hostHitCountNode3 = 0;
         nonHitCount = 0;
 
-        MSG_COUNT = 1000000;
-        for (int i = 0; i < MSG_COUNT; i++) {
+        msgCount = 1000000;
+        for (int i = 0; i < msgCount; i++) {
             String msg = "msg:" + i;
             if (sm.filter(n1, msg.getBytes())) {
                 hostHitCountNode1++;
@@ -175,7 +175,7 @@ public class ServerSlotManagerTest {
             }
         }
 
-        assertEquals(MSG_COUNT, hostHitCountNode1 + hostHitCountNode2 + hostHitCountNode3);
+        assertEquals(msgCount, hostHitCountNode1 + hostHitCountNode2 + hostHitCountNode3);
 
         ssm.deregisterServer(n1, params);
         ssm.deregisterServer(n2, params);
@@ -184,20 +184,20 @@ public class ServerSlotManagerTest {
 
     @Test
     public void twoNodeDifferentClientIdTest() {
-        WritableEndpoint<Void> n1 = new WritableEndpoint<Void>("host1", 7001);
-        WritableEndpoint<Void> n2 = new WritableEndpoint<Void>("host2", 7001);
+        WritableEndpoint<Void> n1 = new WritableEndpoint<>("host1", 7001);
+        WritableEndpoint<Void> n2 = new WritableEndpoint<>("host2", 7001);
 
-        Map<String, List<String>> params = new HashMap<String, List<String>>();
-        List<String> vals = new ArrayList<String>();
+        Map<String, List<String>> params = new HashMap<>();
+        List<String> vals = new ArrayList<>();
         vals.add("client1");
         params.put("clientId", vals);
 
-        Map<String, List<String>> params2 = new HashMap<String, List<String>>();
-        List<String> vals2 = new ArrayList<String>();
+        Map<String, List<String>> params2 = new HashMap<>();
+        List<String> vals2 = new ArrayList<>();
         vals2.add("client2");
         params2.put("clientId", vals2);
 
-        ServerSlotManager<Void> ssm = new ServerSlotManager<Void>(HashFunctions.ketama());
+        ServerSlotManager<Void> ssm = new ServerSlotManager<>(HashFunctions.ketama());
 
         SlotAssignmentManager<Void> sm = ssm.registerServer(n1, params);
 
@@ -208,9 +208,9 @@ public class ServerSlotManagerTest {
         int hostHitCountNode1 = 0;
         int hostHitCountNode2 = 0;
         int nonHitCount = 0;
-        int MSG_COUNT = 1000000;
+        int msgCount = 1000000;
 
-        for (int i = 0; i < MSG_COUNT; i++) {
+        for (int i = 0; i < msgCount; i++) {
 
             String msg = "msg:" + i;
             boolean atleastOneMatch = false;
@@ -229,8 +229,8 @@ public class ServerSlotManagerTest {
         }
 
         assertTrue(nonHitCount == 0);
-        assertEquals(MSG_COUNT, hostHitCountNode1);
-        assertEquals(MSG_COUNT, hostHitCountNode2);
+        assertEquals(msgCount, hostHitCountNode1);
+        assertEquals(msgCount, hostHitCountNode2);
 
         ssm.deregisterServer(n1, params);
         ssm.deregisterServer(n2, params2);
@@ -239,21 +239,21 @@ public class ServerSlotManagerTest {
 
     @Test
     public void twoSameOneDifferentClientIdTest() {
-        WritableEndpoint<Void> n1 = new WritableEndpoint<Void>("host1", 7001);
-        WritableEndpoint<Void> n2 = new WritableEndpoint<Void>("host2", 7001);
-        WritableEndpoint<Void> n3 = new WritableEndpoint<Void>("host3", 7001);
+        WritableEndpoint<Void> n1 = new WritableEndpoint<>("host1", 7001);
+        WritableEndpoint<Void> n2 = new WritableEndpoint<>("host2", 7001);
+        WritableEndpoint<Void> n3 = new WritableEndpoint<>("host3", 7001);
 
-        Map<String, List<String>> params = new HashMap<String, List<String>>();
-        List<String> vals = new ArrayList<String>();
+        Map<String, List<String>> params = new HashMap<>();
+        List<String> vals = new ArrayList<>();
         vals.add("client1");
         params.put("clientId", vals);
 
-        Map<String, List<String>> params3 = new HashMap<String, List<String>>();
-        List<String> vals3 = new ArrayList<String>();
+        Map<String, List<String>> params3 = new HashMap<>();
+        List<String> vals3 = new ArrayList<>();
         vals3.add("client3");
         params3.put("clientId", vals3);
 
-        ServerSlotManager<Void> ssm = new ServerSlotManager<Void>(HashFunctions.ketama());
+        ServerSlotManager<Void> ssm = new ServerSlotManager<>(HashFunctions.ketama());
 
         SlotAssignmentManager<Void> sm = ssm.registerServer(n1, params);
 
@@ -269,9 +269,9 @@ public class ServerSlotManagerTest {
         int hostHitCountNode2 = 0;
         int hostHitCountNode3 = 0;
         int nonHitCount = 0;
-        int MSG_COUNT = 1000000;
+        int msgCount = 1000000;
 
-        for (int i = 0; i < MSG_COUNT; i++) {
+        for (int i = 0; i < msgCount; i++) {
             boolean atleastOneMatch = false;
             String msg = "msg:" + i;
 
@@ -295,8 +295,8 @@ public class ServerSlotManagerTest {
         }
 
         assertTrue(nonHitCount == 0);
-        assertEquals(MSG_COUNT, hostHitCountNode1 + hostHitCountNode2);
-        assertEquals(MSG_COUNT, hostHitCountNode3);
+        assertEquals(msgCount, hostHitCountNode1 + hostHitCountNode2);
+        assertEquals(msgCount, hostHitCountNode3);
 
         ssm.deregisterServer(n1, params);
         ssm.deregisterServer(n2, params);

@@ -107,7 +107,7 @@ public class PercentageMigrationStrategy extends MigrationStrategy {
             }
         }
 
-        if (workersToMigrate.size() > 0) {
+        if (!workersToMigrate.isEmpty()) {
             logger.debug("migrating jobId {} workers {}", jobId, workersToMigrate);
         }
 

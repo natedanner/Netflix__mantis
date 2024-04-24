@@ -26,8 +26,8 @@ import io.mantisrx.common.metrics.Gauge;
 public class GaugeImpl implements Gauge {
 
     private final MetricId metricId;
-    private String event;
-    private AtomicDouble value;
+    private final String event;
+    private final AtomicDouble value;
 
     public GaugeImpl(final MetricId metricId,
                      final Registry registry) {
@@ -78,7 +78,7 @@ public class GaugeImpl implements Gauge {
 
     @Override
     public void decrement(double delta) {
-        value.getAndAdd((-1) * delta);
+        value.getAndAdd(-1 * delta);
     }
 
     @Override

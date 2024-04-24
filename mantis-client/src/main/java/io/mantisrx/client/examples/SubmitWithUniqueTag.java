@@ -83,10 +83,11 @@ public class SubmitWithUniqueTag {
                 })
                 .subscribe();
         try {
-            if (latch.await(50, TimeUnit.SECONDS))
+            if (latch.await(50, TimeUnit.SECONDS)) {
                 System.out.println("SUCCESS");
-            else
+            } else {
                 System.out.println("FAILURE");
+            }
             subscribe.unsubscribe();
             System.exit(0);
 

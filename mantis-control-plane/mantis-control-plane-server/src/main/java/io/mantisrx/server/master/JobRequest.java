@@ -23,8 +23,8 @@ import io.mantisrx.server.master.store.NamedJob;
 
 public class JobRequest {
 
-    private String jobId;
-    private MantisJobDefinition jobDefinition;
+    private final String jobId;
+    private final MantisJobDefinition jobDefinition;
 
     public JobRequest(final String jobId,
                       final MantisJobDefinition jobDefinition,

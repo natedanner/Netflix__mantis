@@ -103,8 +103,9 @@ public class SinkPublisher<T> implements WorkerPublisher<T> {
                 .doOnTerminate(() -> logger.info("Sink observable subscription termindated."))
                 .doOnUnsubscribe(() -> {
                     logger.info("Sink subscriptions clean up, action={}", onUnsubscribeAction);
-                    if (onUnsubscribeAction != null)
+                    if (onUnsubscribeAction != null) {
                         onUnsubscribeAction.call();
+                    }
                 })
                 .share();
         if (context.getWorkerInfo().getDurationType() == MantisJobDurationType.Perpetual) {

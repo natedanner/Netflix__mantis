@@ -47,7 +47,7 @@ public class GroupByStage implements ToGroupComputation<RequestEvent, String, Re
     @Override
     public Observable<MantisGroup<String, RequestEvent>> call(Context context, Observable<RequestEvent> requestEventO) {
         return requestEventO
-                .map((requestEvent) -> {
+                .map(requestEvent -> {
                     if(groupByPath) {
                         return new MantisGroup<>(requestEvent.getRequestPath(), requestEvent);
                     } else {
@@ -59,7 +59,7 @@ public class GroupByStage implements ToGroupComputation<RequestEvent, String, Re
     @Override
     public void init(Context context) {
         String groupByField = (String)context.getParameters().get(GROUPBY_FIELD_PARAM,"path");
-        groupByPath = groupByField.equalsIgnoreCase("path") ? true : false;
+        groupByPath = "path".equalsIgnoreCase(groupByField) ? true : false;
     }
 
     /**

@@ -81,7 +81,7 @@ public class JobTestLifecycle {
 	static ActorSystem system;
 	private static MantisJobStore jobStore;
 	private static IMantisPersistenceProvider storageProvider;
-	private static LifecycleEventPublisher eventPublisher = new LifecycleEventPublisherImpl(new AuditEventSubscriberLoggingImpl(), new StatusEventSubscriberLoggingImpl(), new WorkerEventSubscriberLoggingImpl());
+    private static final LifecycleEventPublisher eventPublisher = new LifecycleEventPublisherImpl(new AuditEventSubscriberLoggingImpl(), new StatusEventSubscriberLoggingImpl(), new WorkerEventSubscriberLoggingImpl());
     private final CostsCalculator costsCalculator = CostsCalculator.noop();
 
 	private static final String user = "mantis";
@@ -907,8 +907,8 @@ public class JobTestLifecycle {
 			JobTestHelper.sendWorkerTerminatedEvent(probe, jobActor, jobId, workerId2);
 
 			// replaced worker comes up and sends events
-			WorkerId workerId2_replaced = new WorkerId(jobId, 1, 3);
-			JobTestHelper.sendLaunchedInitiatedStartedEventsToWorker(probe, jobActor, jobId, stageNo, workerId2_replaced);
+			WorkerId workerId2Replaced = new WorkerId(jobId, 1, 3);
+			JobTestHelper.sendLaunchedInitiatedStartedEventsToWorker(probe, jobActor, jobId, stageNo, workerId2Replaced);
 
             jobActor.tell(new JobClusterManagerProto.GetJobDetailsRequest("nj", jobId), probe.getRef());
 

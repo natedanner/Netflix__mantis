@@ -55,10 +55,12 @@ public class ConditionalRetry {
                                 .flatMap(new Func1<Integer, Observable<?>>() {
                                     @Override
                                     public Observable<?> call(Integer integer) {
-                                        if (errorRef.get() != null)
+                                        if (errorRef.get() != null) {
                                             return Observable.error(errorRef.get());
-                                        if (ConditionalRetry.this.counter != null)
+                                        }
+                                        if (ConditionalRetry.this.counter != null) {
                                             ConditionalRetry.this.counter.increment();
+                                        }
                                         long delay = 2 * (integer > 10 ? 10 : integer);
                                         logger.info(": retrying " + ConditionalRetry.this.name +
                                                 " after sleeping for " + delay + " secs");

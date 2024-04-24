@@ -36,7 +36,7 @@ import rx.functions.Func1;
 
 public class TestJobThreeStage extends MantisJobProvider<Integer> {
 
-    private List<Integer> itemsWritten = new LinkedList<Integer>();
+    private final List<Integer> itemsWritten = new LinkedList<>();
 
     public static void main(String[] args) {
         LocalJobExecutorNetworked.execute(new TestJobThreeStage().getJobInstance());
@@ -94,7 +94,7 @@ public class TestJobThreeStage extends MantisJobProvider<Integer> {
                         return t1.filter(new Func1<Integer, Boolean>() {
                             @Override
                             public Boolean call(Integer t1) {
-                                return ((t1 % 2) == 0);
+                                return (t1 % 2) == 0;
                             }
                         });
                     }

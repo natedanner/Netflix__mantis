@@ -24,9 +24,9 @@ public class GaugeCallback implements Gauge {
 
     public static final String LEGACY_GAUGE_CALLBACK_METRICGROUP = "legacyGaugeCallbackMetricGroup";
 
-    private String event;
-    private Func0<Long> valueCallback;
-    private MetricId metricId;
+    private final String event;
+    private final Func0<Long> valueCallback;
+    private final MetricId metricId;
 
     /**
      * @deprecated use {@link io.mantisrx.common.metrics.spectator.GaugeCallback} instead

@@ -418,13 +418,13 @@ public class JobWorker implements IMantisWorkerEventProcessor {
         private static final int INVALID_VALUE = -1;
         private int workerIndex = INVALID_VALUE;
         private int workerNumber = INVALID_VALUE;
-        private String jobId = null;
+        private String jobId;
         private int stageNum = INVALID_VALUE;
         private int numberOfPorts = INVALID_VALUE;
-        private WorkerPorts workerPorts = null;
+        private WorkerPorts workerPorts;
         private WorkerState state = WorkerState.Accepted;
-        private String slave = null;
-        private String slaveID = null;
+        private String slave;
+        private String slaveID;
         private long acceptedAt = System.currentTimeMillis();
         private long launchedAt = -1;
         private long startingAt = -1;
@@ -432,8 +432,8 @@ public class JobWorker implements IMantisWorkerEventProcessor {
         private long completedAt = -1;
 
         private JobCompletedReason reason = JobCompletedReason.Normal;
-        private int resubmitOf = 0;
-        private int totalResubmitCount = 0;
+        private int resubmitOf;
+        private int totalResubmitCount;
         private Optional<String> preferredCluster = Optional.empty();
         private Optional<ClusterID> resourceCluster = Optional.empty();
         private IMantisWorkerMetadata metadata;
@@ -748,8 +748,12 @@ public class JobWorker implements IMantisWorkerEventProcessor {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         final JobWorker jobWorker = (JobWorker) o;
         return Objects.equals(metadata, jobWorker.metadata)
                 && Objects.equals(eventPublisher, jobWorker.eventPublisher);

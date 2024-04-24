@@ -34,7 +34,7 @@ public class ConsistentHashing<T> extends SlottingStrategy<T> {
     private Metrics metrics;
 
     public ConsistentHashing(String ringName, HashFunction function) {
-        manager = new SlotAssignmentManager<T>(function, ringName);
+        manager = new SlotAssignmentManager<>(function, ringName);
         metrics = new Metrics.Builder()
                 .name("ConsistentHashing")
                 .addGauge("activeConnections")

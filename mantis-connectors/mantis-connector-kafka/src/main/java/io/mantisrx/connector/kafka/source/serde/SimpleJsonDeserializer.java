@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class SimpleJsonDeserializer extends MapDeserializerBase {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(SimpleJsonDeserializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleJsonDeserializer.class);
     private final ObjectMapper jsonMapper = new ObjectMapper();
     private final TypeReference<Map<String, Object>> typeRef =
         new TypeReference<Map<String, Object>>() {};

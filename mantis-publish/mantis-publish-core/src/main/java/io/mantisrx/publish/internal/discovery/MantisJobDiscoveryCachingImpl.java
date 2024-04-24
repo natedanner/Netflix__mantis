@@ -196,7 +196,7 @@ public class MantisJobDiscoveryCachingImpl implements MantisJobDiscovery {
     }
 
     private String appWithFallback(String app) {
-        return (app == null) ? DEFAULT_APP_KEY : app;
+        return app == null ? DEFAULT_APP_KEY : app;
     }
 
     @Override

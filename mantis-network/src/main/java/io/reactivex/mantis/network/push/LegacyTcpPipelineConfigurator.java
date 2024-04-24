@@ -41,7 +41,7 @@ public class LegacyTcpPipelineConfigurator implements PipelineConfigurator<Remot
     private static final Logger logger = LoggerFactory.getLogger(LegacyTcpPipelineConfigurator.class);
     private static final byte PROTOCOL_VERSION = 1;
 
-    private String name;
+    private final String name;
 
     public LegacyTcpPipelineConfigurator(String name) {
         this.name = name;

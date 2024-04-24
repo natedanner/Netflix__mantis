@@ -64,7 +64,7 @@ import rx.RxReactiveStreams;
                 () -> concat(
                         path(
                                 segment("jobDiscoveryStream").slash(PathMatchers.segment()),
-                                (jobId) -> pathEndOrSingleSlash(
+                                jobId -> pathEndOrSingleSlash(
                                         () -> get(() -> getJobDiscoveryStreamRoute(
                                                 jobId)))
                         )
@@ -83,7 +83,7 @@ import rx.RxReactiveStreams;
     private Route getJobDiscoveryStreamRoute(String jobId) {
         return parameterOptional(
                 StringUnmarshallers.BOOLEAN, ParamName.SEND_HEARTBEAT,
-                (sendHeartbeats) -> {
+                sendHeartbeats -> {
 
                     logger.info("GET /api/v1/jobStatusStream/{} called", jobId);
                     CompletionStage<JobDiscoveryRouteProto.SchedInfoResponse> schedulingInfoRespCS =

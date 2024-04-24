@@ -39,6 +39,7 @@ import io.mantisrx.master.jobcluster.proto.JobClusterManagerProto;
 import io.mantisrx.server.core.JobSchedulingInfo;
 import io.mantisrx.server.master.domain.JobId;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
@@ -75,11 +76,11 @@ public class JobDiscoveryRoute extends BaseRoute {
     private Route getJobDiscoveryRoutes() {
         return route(
                 get(() -> route(
-                        path(segment("assignmentresults").slash(PathMatchers.segment()), (jobId) ->
+                        path(segment("assignmentresults").slash(PathMatchers.segment()), jobId ->
                                 parameterOptional(
                                         StringUnmarshallers.BOOLEAN,
                                         "sendHB",
-                                        (sendHeartbeats) -> {
+                                        sendHeartbeats -> {
                                             logger.debug(
                                                     "/assignmentresults/{} called",
                                                     jobId);
@@ -108,8 +109,7 @@ public class JobDiscoveryRoute extends BaseRoute {
                                                                           .map(j -> StreamingUtils.from(
                                                                                   j)
                                                                                                   .orElse(null))
-                                                                          .filter(sse -> sse !=
-                                                                                         null);
+                                                                          .filter(Objects::nonNull);
                                                             return completeOK(
                                                                     schedInfoSource,
                                                                     EventStreamMarshalling.toEventStream());
@@ -125,11 +125,11 @@ public class JobDiscoveryRoute extends BaseRoute {
                                                     });
                                         })
                         ),
-                        path(segment("namedjobs").slash(PathMatchers.segment()), (jobCluster) ->
+                        path(segment("namedjobs").slash(PathMatchers.segment()), jobCluster ->
                                 parameterOptional(
                                         StringUnmarshallers.BOOLEAN,
                                         "sendHB",
-                                        (sendHeartbeats) -> {
+                                        sendHeartbeats -> {
                                             logger.debug(
                                                     "/namedjobs/{} called",
                                                     jobCluster);
@@ -157,7 +157,7 @@ public class JobDiscoveryRoute extends BaseRoute {
                                                                                                    jobClusterInfoObs))
                                                                     .map(j -> StreamingUtils.from(j)
                                                                                             .orElse(null))
-                                                                    .filter(sse -> sse != null);
+                                                                    .filter(Objects::nonNull);
                                                             return completeOK(
                                                                     source,
                                                                     EventStreamMarshalling.toEventStream());

@@ -52,13 +52,7 @@ public class WorkerId implements Serializable {
         this.jobId = jobId;
         this.wIndex = wIndex;
         this.wNum = wNum;
-        this.id = new StringBuilder()
-                .append(jobId)
-                .append(WORKER_DELIMITER)
-                .append(wIndex)
-                .append('-')
-                .append(wNum)
-                .toString();
+        this.id = jobId + WORKER_DELIMITER + wIndex + '-' + wNum;
     }
 
     private static String getJobClusterFromId(final String jobId) {
@@ -128,15 +122,27 @@ public class WorkerId implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         WorkerId workerId = (WorkerId) o;
 
-        if (wIndex != workerId.wIndex) return false;
-        if (wNum != workerId.wNum) return false;
-        if (!jobCluster.equals(workerId.jobCluster)) return false;
-        if (!jobId.equals(workerId.jobId)) return false;
+        if (wIndex != workerId.wIndex) {
+            return false;
+        }
+        if (wNum != workerId.wNum) {
+            return false;
+        }
+        if (!jobCluster.equals(workerId.jobCluster)) {
+            return false;
+        }
+        if (!jobId.equals(workerId.jobId)) {
+            return false;
+        }
         return id.equals(workerId.id);
     }
 

@@ -27,10 +27,10 @@ public class InvalidJobException extends Exception {
     }
 
     public InvalidJobException(String jobId, int stageNum, int workerId) {
-        super(jobId + ((stageNum >= 0) ? "-stage-" + stageNum : "") + ((workerId >= 0) ? "-worker-" + workerId : ""));
+        super(jobId + (stageNum >= 0 ? "-stage-" + stageNum : "") + (workerId >= 0 ? "-worker-" + workerId : ""));
     }
 
     public InvalidJobException(String jobId, int stageNum, int workerId, Throwable cause) {
-        super(jobId + ((stageNum >= 0) ? "-stage-" + stageNum : "") + ((workerId >= 0) ? "-worker-" + workerId : ""), cause);
+        super(jobId + (stageNum >= 0 ? "-stage-" + stageNum : "") + (workerId >= 0 ? "-worker-" + workerId : ""), cause);
     }
 }

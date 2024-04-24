@@ -92,8 +92,12 @@ public class SourceJobParameters {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             TargetInfo that = (TargetInfo) o;
             return Objects.equals(sourceJobName, that.sourceJobName) &&
                     Objects.equals(criterion, that.criterion) &&
@@ -131,10 +135,10 @@ public class SourceJobParameters {
         private String criterion;
         private String clientId;
         private int samplePerSec = -1;
-        private boolean isBroadcastMode = false;
-        private boolean enableMetaMessages = false;
-        private boolean enableCompressedBinary = false;
-        private String delimiter = null;
+        private boolean isBroadcastMode;
+        private boolean enableMetaMessages;
+        private boolean enableCompressedBinary;
+        private String delimiter;
 
         public TargetInfoBuilder() {
         }

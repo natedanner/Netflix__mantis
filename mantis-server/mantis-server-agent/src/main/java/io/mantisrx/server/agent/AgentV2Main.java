@@ -156,7 +156,7 @@ public class AgentV2Main implements Service {
     public void start() {
         Runtime.getRuntime()
             .addShutdownHook(
-                new Thread(() -> shutdown()));
+                new Thread(this::shutdown));
 
         try {
             taskExecutorStarter.startAsync().awaitRunning(2, TimeUnit.MINUTES);

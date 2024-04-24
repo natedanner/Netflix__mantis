@@ -38,13 +38,13 @@ public class WritableEndpoint<T> extends Endpoint implements Comparable<Writable
     public WritableEndpoint(String host, int port, String slotId,
                             ObservableConnection<?, ?> connection) {
         super(host, port, slotId);
-        subject = new SerializedSubject<T, T>(PublishSubject.<T>create());
+        subject = new SerializedSubject<>(PublishSubject.<T>create());
         this.connection = connection;
     }
 
     public WritableEndpoint(String host, int port) {
         super(host, port);
-        subject = new SerializedSubject<T, T>(PublishSubject.<T>create());
+        subject = new SerializedSubject<>(PublishSubject.<T>create());
     }
 
     public void write(T value) {
@@ -81,24 +81,29 @@ public class WritableEndpoint<T> extends Endpoint implements Comparable<Writable
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((slotId == null) ? 0 : slotId.hashCode());
+        result = prime * result + (slotId == null ? 0 : slotId.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Endpoint other = (Endpoint) obj;
         if (slotId == null) {
-            if (other.slotId != null)
+            if (other.slotId != null) {
                 return false;
-        } else if (!slotId.equals(other.slotId))
+            }
+        } else if (!slotId.equals(other.slotId)) {
             return false;
+        }
         return true;
     }
 

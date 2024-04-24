@@ -50,7 +50,7 @@ public class KafkaData {
         this.parsedEvent = parsedEvent;
         this.key = key;
         this.mantisKafkaConsumerId = mantisKafkaConsumerId;
-        this.streamId = new StringBuilder(topic).append('-').append(partition).toString();
+        this.streamId = topic + '-' + partition;
     }
 
     public KafkaData(ConsumerRecord<String, byte[]> m,
@@ -86,8 +86,12 @@ public class KafkaData {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         KafkaData kafkaData = (KafkaData) o;
         return partition == kafkaData.partition &&
             offset == kafkaData.offset &&

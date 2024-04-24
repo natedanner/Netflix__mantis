@@ -126,7 +126,7 @@ public class JobClusterManagerTest {
     private ActorRef jobClusterManagerActor;
     private MantisSchedulerFactory schedulerMockFactory;
     private MantisScheduler schedulerMock;
-    private static LifecycleEventPublisher eventPublisher = new LifecycleEventPublisherImpl(
+    private static final LifecycleEventPublisher eventPublisher = new LifecycleEventPublisherImpl(
         new AuditEventSubscriberLoggingImpl(),
         new StatusEventSubscriberLoggingImpl(),
         new WorkerEventSubscriberLoggingImpl());
@@ -427,7 +427,7 @@ public class JobClusterManagerTest {
 
             submitJobAndAssert(jobClusterManagerActor, cluster);
 
-            if (cluster.equals("testBootStrapJobClustersAndJobs1")) {
+            if ("testBootStrapJobClustersAndJobs1".equals(cluster)) {
                 // send worker events for job 1 so it goes to started state
                 String jobId = "testBootStrapJobClustersAndJobs1-1";
                 WorkerId workerId = new WorkerId(jobId, 0, 1);
@@ -611,11 +611,10 @@ public class JobClusterManagerTest {
             .get()
             .take(1)
             .toBlocking()
-            .subscribe((jId) -> {
+            .subscribe(jId ->
                 assertEquals(new JobId(
                     "testBootStrapJobClustersAndJobs1",
-                    1), jId);
-            });
+                    1), jId));
 
         jobClusterManagerActor.tell(new GetJobClusterRequest(clusterWithNoJob), probe.getRef());
         GetJobClusterResponse jobClusterResponse = probe.expectMsgClass(Duration.of(
@@ -801,11 +800,10 @@ public class JobClusterManagerTest {
             .get()
             .take(1)
             .toBlocking()
-            .subscribe((jId) -> {
+            .subscribe(jId ->
                 assertEquals(new JobId(
                     "testBootStrapJobClustersAndJobs1",
-                    1), jId);
-            });
+                    1), jId));
 
         // Two schedules: one for the initial success, one for a resubmit from corrupted worker ports.
         verify(schedulerMock, times(2)).scheduleWorkers(any());
@@ -980,9 +978,9 @@ public class JobClusterManagerTest {
         for (MantisJobMetadataView v : listResp.getJobList()) {
             System.out.println("Job -> " + v.getJobMetadata().getJobId());
             String jId = v.getJobMetadata().getJobId();
-            if (jId.equals("testListJobs-1")) {
+            if ("testListJobs-1".equals(jId)) {
                 foundJob1 = true;
-            } else if (jId.equals("testListJobs2-1")) {
+            } else if ("testListJobs2-1".equals(jId)) {
                 foundJob2 = true;
             }
         }
@@ -1413,7 +1411,7 @@ public class JobClusterManagerTest {
             BehaviorSubject<JobId> jobIdBehaviorSubject =
                 getLastSubmittedJobIdStreamResponse.getjobIdBehaviorSubject().get();
 
-            jobIdBehaviorSubject.subscribeOn(Schedulers.io()).subscribe((jId) -> {
+            jobIdBehaviorSubject.subscribeOn(Schedulers.io()).subscribe(jId -> {
                 System.out.println("Got Jid -> " + jId);
                 assertEquals(clusterName + "-1", jId.getId());
                 jobIdLatch.countDown();

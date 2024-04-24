@@ -18,6 +18,6 @@ package io.mantisrx.runtime;
 
 public enum MantisJobDurationType {
     Perpetual,
-    Transient;
+    Transient
 
 }
